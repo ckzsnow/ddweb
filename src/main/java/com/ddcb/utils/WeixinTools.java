@@ -118,12 +118,12 @@ public class WeixinTools {
 				bufferRes.toString());
 		return ret;
 	}
-
+ 
 	public static String getOpenId(String code) {
 		String openId = "";
 		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
-		url = url.replace("APPID", WeixinConstEnum.TEST_APP_ID.toString())
-				.replace("SECRET", WeixinConstEnum.TEST_APP_SECRET.toString())
+		url = url.replace("APPID", WeixinConstEnum.COMPANY_APP_ID.toString())
+				.replace("SECRET", WeixinConstEnum.COMPANY_APP_SECRET.toString())
 				.replace("CODE", code);
 		logger.info("GetOpenId URL : {}", url);
 		Map<Object, Object> map = httpGet(url);

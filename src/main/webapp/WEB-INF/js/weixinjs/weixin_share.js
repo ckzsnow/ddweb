@@ -20,7 +20,7 @@ mui.ajax({
     success : getJsConfigInfoSuccess 
 });
 wx.ready(function(){
-	var imgUrl = "http://diandou.me/img/webimg/share_img.png";
+	var imgUrl = "http://www.diandou.me/img/webimg/share_img.png";
 	var lineLink = window.location.href;
 	var descContent = "点豆成兵&mdash;为进取心而生，专注职场“传、帮、带”";
 	var shareTitle = "点豆成兵";
