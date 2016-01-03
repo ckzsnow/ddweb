@@ -14,7 +14,7 @@ public enum WeixinConstEnum {
 	
 	COMPANY_APP_ID("wx55d4da6e29cc6c83"),
 
-	COMPANY_APP_SECRET("64e526f157d961831850e1aa764ed795"),
+	COMPANY_APP_SECRET("cecb286453f522f1141438a666fc5b07"),
 
 	COMPANY_ACCESS_TOKEN_URL("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET"),
 	//COMPANY_ACCESS_TOKEN_URL("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET"),

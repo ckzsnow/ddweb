@@ -6,7 +6,7 @@ import com.ddcb.model.UserForwardModel;
 
 public interface IUserForwardDao {
 
-	public UserForwardModel getUserForwardByOpenId(String openId);
+	public UserForwardModel getUserForwardByUserId(String userId);
 	
 	public List<UserForwardModel> getAllUserForward();
 	

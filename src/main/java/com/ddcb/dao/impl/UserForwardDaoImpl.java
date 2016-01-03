@@ -8,11 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.stereotype.Repository;
-import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.IUserForwardDao;
-import com.ddcb.mapper.CourseMapper;
 import com.ddcb.mapper.UserForwardMapper;
-import com.ddcb.model.CourseModel;
 import com.ddcb.model.UserForwardModel;
 
 @Repository("userForwardDao")
@@ -25,12 +22,12 @@ public class UserForwardDaoImpl implements IUserForwardDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	@Override
-	public UserForwardModel getUserForwardByOpenId(String id) {
-		String sql = "select * from user_forward where open_id = ?";
+	public UserForwardModel getUserForwardByUserId(String userId) {
+		String sql = "select * from user_forward where user_id = ?";
 		UserForwardModel userForwardModel = null;
 		try {
 			userForwardModel = jdbcTemplate.queryForObject(sql,
-					new Object[] { id }, new UserForwardMapper());
+					new Object[] { userId }, new UserForwardMapper());
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());
 		}
@@ -53,9 +50,9 @@ public class UserForwardDaoImpl implements IUserForwardDao {
 	@Override
 	public boolean addUserForward(UserForwardModel userForwardModel) {
 		try{
-			String sql= "insert into user_forward(open_id, screenshot, create_time) values (?,?,?)";
-			int num = jdbcTemplate.update(sql, userForwardModel.getOpen_id(), userForwardModel.getScreenshot(),
-					userForwardModel.getCreate_time());
+			String sql= "insert into user_forward(user_id, screenshot, course_id, create_time) values (?,?,?)";
+			int num = jdbcTemplate.update(sql, userForwardModel.getUser_id(), userForwardModel.getScreenshot(),
+					userForwardModel.getCourse_id(), userForwardModel.getCreate_time());
 			return num > 0;
 		}catch(Exception e){
 			logger.debug("exception : {}", e.toString());

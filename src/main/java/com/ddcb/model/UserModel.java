@@ -4,41 +4,43 @@ import java.sql.Timestamp;
 
 public class UserModel {
 
-	private String open_id;
-	private Integer pay_status;
-	private Integer forward_status;
+	private String user_id;
+	private String user_pwd;
+	private Integer user_type;
 	private Timestamp create_time;
 	
-	public UserModel(String open_id, Integer pay_status, Integer forward_status, Timestamp create_time) {
+	public UserModel() {}
+	
+	public UserModel(String user_id, String user_pwd, Integer user_type, Timestamp create_time) {
 		super();
-		this.open_id = open_id;
-		this.pay_status = pay_status;
-		this.forward_status = forward_status;
+		this.user_id = user_id;
+		this.user_pwd = user_pwd;
+		this.user_type = user_type;
 		this.create_time = create_time;
 	}
 
-	public String getOpen_id() {
-		return open_id;
+	public String getUser_id() {
+		return user_id;
 	}
 
-	public void setOpen_id(String open_id) {
-		this.open_id = open_id;
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
 	}
 
-	public Integer getPay_status() {
-		return pay_status;
+	public String getUser_pwd() {
+		return user_pwd;
 	}
 
-	public void setPay_status(Integer pay_status) {
-		this.pay_status = pay_status;
+	public void setUser_pwd(String user_pwd) {
+		this.user_pwd = user_pwd;
 	}
 
-	public Integer getForward_status() {
-		return forward_status;
+	public Integer getUser_type() {
+		return user_type;
 	}
 
-	public void setForward_status(Integer forward_status) {
-		this.forward_status = forward_status;
+	public void setUser_type(Integer user_type) {
+		this.user_type = user_type;
 	}
 
 	public Timestamp getCreate_time() {
@@ -51,7 +53,7 @@ public class UserModel {
 
 	@Override
 	public String toString() {
-		return "UserModel [open_id=" + open_id + ", pay_status=" + pay_status + ", forward_status=" + forward_status
+		return "UserModel [user_id=" + user_id + ", user_pwd=" + user_pwd + ", user_type=" + user_type
 				+ ", create_time=" + create_time + "]";
 	}
 		

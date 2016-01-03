@@ -4,23 +4,35 @@ import java.sql.Timestamp;
 
 public class UserForwardModel {
 
-	private String open_id;
+	private String user_id;
+	private Long course_id;
 	private String screenshot;
 	private Timestamp create_time;
 	
-	public UserForwardModel(String open_id, String screenshot, Timestamp create_time) {
+	public UserForwardModel() {}
+	
+	public UserForwardModel(String user_id, Long course_id, String screenshot, Timestamp create_time) {
 		super();
-		this.open_id = open_id;
+		this.user_id = user_id;
+		this.course_id = course_id;
 		this.screenshot = screenshot;
 		this.create_time = create_time;
 	}
-
-	public String getOpen_id() {
-		return open_id;
+	
+	public String getUser_id() {
+		return user_id;
 	}
 
-	public void setOpen_id(String open_id) {
-		this.open_id = open_id;
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+
+	public Long getCourse_id() {
+		return course_id;
+	}
+
+	public void setCourse_id(Long course_id) {
+		this.course_id = course_id;
 	}
 
 	public String getScreenshot() {
@@ -41,8 +53,8 @@ public class UserForwardModel {
 
 	@Override
 	public String toString() {
-		return "UserForwardModel [open_id=" + open_id + ", screenshot=" + screenshot + ", create_time=" + create_time
-				+ "]";
+		return "UserForwardModel [user_id=" + user_id + ", course_id=" + course_id + ", screenshot=" + screenshot
+				+ ", create_time=" + create_time + "]";
 	}
 		
 }

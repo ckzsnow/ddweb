@@ -12,10 +12,13 @@ public class CourseDetailModel {
 	private String teacher_info;
 	private String crowd;
 	private String details;
+	private String video_image;
 	private Timestamp createTime;
 	
+	public CourseDetailModel(){}
+	
 	public CourseDetailModel(Long id, String videosrc, String teacher_image, String teacher_name, String teacher_position,
-			String teacher_info, String crowd, String details, Timestamp createTime) {
+			String teacher_info, String crowd, String details, String video_image, Timestamp createTime) {
 		super();
 		this.id = id;
 		this.videosrc = videosrc;
@@ -25,6 +28,7 @@ public class CourseDetailModel {
 		this.teacher_info = teacher_info;
 		this.crowd = crowd;
 		this.details = details;
+		this.video_image = video_image;
 		this.createTime = createTime;
 	}
 
@@ -92,6 +96,14 @@ public class CourseDetailModel {
 		this.details = details;
 	}
 
+	public String getVideo_image() {
+		return video_image;
+	}
+
+	public void setVideo_image(String video_image) {
+		this.video_image = video_image;
+	}
+
 	public Timestamp getCreateTime() {
 		return createTime;
 	}
@@ -104,7 +116,8 @@ public class CourseDetailModel {
 	public String toString() {
 		return "CourseDetailModel [id=" + id + ", videosrc=" + videosrc + ", teacher_image=" + teacher_image
 				+ ", teacher_name=" + teacher_name + ", teacher_position=" + teacher_position + ", teacher_info="
-				+ teacher_info + ", crowd=" + crowd + ", details=" + details + ", createTime=" + createTime + "]";
+				+ teacher_info + ", crowd=" + crowd + ", details=" + details + ", video_image=" + video_image
+				+ ", createTime=" + createTime + "]";
 	}
 	
 }

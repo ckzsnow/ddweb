@@ -8,6 +8,10 @@ public interface ICourseDao {
 
 	public CourseModel getCourseByCourseId(long id);
 	
+	public long addCourse(CourseModel courseModel);
+	
 	public List<CourseModel> getAllCourse();
+	
+	public List<CourseModel> getAllRecentCourse();
 		
 }

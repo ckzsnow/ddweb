@@ -5,10 +5,12 @@ import com.ddcb.model.UserModel;
 
 public interface IUserDao {
 
-	public UserModel getUserByOpenId(String openId);
+	public UserModel getUserByUserId(String userId);
 	
 	public List<UserModel> getAllUser();
 	
 	public boolean addUser(UserModel userModel);
+	
+	public boolean updateUserPwd(String userId, String userPwd);
 		
 }

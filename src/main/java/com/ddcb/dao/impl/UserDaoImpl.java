@@ -23,14 +23,14 @@ public class UserDaoImpl implements IUserDao {
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public UserModel getUserByOpenId(String openId) {
-		String sql = "select * from user where open_id = ?";
+	public UserModel getUserByUserId(String userId) {
+		String sql = "select * from user where user_id = ?";
 		UserModel userModel = null;
 		try {
 			userModel = jdbcTemplate.queryForObject(sql,
-					new Object[] { openId }, new UserMapper());
+					new Object[] { userId }, new UserMapper());
 		} catch (Exception e) {
-			logger.debug("exception : {}", e.toString());
+			logger.error("exception : {}", e.toString());
 		}
 		return userModel;
 	}
@@ -43,7 +43,7 @@ public class UserDaoImpl implements IUserDao {
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<UserModel>(
 							new UserMapper()));
 		} catch (Exception e) {
-			logger.debug("exception : {}", e.toString());
+			logger.error("exception : {}", e.toString());
 		}
 		return list;
 	}
@@ -51,13 +51,25 @@ public class UserDaoImpl implements IUserDao {
 	@Override
 	public boolean addUser(UserModel userModel) {		
 		try{
-			String sql= "insert into user(open_id, pay_status, forward_status, create_time) values (?,?,?,?)";
-			int num = jdbcTemplate.update(sql, userModel.getOpen_id(), userModel.getPay_status(),
-					userModel.getForward_status(), userModel.getCreate_time());
+			String sql= "insert into user(user_id, user_pwd, user_type, create_time) values (?,?,?,?)";
+			int num = jdbcTemplate.update(sql, userModel.getUser_id(), userModel.getUser_pwd(), userModel.getUser_type(),
+					userModel.getCreate_time());
 			return num > 0;
 		}catch(Exception e){
-			logger.debug("exception : {}", e.toString());
+			logger.error("exception : {}", e.toString());
 		}
 		return false;
+	}
+
+	@Override
+	public boolean updateUserPwd(String userId, String userPwd) {
+		String sql = "update user set user_pwd=? where user_id=?";
+		int affectedRows = 0;
+		try {
+			affectedRows = jdbcTemplate.update(sql, userPwd, userId);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return affectedRows != 0;
 	}
 }

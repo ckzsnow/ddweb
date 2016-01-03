@@ -30,4 +30,22 @@ public class CourseDetailDaoImpl implements ICourseDetailDao {
 		}
 		return courseDetailModel;
 	}
+
+	@Override
+	public boolean addCourseDetail(CourseDetailModel courseDetailModel) {
+		try{
+			String sql= "insert into course_detail(id, videosrc, teacher_image, teacher_name, teacher_position, teacher_info, crowd, details, video_image, create_time) values (?,?,?,?,?,?,?,?,?,?)";
+			int num = jdbcTemplate.update(sql, 
+					courseDetailModel.getId(), courseDetailModel.getVideosrc(),
+					courseDetailModel.getTeacher_image(), courseDetailModel.getTeacher_name(), 
+					courseDetailModel.getTeacher_position(),
+					courseDetailModel.getTeacher_info(), courseDetailModel.getCrowd(),
+					courseDetailModel.getDetails(), courseDetailModel.getVideo_image(),
+					courseDetailModel.getCreateTime());
+			return num > 0;
+		}catch(Exception e){
+			logger.debug("exception : {}", e.toString());
+		}
+		return false;
+	}
 }

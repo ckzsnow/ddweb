@@ -1,13 +1,19 @@
 package com.ddcb.weixin.service.impl;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.ddcb.utils.InputMessage;
 import com.ddcb.utils.OutputMessage;
 import com.ddcb.utils.TextOutputMessage;
+import com.ddcb.utils.WeixinCache;
 import com.ddcb.utils.WeixinMsgType;
 import com.ddcb.weixin.service.IMessageProcessService;
 import com.thoughtworks.xstream.XStream;
@@ -58,6 +65,10 @@ public class MessageProcessServiceImpl implements IMessageProcessService {
 				logger.debug("消息创建时间：" + inputMsg.getCreateTime());
 				logger.debug("消息内容：" + inputMsg.getContent());
 				logger.debug("消息Id：" + inputMsg.getMsgId());
+			} else if (("image").equals(WeixinMsgType.Text.toString())) {
+				String mediaId = inputMsg.getMediaId();
+				String openId = inputMsg.getFromUserName();
+				
 			} else if (msgType.equals(WeixinMsgType.Event.toString())) {
 				logger.info("inputMsg.getEvent() : {}", inputMsg
 						.getEvent().trim());
@@ -78,7 +89,7 @@ public class MessageProcessServiceImpl implements IMessageProcessService {
 						}
 					});
 					TextOutputMessage outputMsg = new TextOutputMessage();
-					outputMsg.setContent("您好，欢迎关注点豆成兵！");
+					outputMsg.setContent("您好，欢迎关注dashengtalk11!！");
 					try {
 						setOutputMsgInfo(outputMsg, inputMsg);
 					} catch (Exception e) {
@@ -112,6 +123,41 @@ public class MessageProcessServiceImpl implements IMessageProcessService {
 		CreateTime.set(oms, new Date().getTime());
 		ToUserName.set(oms, msg.getFromUserName());
 		FromUserName.set(oms, msg.getToUserName());
+	}
+	
+	private void saveFile(String openId, String mediaId) {
+		/*String weixinFileURL = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID";
+		weixinFileURL = weixinFileURL.replace("ACCESS_TOKEN",
+				WeixinCache.getAccessToken()).replace("MEDIA_ID", mediaId);
+		try {
+			URL realUrl = new URL(weixinFileURL);
+			HttpURLConnection conn = (HttpURLConnection) realUrl
+					.openConnection();
+			conn.setConnectTimeout(250000);
+			conn.setReadTimeout(250000);
+			conn.connect();
+			InputStream in = conn.getInputStream();
+			String fileName = (String) params.get("openId")
+					+ String.valueOf(System.currentTimeMillis()) + ".jpg";
+			FileUtils.copyInputStreamToFile(in, new File((String) params.get("realPath"), fileName));
+			base64ImageStr = fileName;
+			logger.debug("uploadBillFilePath : {}", base64ImageStr);
+			logger.debug("userId : {}", userId);
+			if (userId != null && !userId.isEmpty()) {
+				Map<String, Object> retMap = invoiceService
+						.createInvoiceProcess(userId, base64ImageStr, "0", "1",
+								params);
+				if (!retMap.containsKey("success")
+						|| !(boolean) retMap.get("success")) {
+					base64ImageStr = "";
+				}
+			} else {
+				base64ImageStr = "";
+			}
+		} catch (Exception e) {
+			logger.debug("Failed in download file.Exception : {}", e.toString());
+		}
+		return base64ImageStr;*/
 	}
 
 }

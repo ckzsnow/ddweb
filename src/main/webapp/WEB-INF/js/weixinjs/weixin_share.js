@@ -1,5 +1,4 @@
 function getJsConfigInfoSuccess(data,status) {
-	alert(111111);
 	wx.config({
 		debug:true,
 		appId: 'wx309df15b6ddc5371',

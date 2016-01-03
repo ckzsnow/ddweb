@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>点豆成兵公开课</title>
+		<title></title>
 		<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
 		<style>
 			.upload-file {
@@ -30,38 +30,27 @@
 	</head>
 
 	<body>
+		<div class="mui-navbar-inner mui-bar mui-bar-nav" style="background-color:#63d7a6;">
+			<h1 class="mui-title" style='text-align: center;color:white;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;'>点豆成兵近期课程</h1>
+			<button id="login_button" style="display:none;color:white;" type="button" onclick="loginClick()" class="mui-btn mui-btn-link mui-btn-nav mui-pull-right">
+				登陆
+			</button>
+			<button id="logout_button" style="display:none;color:white;" type="button" onclick="logoutClick()" class="mui-btn mui-btn-link mui-btn-nav mui-pull-right">
+				退出
+			</button>
+		</div>
 		<div class="mui-content">
-			<div id="data_loading" class="mui-loading" style="margin-top:50%;">
-				<div class="mui-spinner"></div>
-				<div style="text-align: center;">正在加载数据</div>
-			</div>
-			<div id="tips_info" style="display:none;margin-top:50%;">
-				<div style="text-align: center;" id="tips_info_detail">服务器暂时无法处理请求，请稍后重试！</div>
-			</div>
-			<div id="mui_scroll_wrapper" class="mui-scroll-wrapper" style="display:none;background-color: white;">
+			<div id="mui_scroll_wrapper" class="mui-scroll-wrapper" style="background-color: white;">
 				<div class="mui-scroll">
-					<div style="margin-top:10px;margin-left:10px;margin-right:10px;">
-						<div style="width: 100%;" id="videodiv"></div>
+					<div id="data_loading" class="mui-loading" style="margin-top:50%;">
+						<div class="mui-spinner"></div>
+						<div style="text-align: center;">正在加载数据</div>
 					</div>
-					<div style="margin-top:10px;margin-bottom: 20px;">
-						<ul class="mui-table-view">
-							<li class="mui-table-view-cell mui-media">
-								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">导师简介</p>
-								<img id="teacher_image" class="mui-media-object mui-pull-left" style="border-radius:50%;line-height: 84px;height:84px;width:84px;min-width: 84px;" src="">
-								<div class="mui-media-body">
-									<p id="teacher_name" class='mui-ellipsis' style="font-size:15px;color:black;"></p>
-									<p id="teacher_position" class='mui-ellipsis' style="color:black;"></p>
-									<p id="teacher_info" style="color:black;"></p>
-								</div>
-							</li>
-							<li class="mui-table-view-cell mui-media">
-								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">适合人群</p>
-								<p id="crowd" style="color:black;"></p>
-							</li>
-							<li class="mui-table-view-cell mui-media">
-								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">课程简介</p>
-								<p id="details" style="color:black;"></p>
-							</li>
+					<div id="tips_info" style="display:none;margin-top:50%;">
+						<div style="text-align: center;" id="tips_info_detail">服务器暂时无法处理请求，请稍后重试！</div>
+					</div>
+					<div id="courseList" style="display:none;margin-top:50px;">
+						<ul id="courseListDetail" class="mui-table-view">
 						</ul>
 					</div>
 				</div>
@@ -72,6 +61,7 @@
 	</body>
 	<script src="/js/weixinjs/mui.min.js"></script>
 	<script src="/js/weixinjs/jweixin-1.0.0.js"></script>
-	<script src="/js/weixinjs/weixin_share.js"></script>
+	<script src="/js/weixinjs/weixin_share.js?201512291722"></script>
+	<script src="/js/weixinjs/recent_class.js"></script>
 
 </html>

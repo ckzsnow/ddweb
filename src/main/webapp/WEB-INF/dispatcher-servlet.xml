@@ -71,13 +71,14 @@
 	<mvc:resources mapping="/img/weixinimg/**" location="/WEB-INF/img/weixinimg/" cache-period="3600" />
 	<mvc:resources mapping="/css/webcss/**" location="/WEB-INF/css/webcss/" cache-period="3600" />
 	<mvc:resources mapping="/css/weixincss/**" location="/WEB-INF/css/weixincss/" cache-period="3600" />
+	<mvc:resources mapping="/css/fonts/**" location="/WEB-INF/css/fonts/" cache-period="3600" />
 	<mvc:resources mapping="/view/webview/**" location="/WEB-INF/view/webview/" cache-period="3600" />
 	<mvc:resources mapping="/view/weixinview/**" location="/WEB-INF/view/weixinview/" cache-period="3600" />
 	<mvc:resources mapping="/font/webfont/**" location="/WEB-INF/font/webfont/" cache-period="3600" />
 	<mvc:resources mapping="/font/weixinfont/**" location="/WEB-INF/font/weixinfont/" cache-period="3600" />
-	<mvc:resources mapping="/files/forwardimage/**" location="file:/home/files/forwardimage/"/>
-	<mvc:resources mapping="/files/courseimage/**" location="file:/home/files/courseimage/"/>
-	<mvc:resources mapping="/files/carouselimage/**" location="file:/home/files/carouselimage/"/>
+	<mvc:resources mapping="/files/forwardimage/**" location="file:/softs/files/forwardimage/"/>
+	<mvc:resources mapping="/files/vidoes/**" location="file:/softs/files/vidoes/"/>
+	<mvc:resources mapping="/files/imgs/**" location="file:/softs/files/imgs/"/>
 	<!-- static resources config end -->	
 
 	<!-- database config begin -->
@@ -100,6 +101,7 @@
 	<!-- user component-scan begin-->
 	<context:component-scan base-package="com.ddcb.html.controller" />
 	<context:component-scan base-package="com.ddcb.weixin.controller" />
+	<context:component-scan base-package="com.ddcb.web.controller" />
 	<context:component-scan base-package="com.ddcb.weixin.service.impl" />
 	<context:component-scan base-package="com.ddcb.dao.impl" />
 
