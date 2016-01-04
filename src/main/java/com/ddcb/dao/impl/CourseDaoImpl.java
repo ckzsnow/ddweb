@@ -59,7 +59,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllRecentCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where (select date_add(c.course_date, interval c.course_length minute)) > current_timestamp and c.course_type=1 order by c.course_date desc";
+			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where (select date_add(c.course_date, interval c.course_length minute)) > current_timestamp order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {

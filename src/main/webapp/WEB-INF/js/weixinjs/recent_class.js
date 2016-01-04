@@ -145,7 +145,7 @@ function createDataList(data) {
 				buttonNode.setAttribute("button_type", "1");
 			} else {
 				 if(data[i].forward_status == "0") {
-					 buttonNode.innerHTML = "图片待审核";
+					 buttonNode.innerHTML = "分享审核中";
 					 buttonNode.setAttribute("disabled", "");
 				 } else if(data[i].forward_status == "2"){
 					 buttonNode.innerHTML = "审核未通过";
