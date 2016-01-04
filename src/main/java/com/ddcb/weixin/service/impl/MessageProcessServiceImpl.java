@@ -58,10 +58,7 @@ public class MessageProcessServiceImpl implements IMessageProcessService {
 				logger.debug("消息创建时间：" + inputMsg.getCreateTime());
 				logger.debug("消息内容：" + inputMsg.getContent());
 				logger.debug("消息Id：" + inputMsg.getMsgId());
-			} else if (("image").equals(WeixinMsgType.Text.toString())) {
-				
-				
-			} else if (msgType.equals(WeixinMsgType.Event.toString())) {
+			}  else if (msgType.equals(WeixinMsgType.Event.toString())) {
 				logger.info("inputMsg.getEvent() : {}", inputMsg
 						.getEvent().trim());
 				if (("subscribe").equals(inputMsg.getEvent().trim())) {
