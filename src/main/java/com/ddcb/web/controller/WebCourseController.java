@@ -55,6 +55,7 @@ public class WebCourseController {
 		cm.setCourse_date(Timestamp.valueOf(params.get("course_date")[0]));
 		cm.setCourse_time("");
 		cm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+		cm.setCourseType(Integer.valueOf(params.get("course_type")[0]));
 		cm.setName(params.get("name")[0]);
 		cm.setCourse_length(params.get("course_length")[0]);
 		cm.setTeacher(params.get("teacher")[0]);

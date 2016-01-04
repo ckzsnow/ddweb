@@ -86,7 +86,7 @@ function waitLive(endTime) {
 			message += hours + " 小时" + ", ";
 			message += minutes + " 分钟" + ", ";
 			message += seconds + " 秒" + " <br />";
-			message += "欢迎您收看点豆成兵公开课！";
+			message += "欢迎您收看点豆成兵直播课！";
 			note.html(message);
 			if(days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
 				playLive(0);
@@ -95,8 +95,8 @@ function waitLive(endTime) {
 	});	
 }
 function playLive(startPlayTime) {
+	document.getElementById('tempCountDiv').style.display = "none";
 	var playerNode = document.getElementById('player_video');
-	playerNode.innerHTML = "";
 	var videoNode = document.createElement("video");
 	videoNode.setAttribute("id", "video");
 	videoNode.setAttribute("src", "http://www.diandou.me:8080/" + globalData.videosrc);
@@ -104,16 +104,27 @@ function playLive(startPlayTime) {
 	videoNode.setAttribute("width", "100%");
 	videoNode.setAttribute("height", "100%");
 	playerNode.appendChild(videoNode);
-	setTimeout(function(){
-		videoNode.currentTime = parseInt(startPlayTime);
-		videoNode.play();
-		document.getElementById('video').addEventListener('ended', function(){
-			videoNode.style.display = "none";
-			document.getElementById('endNoteDiv').style.display = "";
-			document.getElementById('tempCountDiv').style.display = "none";
-			document.getElementById('end_note').innerHTML = "当前课程已结束，非常感谢您的关注！";
-		}, false);
-	}, 1000);
+	var i = setInterval(function() {
+		if(video.readyState > 0) {
+			clearInterval(i);
+			var seconds = video.duration;
+			if(startPlayTime >= seconds) {
+				videoNode.style.display = "none";
+				document.getElementById('endNoteDiv').style.display = "";
+				document.getElementById('tempCountDiv').style.display = "none";
+				document.getElementById('end_note').innerHTML = "当前课程已结束，非常感谢您的关注！";
+			} else {
+				videoNode.currentTime = parseInt(startPlayTime);
+				videoNode.play();
+				document.getElementById('video').addEventListener('ended', function(){
+					videoNode.style.display = "none";
+					document.getElementById('endNoteDiv').style.display = "";
+					document.getElementById('tempCountDiv').style.display = "none";
+					document.getElementById('end_note').innerHTML = "当前课程已结束，非常感谢您的关注！";
+				}, false);
+			}
+		}
+	}, 500);
 }
 function fillDataIntoHtml(data) {
 	globalData = data;
@@ -128,7 +139,7 @@ function fillDataIntoHtml(data) {
 		var currentDate = new Date();
 		if(date.getTime() > currentDate.getTime()) {
 			waitLive(date);
-		} else if(date.getTime() + parseInt(data.course_length) * 60 * 1000 < currentDate.getTime()){
+		} else if(date.getTime() + parseInt(data.course_length) * 60 * 1000 > currentDate.getTime()){
 			playLive((currentDate.getTime() - date.getTime()) / 1000);
 		} else {
 			document.getElementById('endNoteDiv').style.display = "";

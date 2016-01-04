@@ -31,7 +31,7 @@ public class CourseDaoImpl implements ICourseDao {
 	
 	@Override
 	public CourseModel getCourseByCourseId(long id) {
-		String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c where c.id = ?";
+		String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.id = ?";
 		CourseModel courseModel = null;
 		try {
 			courseModel = jdbcTemplate.queryForObject(sql,
@@ -46,7 +46,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllOpenCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c where (select date_add(c.course_date, interval c.course_length minute)) <= current_timestamp order by c.course_date desc";
+			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where (select date_add(c.course_date, interval c.course_length minute)) <= current_timestamp and c.course_type=0 order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -59,7 +59,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllRecentCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c where (select date_add(c.course_date, interval c.course_length minute)) > current_timestamp order by c.course_date desc";
+			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where (select date_add(c.course_date, interval c.course_length minute)) > current_timestamp and c.course_type=1 order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -75,7 +75,7 @@ public class CourseDaoImpl implements ICourseDao {
 			jdbcTemplate.update(new PreparedStatementCreator() {
 				public PreparedStatement createPreparedStatement(
 						Connection connection) throws SQLException {
-					String sql = "insert into course(name, course_abstract, teacher, image, course_time, course_date, course_length, create_time) values (?,?,?,?,?,?,?,?)";
+					String sql = "insert into course(name, course_abstract, teacher, image, course_time, course_date, course_length, create_time, course_type) values (?,?,?,?,?,?,?,?,?)";
 					PreparedStatement ps = connection.prepareStatement(sql,
 							Statement.RETURN_GENERATED_KEYS);
 					ps.setString(1, courseModel.getName());
@@ -86,6 +86,7 @@ public class CourseDaoImpl implements ICourseDao {
 					ps.setTimestamp(6, courseModel.getCourse_date());
 					ps.setString(7, courseModel.getCourse_length());
 					ps.setTimestamp(8, courseModel.getCreate_time());
+					ps.setInt(9, courseModel.getCourseType());
 					return ps;
 				}
 			}, keyHolder);
@@ -101,7 +102,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c order by c.course_date desc";
+			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {

@@ -16,6 +16,7 @@ public class CourseDetailModel {
 	private Timestamp createTime;
 	
 	private String course_date;
+	private String course_length;
 	
 	public CourseDetailModel(){}
 	
@@ -120,6 +121,14 @@ public class CourseDetailModel {
 
 	public void setCourse_date(String course_date) {
 		this.course_date = course_date;
+	}
+
+	public String getCourse_length() {
+		return course_length;
+	}
+
+	public void setCourse_length(String course_length) {
+		this.course_length = course_length;
 	}
 
 	@Override

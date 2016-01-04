@@ -14,6 +14,7 @@ public class CourseModel {
 	private String course_time;
 	private String course_length;
 	private Timestamp create_time;
+	private Integer courseType;
 	
 	private Integer select_status;
 	private Integer pay_status;
@@ -22,7 +23,8 @@ public class CourseModel {
 	public CourseModel(){}
 	
 	public CourseModel(Long id, String name, String course_abstract, String teacher, String image,
-			Timestamp course_date, String course_date_readable, String course_time, String course_length, Timestamp create_time) {
+			Timestamp course_date, String course_date_readable, String course_time, 
+			String course_length, Timestamp create_time, Integer courseType) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -34,6 +36,7 @@ public class CourseModel {
 		this.course_time = course_time;
 		this.course_length = course_length;
 		this.create_time = create_time;
+		this.courseType = courseType;
 	}
 
 	public Long getId() {
@@ -140,12 +143,20 @@ public class CourseModel {
 		this.forward_status = forward_status;
 	}
 
+	public Integer getCourseType() {
+		return courseType;
+	}
+
+	public void setCourseType(Integer courseType) {
+		this.courseType = courseType;
+	}
+
 	@Override
 	public String toString() {
 		return "CourseModel [id=" + id + ", name=" + name + ", course_abstract=" + course_abstract + ", teacher="
 				+ teacher + ", image=" + image + ", course_date=" + course_date + ", course_date_readable="
 				+ course_date_readable + ", course_time=" + course_time + ", course_length=" + course_length
-				+ ", create_time=" + create_time + ", select_status=" + select_status + ", pay_status=" + pay_status
-				+ ", forward_status=" + forward_status + "]";
+				+ ", create_time=" + create_time + ", courseType=" + courseType + ", select_status=" + select_status
+				+ ", pay_status=" + pay_status + ", forward_status=" + forward_status + "]";
 	}
 }

@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class SessionFilter extends OncePerRequestFilter {
@@ -17,8 +18,7 @@ public class SessionFilter extends OncePerRequestFilter {
 	private String[] filterUrls;
 
 	public SessionFilter() {
-		filterUrls = new String[] { "/admin/", "/company/", "/accounter/",
-				"/companyUser/"};
+		filterUrls = new String[] { "/view/webview/admin_index.html", "/view/webview/class_list.html", "/view/webview/user_forward_audit.html"};
 	}
 
 	@Override
@@ -28,16 +28,26 @@ public class SessionFilter extends OncePerRequestFilter {
 
 		String uri = request.getRequestURI();
 		boolean doFilter = false;
-		if(uri.indexOf("/files/company") == -1) {
-			for (String url : filterUrls) {
-				if (uri.indexOf(url) != -1) {
-					doFilter = true;
-					break;
-				}
+		for (String url : filterUrls) {
+			if (url.equals(uri)) {
+				doFilter = true;
+				break;
 			}
 		}
 		if (doFilter) {
-			
+			String userId = (String)request.getSession().getAttribute("user_id");
+			if (null == userId || userId.isEmpty()) {
+				logger.debug("user id is null.");
+				boolean isAjaxRequest = isAjaxRequest(request);
+				if (isAjaxRequest) {
+					response.setCharacterEncoding("UTF-8");
+					response.sendError(HttpStatus.UNAUTHORIZED.value(),
+							"Unauthorized!");
+					return;
+				}
+				response.sendRedirect("/getUserLoginHtml");
+				return;
+			}
 		}
 		filterChain.doFilter(request, response);
 	}

@@ -1,7 +1,7 @@
 function getJsConfigInfoSuccess(data,status) {
 	wx.config({
-		debug:true,
-		appId: 'wx309df15b6ddc5371',
+		//debug:true,
+		appId: 'wx55d4da6e29cc6c83',
 		timestamp: data.timestamp,
 		nonceStr: data.nonceStr,
 		signature: data.signature,

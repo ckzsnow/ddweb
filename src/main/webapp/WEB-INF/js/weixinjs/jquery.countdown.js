@@ -60,7 +60,9 @@
 			options.callback(d, h, m, s);
 			
 			// Scheduling another call of this function in 1s
-			setTimeout(tick, 1000);
+			if(left != 0) {
+				setTimeout(tick, 1000);
+			}
 		})();
 		
 		// This function updates two digit positions at once

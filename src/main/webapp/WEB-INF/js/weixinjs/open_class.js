@@ -74,7 +74,7 @@ function createDataList(data) {
 }
 
 mui.ajax({
-	url: '/course/getAllCourse',
+	url: '/course/getAllOpenCourse',
 	type: "POST",
 	data: {},
 	success: function(data) {

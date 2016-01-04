@@ -136,6 +136,7 @@ public class WeixinCourseController {
 			courseDetailModel = courseDetailDao.getCourseDetailByCourseId(id);
 			CourseModel cm = courseDao.getCourseByCourseId(id);
 			courseDetailModel.setCourse_date(cm.getCourse_date_readable());
+			courseDetailModel.setCourse_length(cm.getCourse_length());
 		} catch(Exception e) {
 			logger.debug("exception : {}", e.toString());
 		}
@@ -175,10 +176,10 @@ public class WeixinCourseController {
 			retMap.put("error_msg", "您上传的文件为空文件，请检查！");
 			return retMap;
 		}
-		/*String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF");
-		realPath = realPath.substring(0, realPath.indexOf("/", 1));*/
-		/*String imgPath = realPath + "/files/forwardimage";*/
-		String imgPath = "/files/forwardimage";
+		String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF");
+		realPath = realPath.substring(0, realPath.indexOf("/", 1));
+		String imgPath = realPath + "/files/forwardimage";
+		//String imgPath = "/files/forwardimage";
 		String imgFileName = getUniqueIdentifier() + ".jpg";
 		try {
 			FileUtils.copyInputStreamToFile(files.getInputStream(),

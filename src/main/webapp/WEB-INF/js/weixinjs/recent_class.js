@@ -198,7 +198,7 @@ mui.ajax({
 	type: "POST",
 	data: {},
 	success: function(data) {
-		if (!checkJsonIsEmpty(data)) {
+		if (!checkJsonIsEmpty(data.data)) {
 			createDataList(data);
 			document.getElementById('data_loading').style.display = 'none';
 			document.getElementById('courseList').style.display = '';
