@@ -31,7 +31,7 @@ public class CourseDaoImpl implements ICourseDao {
 	
 	@Override
 	public CourseModel getCourseByCourseId(long id) {
-		String sql = "select * from course where id = ?";
+		String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c where c.id = ?";
 		CourseModel courseModel = null;
 		try {
 			courseModel = jdbcTemplate.queryForObject(sql,
@@ -43,10 +43,10 @@ public class CourseDaoImpl implements ICourseDao {
 	}
 
 	@Override
-	public List<CourseModel> getAllCourse() {
+	public List<CourseModel> getAllOpenCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select * from course as c where (select date_add(c.course_date, interval c.course_length minute)) <= current_timestamp";
+			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c where (select date_add(c.course_date, interval c.course_length minute)) <= current_timestamp order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -59,7 +59,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllRecentCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select * from course as c where (select date_add(c.course_date, interval c.course_length minute)) > current_timestamp";
+			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c where (select date_add(c.course_date, interval c.course_length minute)) > current_timestamp order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -95,5 +95,18 @@ public class CourseDaoImpl implements ICourseDao {
 			logger.error("addCourse error." + e.toString());
 		}
 		return -1;
+	}
+
+	@Override
+	public List<CourseModel> getAllCourse() {
+		List<CourseModel> list = null;
+		try {
+			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time from course as c order by c.course_date desc";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
 	}
 }

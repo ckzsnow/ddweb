@@ -10,6 +10,7 @@ public class CourseModel {
 	private String teacher;
 	private String image;
 	private Timestamp course_date;
+	private String course_date_readable;
 	private String course_time;
 	private String course_length;
 	private Timestamp create_time;
@@ -21,7 +22,7 @@ public class CourseModel {
 	public CourseModel(){}
 	
 	public CourseModel(Long id, String name, String course_abstract, String teacher, String image,
-			Timestamp course_date, String course_time, String course_length, Timestamp create_time) {
+			Timestamp course_date, String course_date_readable, String course_time, String course_length, Timestamp create_time) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -29,6 +30,7 @@ public class CourseModel {
 		this.teacher = teacher;
 		this.image = image;
 		this.course_date = course_date;
+		this.course_date_readable = course_date_readable;
 		this.course_time = course_time;
 		this.course_length = course_length;
 		this.create_time = create_time;
@@ -82,6 +84,14 @@ public class CourseModel {
 		this.course_date = course_date;
 	}
 
+	public String getCourse_date_readable() {
+		return course_date_readable;
+	}
+
+	public void setCourse_date_readable(String course_date_readable) {
+		this.course_date_readable = course_date_readable;
+	}
+
 	public String getCourse_time() {
 		return course_time;
 	}
@@ -133,7 +143,9 @@ public class CourseModel {
 	@Override
 	public String toString() {
 		return "CourseModel [id=" + id + ", name=" + name + ", course_abstract=" + course_abstract + ", teacher="
-				+ teacher + ", image=" + image + ", course_date=" + course_date + ", course_time=" + course_time
-				+ ", course_length=" + course_length + ", create_time=" + create_time + "]";
+				+ teacher + ", image=" + image + ", course_date=" + course_date + ", course_date_readable="
+				+ course_date_readable + ", course_time=" + course_time + ", course_length=" + course_length
+				+ ", create_time=" + create_time + ", select_status=" + select_status + ", pay_status=" + pay_status
+				+ ", forward_status=" + forward_status + "]";
 	}
 }

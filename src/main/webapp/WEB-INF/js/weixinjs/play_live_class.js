@@ -54,23 +54,88 @@ mui("#scrollToTop").on("tap", ".scroll_to_top", function() {
 mui("#scrollToBottom").on("tap", ".scroll_to_bottom", function() {
 	mui('#mui_scroll_wrapper').scroll().scrollToBottom();
 });
-
+var globalData = null;
+function countdownTime() {
+	/*var node = document.getElementById('countdown_time_div');
+	var endtime = new Date(node.getAttribute('endtime')).getTime();//取结束日期(毫秒值)
+    var nowtime = new Date().getTime();        //今天的日期(毫秒值)
+    var youtime = endtime-nowtime;//还有多久(毫秒值)
+    var seconds = youtime/1000;
+    var minutes = Math.floor(seconds/60);
+    var hours = Math.floor(minutes/60);
+    var days = Math.floor(hours/24);
+    var CDay= days ;
+    var CHour= hours % 24;
+    var CMinute= minutes % 60;
+    var CSecond= Math.floor(seconds%60);
+    if(endtime <= nowtime) {
+    	playLive(0);
+    } else {
+    	node.innerHTML = "<i>剩余：</i><span>"+CHour+"</span>时<span>"+CMinute+"</span>分<span>"+CSecond+"</span>秒";
+    	setTimeout("countdownTime()",1000);
+    }*/
+}
+function waitLive(endTime) {
+	var note = $('#note'),
+	ts = new Date(endTime);	
+	$('#countdown').countdown({
+		timestamp	: ts,
+		callback	: function(days, hours, minutes, seconds){	
+			var message = "";
+			message += days + " 天" + ", ";
+			message += hours + " 小时" + ", ";
+			message += minutes + " 分钟" + ", ";
+			message += seconds + " 秒" + " <br />";
+			message += "欢迎您收看点豆成兵公开课！";
+			note.html(message);
+			if(days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
+				playLive(0);
+			}
+		}
+	});	
+}
+function playLive(startPlayTime) {
+	var playerNode = document.getElementById('player_video');
+	playerNode.innerHTML = "";
+	var videoNode = document.createElement("video");
+	videoNode.setAttribute("id", "video");
+	videoNode.setAttribute("src", "http://www.diandou.me:8080/" + globalData.videosrc);
+	videoNode.setAttribute("poster", "/files/imgs/" + globalData.video_image);
+	videoNode.setAttribute("width", "100%");
+	videoNode.setAttribute("height", "100%");
+	playerNode.appendChild(videoNode);
+	setTimeout(function(){
+		videoNode.currentTime = parseInt(startPlayTime);
+		videoNode.play();
+		document.getElementById('video').addEventListener('ended', function(){
+			videoNode.style.display = "none";
+			document.getElementById('endNoteDiv').style.display = "";
+			document.getElementById('tempCountDiv').style.display = "none";
+			document.getElementById('end_note').innerHTML = "当前课程已结束，非常感谢您的关注！";
+		}, false);
+	}, 1000);
+}
 function fillDataIntoHtml(data) {
+	globalData = data;
 	document.getElementById('teacher_image').setAttribute('src', "/files/imgs/" + data.teacher_image);
 	document.getElementById('teacher_name').innerHTML = data.teacher_name;
 	document.getElementById('teacher_info').innerHTML = data.teacher_info;
 	document.getElementById('teacher_position').innerHTML = data.teacher_position;
 	document.getElementById('crowd').innerHTML = data.crowd;
 	document.getElementById('details').innerHTML = data.details;
-	var playerNode = document.getElementById('player_video');
-	var videoNode = document.createElement("video");
-	videoNode.setAttribute("id", "video");
-	videoNode.setAttribute("src", "http://www.diandou.me:8080/" + data.videosrc);
-	videoNode.setAttribute("poster", "/files/imgs/" + data.video_image);
-	videoNode.setAttribute("controls", "");
-	videoNode.setAttribute("width", "100%");
-	videoNode.setAttribute("height", "100%");
-	playerNode.appendChild(videoNode);
+	if(data.course_date) {
+		var date= new Date(Date.parse(data.course_date));
+		var currentDate = new Date();
+		if(date.getTime() > currentDate.getTime()) {
+			waitLive(date);
+		} else if(date.getTime() + parseInt(data.course_length) * 60 * 1000 < currentDate.getTime()){
+			playLive((currentDate.getTime() - date.getTime()) / 1000);
+		} else {
+			document.getElementById('endNoteDiv').style.display = "";
+			document.getElementById('tempCountDiv').style.display = "none";
+			document.getElementById('end_note').innerHTML = "当前课程已结束，非常感谢您的关注！";
+		}
+	}
 }
 
 mui.ajax({

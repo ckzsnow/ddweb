@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title>点豆成兵直播课</title>
 		<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
+		<link href="/css/weixincss/jquery.countdown.css" rel="stylesheet" />
 		<style>
 			.upload-file {
 				position: fixed;
@@ -26,6 +27,15 @@
 				left: 0;
 				background-color: rgba(0, 0, 0, .4);
 			}
+			#note{
+				color: #666666;
+				font-size: 12px;
+				margin: 0 auto;
+				padding: 4px;
+				text-align: center;
+				text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
+				width: 100%;
+			}
 		</style>
 	</head>
 
@@ -41,6 +51,13 @@
 			<div id="mui_scroll_wrapper" class="mui-scroll-wrapper" style="display:none;background-color: white;">
 				<div class="mui-scroll">
 					<div id="player_video">
+						<div id="tempCountDiv" style="width:100%;padding-top:60px;padding-bottom: 60px;height:250px;background:url('/img/weixinimg/page_bg_center.jpg') no-repeat center center;">
+							<div id="countdown" style="width:100%;"></div>
+							<p id="note"></p>
+						</div>
+						<div id="endNoteDiv" style="display:none;text-align:center;width:100%;padding-top:100px;padding-bottom: 100px;height:250px;background:url('/img/weixinimg/page_bg_center.jpg') no-repeat center center;">
+							<p id="end_note"></p>
+						</div>
 					</div>
 					<div style="margin-bottom: 20px;">
 						<ul class="mui-table-view">
@@ -70,5 +87,7 @@
 		</div>
 	</body>
 	<script src="/js/weixinjs/mui.min.js"></script>
+	<script src="/js/weixinjs/jquery-1.11.1.min.js"></script>
+	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="/js/weixinjs/play_live_class.js"></script>
 </html>

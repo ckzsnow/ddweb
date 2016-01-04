@@ -1,15 +1,13 @@
 package com.ddcb.dao;
 
-import java.util.List;
-
 import com.ddcb.model.UserForwardModel;
 
 public interface IUserForwardDao {
 
-	public UserForwardModel getUserForwardByUserId(String userId);
-	
-	public List<UserForwardModel> getAllUserForward();
+	public UserForwardModel getUserForwardByUserIdAndCourseId(String userId, long courseId);
 	
 	public boolean addUserForward(UserForwardModel userForwardModel);
+	
+	public boolean updateScreenShot(UserForwardModel userForwardModel);
 		
 }

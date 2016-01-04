@@ -15,6 +15,8 @@ public class CourseDetailModel {
 	private String video_image;
 	private Timestamp createTime;
 	
+	private String course_date;
+	
 	public CourseDetailModel(){}
 	
 	public CourseDetailModel(Long id, String videosrc, String teacher_image, String teacher_name, String teacher_position,
@@ -110,6 +112,14 @@ public class CourseDetailModel {
 
 	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getCourse_date() {
+		return course_date;
+	}
+
+	public void setCourse_date(String course_date) {
+		this.course_date = course_date;
 	}
 
 	@Override

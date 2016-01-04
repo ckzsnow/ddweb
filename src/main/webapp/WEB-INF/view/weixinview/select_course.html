@@ -7,6 +7,7 @@
 	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <title></title>
 <link href="/css/weixincss/mui.min.css" rel="stylesheet" />
+<link href="/css/weixincss/circle-progress.css" rel="stylesheet" />
 <style>
 .upload-file {
 	position: fixed;
@@ -42,7 +43,7 @@
 				<div style="margin-top: 50px;">
 					<div>
 						<div style="margin-left: 10px;">
-							<p>报名方式1:</p>
+							<p>报名方式:</p>
 							<p>截图近期课程，分享朋友圈，并上传截图。</p>
 						</div>
 						<div class="mui-card"
@@ -69,24 +70,25 @@
 								style="background-color: #63d7a6;">上传分享截图</button>
 						</div>
 					</div>
-					<div>
+					<!-- <div>
 						<div style="margin-left: 10px;">
 							<p>报名方式1:</p>
 							<p>微信支付5元，不需审核可直接观看直播课程。</p>
 						</div>
 					</div>
 					<div style="margin: 2px 5px;">
-						<button style="line-height: 0.5; background-color: #63d7a6;"
-							onclick="weixinPay()"
+						<button id="weixinPay" style="line-height: 0.5; background-color: #63d7a6;"
 							class="mui-btn mui-btn-block mui-btn-success"
 							style="background-color: #63d7a6;">微信支付</button>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
 	</div>
 </body>
 <script src="/js/weixinjs/mui.min.js"></script>
+<script src="/js/weixinjs/jquery-1.11.1.min.js"></script>
+<script src="/js/weixinjs/circle-progress.js"></script>
 <script src="/js/weixinjs/select_course.js"></script>
 
 </html>

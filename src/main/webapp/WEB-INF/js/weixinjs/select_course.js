@@ -8,6 +8,59 @@ function checkJsonIsEmpty(json) {
 	}
 	return isEmpty;
 }
+mui.createUploadMask = function(callback) {
+	var element = document.createElement('div');
+	element.classList.add('upload-file');	
+	element.addEventListener('touchmove', mui.preventDefault);
+	element.addEventListener('tap', function() {
+		//mask.close();
+	});
+	var progressNode = document.createElement('div');
+	progressNode.id="upload_progress";
+	progressNode.setAttribute('class', 'circle');
+	progressNode.innerHTML = "<strong></strong>";
+	element.appendChild(progressNode);
+	var mask = [element];
+	mask._show = false;
+	mask.show = function() {
+		mask._show = true;
+		element.setAttribute('style', 'opacity:1');
+		progressNode.style.marginLeft = window.screen.availWidth/2-50 + "px";
+		progressNode.style.marginTop = window.screen.availHeight/2-50 + "px";
+		document.body.appendChild(element);
+		$('#upload_progress').circleProgress({
+	    	value: 0,
+	    	emptyFill: 'rgba(74, 197, 248, 1)',
+	    	animation: false,
+	    	fill: { gradient: ["red", "blue", "green"], gradientAngle: Math.PI / 4 }	
+	    }).on('circle_progress_percent', function(event, progress) {
+	        $(this).find('strong').html(parseInt(100 * progress) + '<i>%</i>');
+	        $('#upload_progress').circleProgress('value', progress);
+	    });
+		return mask;
+	};
+	mask._remove = function() {
+		if (mask._show) {
+			mask._show = false;
+			element.setAttribute('style', 'opacity:0');
+			mui.later(function() {
+				var body = document.body;
+				element.parentNode === body && body.removeChild(element);
+			}, 350);
+		}
+		return mask;
+	};
+	mask.close = function() {
+		if (callback) {
+			if (callback() !== false) {
+				mask._remove();
+			}
+		} else {
+			mask._remove();
+		}
+	};
+	return mask;
+};
 mui.createProcessingMask = function(callback) {
 	var element = document.createElement('div');
 	element.classList.add('upload-file');
@@ -138,4 +191,41 @@ document.getElementById("share_image").onchange = function(event) {
 			}
 		}
 	}
+}
+function uploadShareImage() {
+	if(uploadFile == null || uploadFile == "") {
+		mui.createTipDialog('您还没有选择图片，请先选择图片！',null).show();
+		return;
+	}
+	var mask = mui.createUploadMask(false);
+	mask.show();
+	$('#upload_progress').find('strong').html(0 + '<i>%</i>');
+	var formData = {};
+	var xhr = new XMLHttpRequest();
+	var fd = new FormData();
+	fd.append("files", uploadFile);
+	xhr.upload.addEventListener("progress", function(evt) {
+		if (evt.lengthComputable) {
+			var percentComplete = Math.round(evt.loaded * 100 / evt.total) / 100;
+			$('#upload_progress').trigger('circle_progress_percent', [percentComplete]);
+		}
+	}, false);
+	xhr.addEventListener("load", function(evt) {
+		var res = evt.target.responseText;
+		res = JSON.parse(res);
+		if (res.error_code == "0") {
+			mui.createTipDialog('微信圈分享图片上传成功!',null).show();
+		} else {
+			mui.createTipDialog(res.error_msg, null).show();
+		}
+		mask.close();
+	}, false);
+	xhr.addEventListener("error", function(evt) {
+		mask.close();
+		mui.createTipDialog('微信圈分享图片上传失败，请稍后重试！',null).show();
+		
+	}, false);
+	xhr.addEventListener("abort", null, false);
+	xhr.open("POST", "/weixin/uploadShareImage");
+	xhr.send(fd);
 }

@@ -136,7 +136,7 @@ function createDataList(data) {
 		buttonDivNode.appendChild(buttonNode);
 		buttonNode.setAttribute("select_status", data[i].select_status);
 		buttonNode.setAttribute("pay_status", data[i].pay_status);
-		buttonNode.setAttribute("course_id", data[i].course_id);
+		buttonNode.setAttribute("course_id", data[i].id);
 		buttonNode.setAttribute("forward_status", data[i].forward_status);
 		buttonNode.setAttribute("button_type", "0");
 		if(data[i].select_status == "1") {
@@ -146,6 +146,9 @@ function createDataList(data) {
 			} else {
 				 if(data[i].forward_status == "0") {
 					 buttonNode.innerHTML = "图片待审核";
+					 buttonNode.setAttribute("disabled", "");
+				 } else if(data[i].forward_status == "2"){
+					 buttonNode.innerHTML = "审核未通过";
 					 buttonNode.setAttribute("disabled", "");
 				 } else {
 					 buttonNode.innerHTML = "点击上课";
