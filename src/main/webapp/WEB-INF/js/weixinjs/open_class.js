@@ -63,7 +63,7 @@ function createDataList(data) {
 		var liNode = document.createElement('li');
 		liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 		liNode.setAttribute('course_id', data[i].id);
-		liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='line-height: 120px;height:84px;width:115px;min-width: 115px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><p class='mui-ellipsis' tyle='font-size:15px;color:black;'>"+data[i].name+"</p><p class='mui-ellipsis-2'>"+data[i].course_abstract+"</p><p class='mui-ellipsis' style='color:#63d7a6;'><span class='mui-icon mui-icon-person-filled'></span>"+data[i].teacher+"</p></div>";
+		liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='line-height: 120px;height:84px;width:115px;min-width: 115px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><p class='mui-ellipsis' tyle='font-size:15px;color:black;'>"+data[i].name+"</p><p class='mui-ellipsis-2'>"+data[i].course_abstract+"</p><p class='mui-ellipsis' style='color:#1d8c3e;'><span class='mui-icon mui-icon-person-filled'></span>"+data[i].teacher+"</p></div>";
 		detailNode.appendChild(liNode);
 	}
 	mui('#courseListDetail').on('tap', '.mui-table-view-cell', function(event) {

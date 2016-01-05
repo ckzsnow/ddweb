@@ -79,6 +79,7 @@
 	<mvc:resources mapping="/files/forwardimage/**" location="file:/softs/files/forwardimage/"/>
 	<mvc:resources mapping="/files/vidoes/**" location="file:/softs/files/vidoes/"/>
 	<mvc:resources mapping="/files/imgs/**" location="file:/softs/files/imgs/"/>
+	<mvc:resources mapping="/files/bannerimgs/**" location="file:/softs/files/bannerimgs/"/>
 	<!-- static resources config end -->	
 
 	<!-- database config begin -->

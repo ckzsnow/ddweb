@@ -105,9 +105,9 @@ function playLive(startPlayTime) {
 	videoNode.setAttribute("height", "100%");
 	playerNode.appendChild(videoNode);
 	var i = setInterval(function() {
-		if(video.readyState > 0) {
+		if(videoNode.readyState > 0) {
 			clearInterval(i);
-			var seconds = video.duration;
+			var seconds = videoNode.duration;
 			if(startPlayTime >= seconds) {
 				videoNode.style.display = "none";
 				document.getElementById('endNoteDiv').style.display = "";

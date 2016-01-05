@@ -98,13 +98,36 @@ public class WebCourseController {
 		return retMap;
 	}
 	
-	private void saveFile(MultipartFile file, String path, String fileName) {
-		try {
-			FileUtils.copyInputStreamToFile(file.getInputStream(),
-					new File(path, fileName));
-		} catch (IOException e) {
-			logger.debug(e.toString());
+	@RequestMapping("/course/addCourseBanner")
+	@ResponseBody
+	public Map<String, String> addCourseBanner(@RequestParam MultipartFile[] files,
+			HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF");
+		logger.debug("realPath : {}", realPath);
+		realPath = realPath.substring(0, realPath.indexOf("/", 1));
+		logger.debug("realPath : {}", realPath);
+		String imgPath = realPath + "/files/bannerimgs";
+		int index = 1;
+		if(files.length != 0) {
+			for(MultipartFile file:files) {
+				String imgFileName = "banner" + String.valueOf(index) + ".jpg";
+				try {
+					FileUtils.copyInputStreamToFile(file.getInputStream(),
+							new File(imgPath, imgFileName));
+				} catch (IOException e) {
+					logger.debug(e.toString());
+				}
+				index++;
+			}
 		}
+		retMap.put("error_code", "0");
+		retMap.put("error_message", "");
+		return retMap;
+	}
+	
+	private void saveFile(MultipartFile file, String path, String fileName) {
+		
 	}
 	
 	private String getUniqueIdentifier() {
