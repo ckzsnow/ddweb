@@ -65,7 +65,7 @@ function fillDataIntoHtml(data) {
 	var playerNode = document.getElementById('player_video');
 	var videoNode = document.createElement("video");
 	videoNode.setAttribute("id", "video");
-	videoNode.setAttribute("src", "http://www.diandou.me:8080/" + data.videosrc);
+	videoNode.setAttribute("src", data.videosrc);
 	videoNode.setAttribute("poster", "/files/imgs/" + data.video_image);
 	videoNode.setAttribute("controls", "");
 	videoNode.setAttribute("width", "100%");

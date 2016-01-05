@@ -99,15 +99,19 @@ function playLive(startPlayTime) {
 	var playerNode = document.getElementById('player_video');
 	var videoNode = document.createElement("video");
 	videoNode.setAttribute("id", "video");
-	videoNode.setAttribute("src", "http://www.diandou.me:8080/" + globalData.videosrc);
+	videoNode.setAttribute("src", globalData.videosrc);
 	videoNode.setAttribute("poster", "/files/imgs/" + globalData.video_image);
 	videoNode.setAttribute("width", "100%");
 	videoNode.setAttribute("height", "100%");
 	playerNode.appendChild(videoNode);
+	alert(111);
 	var i = setInterval(function() {
 		if(videoNode.readyState > 0) {
+			alert("videoNode.readyState > 0");
 			clearInterval(i);
 			var seconds = videoNode.duration;
+			alert("startPlayTime : " + startPlayTime);
+			alert("videoNode.duration : " + videoNode.duration);
 			if(startPlayTime >= seconds) {
 				videoNode.style.display = "none";
 				document.getElementById('endNoteDiv').style.display = "";

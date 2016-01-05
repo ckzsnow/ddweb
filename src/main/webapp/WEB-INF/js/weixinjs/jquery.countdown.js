@@ -60,7 +60,7 @@
 			options.callback(d, h, m, s);
 			
 			// Scheduling another call of this function in 1s
-			if(left != 0) {
+			if(d!=0 || h!=0 || m!=0 || s!=0) {
 				setTimeout(tick, 1000);
 			}
 		})();

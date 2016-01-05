@@ -65,17 +65,17 @@
 	</bean>
 	
 	<!-- static resources config begin -->
-	<mvc:resources mapping="/js/webjs/**" location="/WEB-INF/js/webjs/"	cache-period="3600" />
-	<mvc:resources mapping="/js/weixinjs/**" location="/WEB-INF/js/weixinjs/" cache-period="3600" />
-	<mvc:resources mapping="/img/webimg/**" location="/WEB-INF/img/webimg/" cache-period="3600" />
-	<mvc:resources mapping="/img/weixinimg/**" location="/WEB-INF/img/weixinimg/" cache-period="3600" />
-	<mvc:resources mapping="/css/webcss/**" location="/WEB-INF/css/webcss/" cache-period="3600" />
-	<mvc:resources mapping="/css/weixincss/**" location="/WEB-INF/css/weixincss/" cache-period="3600" />
-	<mvc:resources mapping="/css/fonts/**" location="/WEB-INF/css/fonts/" cache-period="3600" />
-	<mvc:resources mapping="/view/webview/**" location="/WEB-INF/view/webview/" cache-period="3600" />
-	<mvc:resources mapping="/view/weixinview/**" location="/WEB-INF/view/weixinview/" cache-period="3600" />
-	<mvc:resources mapping="/font/webfont/**" location="/WEB-INF/font/webfont/" cache-period="3600" />
-	<mvc:resources mapping="/font/weixinfont/**" location="/WEB-INF/font/weixinfont/" cache-period="3600" />
+	<mvc:resources mapping="/js/webjs/**" location="/WEB-INF/js/webjs/"	cache-period="0" />
+	<mvc:resources mapping="/js/weixinjs/**" location="/WEB-INF/js/weixinjs/" cache-period="0" />
+	<mvc:resources mapping="/img/webimg/**" location="/WEB-INF/img/webimg/" cache-period="0" />
+	<mvc:resources mapping="/img/weixinimg/**" location="/WEB-INF/img/weixinimg/" cache-period="0" />
+	<mvc:resources mapping="/css/webcss/**" location="/WEB-INF/css/webcss/" cache-period="0" />
+	<mvc:resources mapping="/css/weixincss/**" location="/WEB-INF/css/weixincss/" cache-period="0" />
+	<mvc:resources mapping="/css/fonts/**" location="/WEB-INF/css/fonts/" cache-period="0" />
+	<mvc:resources mapping="/view/webview/**" location="/WEB-INF/view/webview/" cache-period="0" />
+	<mvc:resources mapping="/view/weixinview/**" location="/WEB-INF/view/weixinview/" cache-period="0" />
+	<mvc:resources mapping="/font/webfont/**" location="/WEB-INF/font/webfont/" cache-period="0" />
+	<mvc:resources mapping="/font/weixinfont/**" location="/WEB-INF/font/weixinfont/" cache-period="0" />
 	<mvc:resources mapping="/files/forwardimage/**" location="file:/softs/files/forwardimage/"/>
 	<mvc:resources mapping="/files/vidoes/**" location="file:/softs/files/vidoes/"/>
 	<mvc:resources mapping="/files/imgs/**" location="file:/softs/files/imgs/"/>
