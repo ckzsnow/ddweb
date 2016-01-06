@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ddcb.dao.IBannerDao;
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.ICourseDetailDao;
+import com.ddcb.model.BannerModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
 
@@ -32,6 +35,9 @@ public class WebCourseController {
 	
 	@Autowired
 	private ICourseDao courseDao;
+	
+	@Autowired
+	private IBannerDao bannerDao;
 	
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
@@ -116,6 +122,7 @@ public class WebCourseController {
 				try {
 					FileUtils.copyInputStreamToFile(file.getInputStream(),
 							new File(imgPath, imgFileName));
+					bannerDao.updateBanner("banner" + String.valueOf(index), imgFileName);
 				} catch (IOException e) {
 					logger.debug(e.toString());
 				}
@@ -127,8 +134,25 @@ public class WebCourseController {
 		return retMap;
 	}
 	
+	@RequestMapping("/course/getCourseBanner")
+	@ResponseBody
+	public Map<String, String> getCourseBanner() {
+		Map<String, String> retMap = new HashMap<>();
+		List<BannerModel> bannerList = bannerDao.getAllBanner();
+		if(bannerList == null || bannerList.size() == 0) return retMap;
+		for(BannerModel bm : bannerList) {
+			retMap.put(bm.getId(), bm.getFile_name());
+		}
+		return retMap;
+	}
+	
 	private void saveFile(MultipartFile file, String path, String fileName) {
-		
+		try {
+			FileUtils.copyInputStreamToFile(file.getInputStream(),
+					new File(path, fileName));
+		} catch (IOException e) {
+			logger.debug(e.toString());
+		}
 	}
 	
 	private String getUniqueIdentifier() {

@@ -94,3 +94,24 @@ mui.ajax({
 		document.getElementById('tips_info').style.display = '';
 	}
 });
+document.getElementById('banner_end').src = "/files/bannerimgs/banner1.jpg?" + new Date().getTime();
+document.getElementById('banner_begin').src = "/files/bannerimgs/banner4.jpg?" + new Date().getTime();
+document.getElementById('banner1').src = "/files/bannerimgs/banner1.jpg?" + new Date().getTime();
+document.getElementById('banner2').src = "/files/bannerimgs/banner2.jpg?" + new Date().getTime();
+document.getElementById('banner3').src = "/files/bannerimgs/banner3.jpg?" + new Date().getTime();
+document.getElementById('banner4').src = "/files/bannerimgs/banner4.jpg?" + new Date().getTime();
+/*mui.ajax({
+	url: '/course/getCourseBanner',
+	type: "POST",
+	data: {},
+	success: function(data) {
+		if (!checkJsonIsEmpty(data)) {
+			for (var i in data) {
+				document.getElementById().style
+			}
+		} 
+	},
+	error: function(status, error) {
+		
+	}
+});*/
