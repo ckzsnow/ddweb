@@ -1,6 +1,6 @@
 function getJsConfigInfoSuccess(data,status) {
 	wx.config({
-		//debug:true,
+		debug:true,
 		appId: 'wx55d4da6e29cc6c83',
 		timestamp: data.timestamp,
 		nonceStr: data.nonceStr,
@@ -19,9 +19,9 @@ mui.ajax({
     success : getJsConfigInfoSuccess 
 });
 wx.ready(function(){
-	var imgUrl = "http://www.diandou.me/img/webimg/share_img.png";
+	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 	var lineLink = window.location.href;
-	var descContent = "点豆成兵&mdash;为进取心而生，专注职场“传、帮、带”";
+	var descContent = "点豆成兵---为进取心而生，专注职场“传、帮、带”";
 	var shareTitle = "点豆成兵";
 	var appid = 'wx309df15b6ddc5371';
 	setTimeout(function(){

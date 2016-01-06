@@ -109,17 +109,23 @@ function playLive(startPlayTime) {
 		if(videoNode.readyState > 0) {
 			alert("videoNode.readyState > 0");
 			clearInterval(i);
-			var seconds = videoNode.duration;
+			var seconds = globalData.course_length;
 			alert("startPlayTime : " + startPlayTime);
-			alert("videoNode.duration : " + videoNode.duration);
+			alert("videoNode.duration : " + globalData.course_length);
 			if(startPlayTime >= seconds) {
 				videoNode.style.display = "none";
 				document.getElementById('endNoteDiv').style.display = "";
 				document.getElementById('tempCountDiv').style.display = "none";
 				document.getElementById('end_note').innerHTML = "当前课程已结束，非常感谢您的关注！";
 			} else {
+				alert("before play");
 				videoNode.currentTime = parseInt(startPlayTime);
 				videoNode.play();
+				document.addEventListener("WeixinJSBridgeReady", function () {
+					alert("WeixinJSBridgeReady");
+					document.getElementById('video').play();
+			    }, false);
+				alert("after play");
 				document.getElementById('video').addEventListener('ended', function(){
 					videoNode.style.display = "none";
 					document.getElementById('endNoteDiv').style.display = "";
@@ -143,7 +149,7 @@ function fillDataIntoHtml(data) {
 		var currentDate = new Date();
 		if(date.getTime() > currentDate.getTime()) {
 			waitLive(date);
-		} else if(date.getTime() + parseInt(data.course_length) * 60 * 1000 > currentDate.getTime()){
+		} else if(date.getTime() + parseInt(data.course_length) * 1000 > currentDate.getTime()){
 			playLive((currentDate.getTime() - date.getTime()) / 1000);
 		} else {
 			document.getElementById('endNoteDiv').style.display = "";
@@ -153,24 +159,46 @@ function fillDataIntoHtml(data) {
 	}
 }
 
-mui.ajax({
-	url: '/course/getCourseDetailByCourseId',
-	type: "POST",
-	data: {},
-	success: function(data) {
-		if (!checkJsonIsEmpty(data)) {
-			fillDataIntoHtml(data);
+function getJsConfigInfoSuccess(data,status) {
+	wx.config({
+		debug:true,
+		appId: 'wx55d4da6e29cc6c83',
+		timestamp: data.timestamp,
+		nonceStr: data.nonceStr,
+		signature: data.signature,
+		jsApiList: [
+			'onMenuShareQQ',
+			'onMenuShareTimeline',
+			'onMenuShareAppMessage'
+		]
+	});
+}
+/*mui.ajax({ 
+    type : "POST", 
+    url  : "/getJsConfigInfo?url=" + encodeURIComponent(location.href.split('#')[0]),
+    async: false,
+    success : getJsConfigInfoSuccess 
+});
+wx.ready(function(){
+	mui.ajax({
+		url: '/course/getCourseDetailByCourseId',
+		type: "POST",
+		data: {},
+		success: function(data) {
+			if (!checkJsonIsEmpty(data)) {
+				fillDataIntoHtml(data);
+				document.getElementById('data_loading').style.display = 'none';
+				document.getElementById('mui_scroll_wrapper').style.display = '';
+			} else {
+				document.getElementById('data_loading').style.display = 'none';
+				document.getElementById('tips_info_detail').innerHTML = '暂时没有获取到您选择的课程数据,请稍后重试!';
+				document.getElementById('tips_info').style.display = '';
+			}
+		},
+		error: function(status, error) {
 			document.getElementById('data_loading').style.display = 'none';
-			document.getElementById('mui_scroll_wrapper').style.display = '';
-		} else {
-			document.getElementById('data_loading').style.display = 'none';
-			document.getElementById('tips_info_detail').innerHTML = '暂时没有获取到您选择的课程数据,请稍后重试!';
+			document.getElementById('tips_info_detail').innerHTML = '服务器暂时无法响应请求,请稍后重试!';
 			document.getElementById('tips_info').style.display = '';
 		}
-	},
-	error: function(status, error) {
-		document.getElementById('data_loading').style.display = 'none';
-		document.getElementById('tips_info_detail').innerHTML = '服务器暂时无法响应请求,请稍后重试!';
-		document.getElementById('tips_info').style.display = '';
-	}
-});
+	});
+});*/

@@ -45,7 +45,7 @@ public class WebCourseController {
 		logger.debug("realPath : {}", realPath);
 		realPath = realPath.substring(0, realPath.indexOf("/", 1));
 		logger.debug("realPath : {}", realPath);
-		String videoPath = realPath + "/files/videos";
+		//String videoPath = realPath + "/files/videos";
 		String imgPath = realPath + "/files/imgs";
 		int index = 1;
 		CourseModel cm = new CourseModel();
@@ -65,9 +65,10 @@ public class WebCourseController {
 		cdm.setTeacher_info(params.get("teacher_info")[0]);
 		cdm.setTeacher_name(params.get("teacher_position")[0]);
 		cdm.setTeacher_position(params.get("course_abstract")[0]);
+		cdm.setVideosrc(params.get("video_src")[0]);
 		if(files.length != 0) {
 			for(MultipartFile file:files) {
-				String videoFileName = getUniqueIdentifier() + ".mp4";
+				//String videoFileName = getUniqueIdentifier() + ".mp4";
 				String imgFileName = getUniqueIdentifier() + ".jpg";
 				switch(index) {
 				case 1:
@@ -82,10 +83,10 @@ public class WebCourseController {
 					saveFile(file, imgPath, imgFileName);
 					cdm.setVideo_image(imgFileName);
 					break;
-				case 4:
+				/*case 4:
 					saveFile(file, videoPath, videoFileName);
 					cdm.setVideosrc(videoFileName);
-					break;
+					break;*/
 				}
 				index++;
 			}
