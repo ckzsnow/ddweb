@@ -145,12 +145,12 @@
 													</div>
 												</div>
 												<!-- /.form-group -->
-												<div class="form-group">
+												<!-- <div class="form-group">
 													<label for="course_abstract" class="control-label col-lg-4">课程摘要</label>
 													<div class="col-lg-8">
 														<textarea id="course_abstract" class="form-control"></textarea>
 													</div>
-												</div>
+												</div> -->
 												<!-- /.form-group -->
 												<div class="form-group">
 													<label for="teacher_abstract" class="control-label col-lg-4">导师摘要</label>
@@ -410,7 +410,7 @@
 			});
 			function checkInput() {
 				var name = $('#name').val();
-				var course_abstract = $('#course_abstract').val();
+				//var course_abstract = $('#course_abstract').val();
 				var teacher = $('#teacher').val();
 				var teacher_name = $('#teacher_name').val();
 				var teacher_position = $('#teacher_position').val();
@@ -425,7 +425,6 @@
 				var video_img = $('#video_img').val();
 				var video_src = $('#video_src').val();
 				if(name == null || name == "" ||
-					course_abstract == null || course_abstract == "" ||
 					teacher == null || teacher == "" ||
 					teacher_name == null || teacher_name == "" ||
 					teacher_position == null || teacher_position == "" ||
@@ -444,7 +443,6 @@
 				} else {
 					var data = {
 						name:name,
-						course_abstract:course_abstract,
 						teacher:teacher,
 						teacher_name:teacher_name,
 						teacher_position:teacher_position,
@@ -495,7 +493,6 @@
 							$('#tips_info').html("<p>提交课程信息成功！</p>");
 							$('#helpModal').modal();
 							$('#name').val("");
-							$('#course_abstract').val("");
 							$('#teacher').val("");
 							$('#teacher_name').val("");
 							$('#teacher_position').val("");

@@ -57,7 +57,8 @@ public class WebCourseController {
 		CourseModel cm = new CourseModel();
 		CourseDetailModel cdm = new CourseDetailModel();
 		Map<String, String[]> params = request.getParameterMap();
-		cm.setCourse_abstract(params.get("course_abstract")[0]);
+		//cm.setCourse_abstract(params.get("course_abstract")[0]);
+		cm.setCourse_abstract("");
 		cm.setCourse_date(Timestamp.valueOf(params.get("course_date")[0]));
 		cm.setCourse_time("");
 		cm.setCreate_time(new Timestamp(System.currentTimeMillis()));
@@ -69,8 +70,8 @@ public class WebCourseController {
 		cdm.setCrowd(params.get("crowd")[0]);
 		cdm.setDetails(params.get("details")[0]);
 		cdm.setTeacher_info(params.get("teacher_info")[0]);
-		cdm.setTeacher_name(params.get("teacher_position")[0]);
-		cdm.setTeacher_position(params.get("course_abstract")[0]);
+		cdm.setTeacher_name(params.get("teacher_name")[0]);
+		cdm.setTeacher_position(params.get("teacher_position")[0]);
 		cdm.setVideosrc(params.get("video_src")[0]);
 		if(files.length != 0) {
 			for(MultipartFile file:files) {

@@ -17,6 +17,7 @@ public class CourseDetailModel {
 	
 	private String course_date;
 	private String course_length;
+	private String name;
 	
 	public CourseDetailModel(){}
 	
@@ -129,6 +130,14 @@ public class CourseDetailModel {
 
 	public void setCourse_length(String course_length) {
 		this.course_length = course_length;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

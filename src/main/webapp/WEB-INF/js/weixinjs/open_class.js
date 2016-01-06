@@ -56,15 +56,20 @@ mui("#scrollToTop").on("tap", ".scroll_to_top", function() {
 mui("#scrollToBottom").on("tap", ".scroll_to_bottom", function() {
 	mui('#mui_scroll_wrapper').scroll().scrollToBottom();
 });
-
+var hasWriteShareInfo = false;
 function createDataList(data) {
 	var detailNode = document.getElementById('courseListDetail');
 	for (var i in data) {
 		var liNode = document.createElement('li');
 		liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 		liNode.setAttribute('course_id', data[i].id);
-		liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='line-height: 120px;height:84px;width:115px;min-width: 115px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><p class='mui-ellipsis' tyle='font-size:15px;color:black;'>"+data[i].name+"</p><p class='mui-ellipsis-2'>"+data[i].course_abstract+"</p><p class='mui-ellipsis' style='color:#1d8c3e;'><span class='mui-icon mui-icon-person-filled'></span>"+data[i].teacher+"</p></div>";
+		liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='line-height: 120px;height:84px;width:115px;min-width: 115px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><p class='mui-ellipsis-2' style='font-size:15px;height:60px;color:black;font-weight: bold;'>"+data[i].name+"</p><p class='mui-ellipsis' style='color:#1d8c3e;'><span class='mui-icon mui-icon-person-filled'></span>"+data[i].teacher+"</p></div>";
 		detailNode.appendChild(liNode);
+		if(!hasWriteShareInfo) {
+			imgUrl = "http://www.diandou.me/files/imgs/" + data[i].image;
+			descContent = data[i].teacher;
+			shareTitle = data[i].name;
+		}
 	}
 	mui('#courseListDetail').on('tap', '.mui-table-view-cell', function(event) {
 		var elem = this;

@@ -137,6 +137,7 @@ public class WeixinCourseController {
 			CourseModel cm = courseDao.getCourseByCourseId(id);
 			courseDetailModel.setCourse_date(cm.getCourse_date_readable());
 			courseDetailModel.setCourse_length(cm.getCourse_length());
+			courseDetailModel.setName(cm.getName());
 		} catch(Exception e) {
 			logger.debug("exception : {}", e.toString());
 		}

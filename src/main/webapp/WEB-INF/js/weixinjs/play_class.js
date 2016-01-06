@@ -56,6 +56,9 @@ mui("#scrollToBottom").on("tap", ".scroll_to_bottom", function() {
 });
 
 function fillDataIntoHtml(data) {
+	imgUrl = "http://www.diandou.me/files/imgs/" + data.teacher_image;
+	descContent = data.details;
+	shareTitle = data.name;
 	document.getElementById('teacher_image').setAttribute('src', "/files/imgs/" + data.teacher_image);
 	document.getElementById('teacher_name').innerHTML = data.teacher_name;
 	document.getElementById('teacher_info').innerHTML = data.teacher_info;
