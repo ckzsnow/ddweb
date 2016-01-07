@@ -78,7 +78,7 @@ public class MessageProcessServiceImpl implements IMessageProcessService {
 						}
 					});
 					TextOutputMessage outputMsg = new TextOutputMessage();
-					outputMsg.setContent("您好，欢迎关注dashengtalk11!！");
+					outputMsg.setContent("客官，等您很久了～这里既分享各类线下讲座的内容，也允许优质机构和个人在线开办讲座，让用户足不出户参与讲座，并和导师互动。快点击“点豆大讲堂”来看看我们吧～");
 					try {
 						setOutputMsgInfo(outputMsg, inputMsg);
 					} catch (Exception e) {
