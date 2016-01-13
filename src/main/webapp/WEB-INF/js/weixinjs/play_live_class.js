@@ -124,6 +124,13 @@ function playLive(startPlayTime) {
 				document.addEventListener("WeixinJSBridgeReady", function () {
 					alert("WeixinJSBridgeReady");
 					document.getElementById('video').play();
+					var hasSetted = false;
+					document.getElementById('video').ontimeupdate = function () {
+						if(document.getElementById('video').duration() != 0 && !hasSetted) {
+			        		hasSetted = true;
+			        		document.getElementById('video').currentTime(100);
+			        	}
+					};
 			    }, false);
 				alert("after play");
 				document.getElementById('video').addEventListener('ended', function(){
