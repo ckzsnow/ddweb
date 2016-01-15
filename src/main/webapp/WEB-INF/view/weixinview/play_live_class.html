@@ -7,7 +7,7 @@
 		<title>点豆成兵直播课</title>
 		<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
 		<link href="/css/weixincss/jquery.countdown.css" rel="stylesheet" />
-		<link href="/css/weixincss/video-js.css" rel="stylesheet" />
+		<!-- <link href="/css/weixincss/video-js.css" rel="stylesheet" /> -->
 		<style>
 			.upload-file {
 				position: fixed;
@@ -98,11 +98,34 @@
 	<script src="/js/weixinjs/jquery-1.11.1.min.js"></script>
 	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="/js/weixinjs/jweixin-1.0.0.js"></script>
-	<script src="/js/weixinjs/video.js"></script>
+	<!-- <script src="/js/weixinjs/video.js"></script> -->
 	<script>
+	var hasSetted = false;
+	var media = document.getElementById('test_video');
+	document.addEventListener("WeixinJSBridgeReady", function () {
+		media.play();
+		/* media.addEventListener("canplay", function(){
+			if(!hasSetted) {
+				hasSetted = true;
+				alert(media.duration);
+				media.currentTime = 600;
+				media.play();
+			}
+		}); */
+		media.addEventListener("timeupdate", function(){
+			if(!hasSetted && media.duration>1) {
+				hasSetted = true;
+				
+				media.currentTime = 600;
+				media.play();
+			} else if(!hasSetted) {
+				media.pause();
+			}
+		});
+    }, false);
 	//var myPlayer = videojs('test_video');
-	document.addEventListener("DOMContentLoaded",init,false);
-	/* function init() {
+	/* document.addEventListener("DOMContentLoaded",init,false);
+	function init() {
 	    videojs("test_video").ready(function(){
 	        var myPlayer = this;
 	        myPlayer.load();
@@ -128,7 +151,7 @@
 	        	alert(myPlayer.duration());
 			});
 	    });
-	} */
+	}  */
 	/* var hasSetted = false;
 	var media = document.getElementById('test_video');
 	
@@ -142,22 +165,24 @@
 				media.play();
 			}
 		}); */
-	var hasSetted = false;
+/* 	var hasSetted = false;
 	var media = document.getElementById('test_video');
 	function init() {
 		media.play();
-		media.addEventListener("durationchange", function(){
+		/* media.addEventListener("durationchange", function(){
 			alert('durationchange');
         	alert(media.duration);
         	
-		});
-		media.addEventListener("canplay", function(){
-			alert('canplay');
-			media.pause();
-        	alert(media.duration);
-        	
-		});
-		media.addEventListener("timeupdate", function(){
+		}); */
+		/* media.addEventListener("timeupdate", function(){
+			if(!hasSetted) {
+				hasSetted = true;
+				media.pause();
+	        	media.currentTime = 600;
+	        	media.play();
+			}
+		}); */
+		/* media.addEventListener("timeupdate", function(){
 			alert('timeupdate');
         	alert(media.duration);
         	
@@ -171,8 +196,7 @@
 			alert('loadeddata');
         	alert(media.duration);
         	
-		});
-	}
+		}); */
 	/* document.addEventListener("WeixinJSBridgeReady", function () {
 		media.load();
 		media.addEventListener("durationchange", function(){
