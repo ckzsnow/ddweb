@@ -100,35 +100,30 @@
 	<script src="/js/weixinjs/jweixin-1.0.0.js"></script>
 	<script src="/js/weixinjs/video.js"></script>
 	<script>
-	//var myPlayer = videojs('test_video');
+	var myPlayer = videojs('test_video');
 	document.addEventListener("DOMContentLoaded",init,false);
-	/* function init() {
+	function init() {
 	    videojs("test_video").ready(function(){
 	        var myPlayer = this;
 	        myPlayer.load();
 	        var hasSetted = false;
 	        myPlayer.on('durationchange', function () {
 	        	alert('durationchange');
-	        	alert(myPlayer.duration());
 			});
 	        myPlayer.on('timeupdate', function () {
 	        	alert('timeupdate');
-	        	alert(myPlayer.duration());
 			});
 	        myPlayer.on('canplay', function () {
 	        	alert('canplay');
-	        	alert(myPlayer.duration());
 			});
 	        myPlayer.on('loadedmetadata', function () {
 	        	alert('loadedmetadata');
-	        	alert(myPlayer.duration());
 			});
 	        myPlayer.on('loadeddata', function () {
 	        	alert('loadeddata');
-	        	alert(myPlayer.duration());
 			});
 	    });
-	} */
+	}
 	/* var hasSetted = false;
 	var media = document.getElementById('test_video');
 	
@@ -142,63 +137,18 @@
 				media.play();
 			}
 		}); */
-	var hasSetted = false;
+	/* var hasSetted = false;
 	var media = document.getElementById('test_video');
-	function init() {
-		media.play();
-		media.addEventListener("durationchange", function(){
-			alert('durationchange');
-        	alert(media.duration);
-        	
-		});
-		media.addEventListener("canplay", function(){
-			alert('canplay');
-			media.pause();
-        	alert(media.duration);
-        	
-		});
-		media.addEventListener("timeupdate", function(){
-			alert('timeupdate');
-        	alert(media.duration);
-        	
-		});
-		media.addEventListener("loadedmetadata", function(){
-			alert('loadedmetadata');
-        	alert(media.duration);
-        	
-		});
-		media.addEventListener("loadeddata", function(){
-			alert('loadeddata');
-        	alert(media.duration);
-        	
-		});
-	}
-	/* document.addEventListener("WeixinJSBridgeReady", function () {
+	document.addEventListener("WeixinJSBridgeReady", function () {
+		alert('kkkk');
 		media.load();
-		media.addEventListener("durationchange", function(){
-			alert('durationchange');
-        	alert(media.duration());
-        	
-		});
 		media.addEventListener("canplay", function(){
-			alert('canplay');
-        	alert(media.duration());
-        	
-		});
-		media.addEventListener("timeupdate", function(){
-			alert('timeupdate');
-        	alert(media.duration());
-        	
-		});
-		media.addEventListener("loadedmetadata", function(){
-			alert('loadedmetadata');
-        	alert(media.duration());
-        	
-		});
-		media.addEventListener("loadeddata", function(){
-			alert('loadeddata');
-        	alert(media.duration());
-        	
+			alert('66666');
+			if(!hasSetted) {
+				hasSetted = true;
+				media.currentTime = 600;
+				media.play();
+			}
 		});
     }, false); */
    //var media = document.getElementById('test_video');
