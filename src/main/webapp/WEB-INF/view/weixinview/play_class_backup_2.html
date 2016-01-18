@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>点豆成兵公开课</title>
+		<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
+		<style>
+			.upload-file {
+				position: fixed;
+				z-index: 998;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background-color: rgba(0, 0, 0, .8);
+			}
+			
+			.dialog {
+				position: fixed;
+				z-index: 998;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background-color: rgba(0, 0, 0, .4);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="data_loading" class="mui-loading" style="margin-top:50%;">
+				<div class="mui-spinner"></div>
+				<div style="text-align: center;">正在加载数据</div>
+			</div>
+			<div id="tips_info" style="display:none;margin-top:50%;">
+				<div style="text-align: center;" id="tips_info_detail">服务器暂时无法处理请求，请稍后重试！</div>
+			</div>
+			<div id="mui_scroll_wrapper" class="mui-scroll-wrapper" style="display:none;background-color: white;">
+				<div class="mui-scroll">
+					<div id="player_video">
+					</div>
+					<div style="margin-bottom: 20px;">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell mui-media">
+								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">导师简介</p>
+								<img id="teacher_image" class="mui-media-object mui-pull-left" style="border-radius:50%;line-height: 84px;height:84px;width:84px;min-width: 84px;" src="">
+								<div class="mui-media-body">
+									<p id="teacher_name" class='mui-ellipsis' style="font-size:15px;color:black;"></p>
+									<p id="teacher_position" class='mui-ellipsis' style="color:black;"></p>
+									<p id="teacher_info" style="color:black;"></p>
+								</div>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">适合人群</p>
+								<p id="crowd" style="color:black;"></p>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">课程简介</p>
+								<p id="details" style="color:black;"></p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="scrollToTop" style="position:fixed;bottom: 75px;right:5px;z-index:9999999999;"><img class="scroll_to_top" style="width:25px;" src="/img/weixinimg/scroll_top.png"></div>
+			<div id="scrollToBottom" style="position:fixed;bottom: 50px;right:5px;z-index:9999999999;"><img class="scroll_to_bottom" style="width:25px;" src="/img/weixinimg/scroll_bottom.png"></div>
+		</div>
+	</body>
+	<script src="/js/weixinjs/mui.min.js"></script>
+	<script src="/js/weixinjs/jweixin-1.0.0.js"></script>
+	<script src="/js/weixinjs/weixin_share.js?201601062307"></script>
+	<script src="/js/weixinjs/play_class.js?201601071323"></script>
+
+</html>
