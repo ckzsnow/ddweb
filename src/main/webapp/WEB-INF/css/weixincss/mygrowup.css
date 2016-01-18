@@ -1,0 +1,263 @@
+.mygrowup{
+    background-color:#66d6a6;
+    padding-top:1.5rem;
+}
+.mygrowup a.changecode{
+    color:#fff;
+    font-size:1.5rem;
+    position:absolute;
+    top:1rem;
+    right:1rem;
+}
+.mygrowup a.binduser{
+        color:#ffd52c;
+    font-size:1.2rem;
+    position:absolute;
+    top:1rem;
+    left:1rem;
+}
+.mygrowup .avatarimg{
+    height:6rem;
+    width:6rem;
+    overflow:hidden;
+}
+.mygrowup .avatarimg img{
+    width:100%;
+    height:100%;
+    border-radius:6rem;
+}
+h1.nickname{
+    font-size:1.5rem;
+    margin:0;
+    line-height:2rem;
+    color:#fff;
+}
+h2.experience{
+    font-size:1rem;
+    margin:0;
+    line-height:2rem;
+    color:#fff;
+}
+h3.liangpiao{
+    font-size:1.5rem;
+    margin:0;
+    color:#fff;
+    line-height:2rem;
+    padding-bottom:1rem;
+}
+h3.liangpiao a{
+    font-size:1.5rem;
+    margin:0;
+    color:#ffd52c;
+    line-height:2rem;
+    padding-bottom:1rem;
+}
+h3.liangpiao a:focus{text-decoration:none;}
+.mygrowup ul,.mygrowup ul li{
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+.mygrowup ul{
+    width:100%;
+    background-color:#2ab888;
+    overflow:hidden;
+}
+.mygrowup ul li{
+    float:left;
+    width:25%;
+    color:#fff;
+    background-color:#2ab888;
+    border:0;
+}
+.mygrowup ul li h3{
+    font-size:1.5rem;
+    margin:0;
+    line-height:3rem;
+}
+.mygrowup ul li p{
+    font-size:1rem;
+    margin:0;
+    padding-bottom:.5rem;
+}
+img.isact{
+    display:inline-block;
+    width:1.5rem;
+    height:1.5rem;
+    border-radius:1.5rem;
+    position: relative;
+    top: -.2rem;
+}
+h1.nickname a{
+    outline:none;
+    line-height:2rem;
+}
+ul.mantoutab{
+    border-bottom:1px solid #ddd;
+}
+ul.mantoutab li{
+    padding-left:0;
+    padding-right:0;
+}
+.nav-tabs {
+    border-bottom: 1px solid #ddd;
+    clear:both;
+}
+.nav-tabs > li {
+    margin-bottom:0;
+    line-height:4rem;
+}
+.nav-tabs > li > a {
+    display:inline-block;
+    padding:.5rem 1.5rem;
+    font-size:1.5rem;
+    color:#333;
+    margin-right: auto;
+    border:0;
+    border-radius:2rem;
+    outline:none;
+}
+.nav-tabs > li > a:hover {
+    border:0;
+    background-color:#66d6a6;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+    color: #fff!important;
+    cursor:pointer;
+    background-color:#66d6a6;
+    border:0;
+}
+.comment .nickname,.message .nickname{
+    float:left;
+    color:#666;
+}
+.comment .date,.message .date{
+    float:right;
+    color:#ccc;
+}
+.comment p,.message p{clear:both;}
+.comment a:focus{text-decoration:none;}
+.comment .source,.comment .reply,.message .source,.message .reply,.agree {color:#2ab888;}
+.delete {color:red;}
+.nomore{text-align: center;}
+.more{color:#ccc;cursor: pointer;text-align: center;}
+.reply,.delete,.agree{float:right;}
+.comment .source,.message .source{font-size:.5rem;}
+textarea{width:75%;}
+.confirm{
+    color: #fff;
+  float: right;
+  background-color: #51b1ff;
+  border-radius: 2rem;
+  width: 4rem;
+  text-align: center;
+  height: 2.5rem;
+  line-height: 2.5rem;
+    }
+    .commentinput{
+        padding-top: 0.7rem;
+    }
+.comment,.message,.friend{
+    border-bottom:1px solid #e5e5e5;
+    padding-top:1rem;
+    padding-bottom:1rem;
+}
+.friend a{color:#2ab888;}
+.comment a{color:#2ab888;}
+.comment .col-xs-3 div,.message .col-xs-3 div,.friend .col-xs-3 div{
+    height:4rem;
+    width:4rem;
+    border-radius:4rem;
+}
+.comment img,.message img,.friend img{
+    height:100%;
+    width:100%;
+    border-radius:4rem;
+}
+.comment .col-xs-9,.message .col-xs-9,.friend .col-xs-9{padding-left:0;}
+.friend h1{
+    font-size:1.5rem;
+    margin:0;
+    padding:0;
+    line-height:2rem;
+}
+.friend p{
+    font-size:1rem;
+}
+
+.courselist ul,.courselist li{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+.courselist li.course-list-item{
+    width:100%;
+    display:inline-block;
+    overflow:hidden;
+    padding:15px 10px;
+    border-bottom:1px solid #eee;
+}
+.item-avatar{
+    width:115px;
+    height:84px;
+    float:left;
+}
+.item-avatar img{
+    height:100%;
+    width:100%;
+}
+.item-content{
+    height:84px;
+    overflow:hidden;
+    padding-left:10px;
+    position:relative;
+}
+.item-title{
+    font-size:1.6rem;
+    font-weight:normal;
+    margin:0;
+    padding:0;
+    padding-bottom:8px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.item-title a{
+    color:#000;
+    text-decoration:none;
+}
+.item-title a:focus,.item-title a:active{
+    text-decoration:none;
+    color:#000;
+}
+.item-intro{
+    padding-top:5px;
+    font-size:1.3rem;
+    line-height:18px;
+    font-weight:lighter;
+    color:#666;
+}
+.clearfix:after,.clearfix:before{
+    content:"";
+    display:table;
+}
+.goonbox{
+    position:absolute;
+    bottom:0;
+    width:90%;
+}
+.goonbox .goon a{
+    font-size:1.3rem;
+    color:#2ab888;
+}
+.goonbox .classmates{
+    font-size:1.0rem;
+    color:#999;
+    float:right;
+    position:relative;
+    top:3px;
+}
+.nocourse a{color:#2ab888;}
+a{color:#2ab888;}

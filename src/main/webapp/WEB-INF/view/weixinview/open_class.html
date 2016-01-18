@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="/css/weixincss/indexv2.css">
 		<link rel="stylesheet" href="/css/weixincss/course.css" />
 	</head>
-	<body style="padding-bottom: 52px;">
+	<body style="mrgin-bottom:0px;">
 		<!--标题-->
 		<h1 class="text-center mantoutitle">点豆公开课</h1>
 		<!--轮播-->
@@ -49,33 +49,21 @@
 				</div>
 			</div>
 		</div>
-
 		<div class="courselist">
-			<ul>
-				<li class="course-list-item clearfix">
-					<div class="item-avatar">
-						<a href="/courseplay/189">
-							<img src="http://www.mtedu.com/upload/images/course/e4/3e/9d/e43e9d1959db1a3c717343cd701f5801.jpg" />
-						</a>
-					</div>
-					<div class="item-content">
-						<h3 class="item-title">
-                        	<a href="/courseplay/189">60分钟微信排版课：教你做让转发量和点赞数暴增的微信排版</a>
-                        </h3>
-						<div class="item-teacher">
-							<span class="menter">
-                                <span class="glyphicon glyphicon-user"></span>
-								&nbsp;唐三藏 &nbsp;北京小黄人科技有限公司创始人微信运营专家</span>
-						</div>
-					</div>
-				</li>
+			<ul id="courseList">
 			</ul>
 		</div>
-
-		<script src="/js/weixinjs/jquery.js"></script>
-		<script src="/js/weixinjs/bootstrap.min.js"></script>
-		<script src="/js/weixinjs/swipe.js"></script>
-		<script>
+	</body>
+	<script src="/js/weixinjs/jquery.js"></script>
+	<script src="/js/weixinjs/bootstrap.min.js"></script>
+	<script src="/js/weixinjs/swipe.js"></script>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script>
+	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
+	var lineLink = window.location.href;
+	var descContent = "点豆成兵---为进取心而生，专注职场“传、帮、带”";
+	var shareTitle = "点豆成兵";
+			var hasWriteShareInfo = false;
 			$(function() {
 				$("#myCarousel").touchwipe({
 					wipeLeft: function() {
@@ -92,6 +80,107 @@
 			document.getElementById('banner2').src = "/files/bannerimgs/banner2.jpg?" + new Date().getTime();
 			document.getElementById('banner3').src = "/files/bannerimgs/banner3.jpg?" + new Date().getTime();
 			document.getElementById('banner4').src = "/files/bannerimgs/banner4.jpg?" + new Date().getTime();
+			function checkJsonIsEmpty(json) {
+				var isEmpty = true;
+				if (json == null) return true;
+				for (var jsonKey in json) {
+					isEmpty = false;
+					break;
+				}
+				return isEmpty;
+			}
+			$.ajax({
+				url: '/course/getAllOpenCourse',
+				type: "POST",
+				data: {},
+				success: function(data) {
+					if (!checkJsonIsEmpty(data)) {
+						var detailNode = document.getElementById('courseList');
+						for (var i in data) {
+							var liNode = document.createElement('li');
+							liNode.setAttribute('class', 'course-list-item clearfix');
+							liNode.setAttribute('course_id', data[i].id);
+							liNode.innerHTML = "<div class='item-avatar'><img src='/files/imgs/"+data[i].image+"'/></div><div class='item-content'><h3 class='item-title'>"+data[i].name+"</h3><div class='item-teacher'><span class='menter'><span class='glyphicon glyphicon-user'></span>"+data[i].teacher+"</span></div></div>";
+							detailNode.appendChild(liNode);
+							if(!hasWriteShareInfo) {
+								hasWriteShareInfo = true;
+								imgUrl = "http://www.diandou.me/files/imgs/" + data[i].image;
+								descContent = data[i].teacher;
+								shareTitle = data[i].name;
+							}
+						}
+						$('.course-list-item.clearfix').each(function(){
+							$(this).click(function(event) {
+								var elem = this;
+								var course_id = elem.getAttribute('course_id');
+								window.location = "/course/playCourse?course_id=" + course_id;
+							});
+						});
+					}
+				},
+				error: function(status, error) {
+				}
+			});
+			function getJsConfigInfoSuccess(data,status) {
+				wx.config({
+					appId: 'wxbd6aef840715f99d',
+					timestamp: data.timestamp,
+					nonceStr: data.nonceStr,
+					signature: data.signature,
+					jsApiList: [
+						'onMenuShareQQ',
+						'onMenuShareTimeline',
+						'onMenuShareAppMessage'
+					]
+				});
+			}
+			$.ajax({ 
+			    type : "POST", 
+			    url  : "/getJsConfigInfo?url=" + encodeURIComponent(location.href.split('#')[0]),
+			    async: false,
+			    success : getJsConfigInfoSuccess 
+			});
+			wx.ready(function(){
+				var appid = 'wx309df15b6ddc5371';
+				setTimeout(function(){
+					wx.onMenuShareTimeline({
+					    title: shareTitle, // 分享标题
+					    link: lineLink, // 分享链接
+					    imgUrl: imgUrl, // 分享图标
+					    success: function () { 
+					        // 用户确认分享后执行的回调函数
+					    },
+					    cancel: function () { 
+					        // 用户取消分享后执行的回调函数
+					    }
+					});
+					wx.onMenuShareAppMessage({
+					    title: shareTitle, // 分享标题
+					    desc: descContent, // 分享描述
+					    link: lineLink, // 分享链接
+					    imgUrl: imgUrl, // 分享图标
+					    type: '', // 分享类型,music、video或link，不填默认为link
+					    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+					    success: function () { 
+					        // 用户确认分享后执行的回调函数
+					    },
+					    cancel: function () { 
+					        // 用户取消分享后执行的回调函数
+					    }
+					});
+					wx.onMenuShareQQ({
+					    title: shareTitle, // 分享标题
+					    desc: descContent, // 分享描述
+					    link: lineLink, // 分享链接
+					    imgUrl: imgUrl, // 分享图标
+					    success: function () { 
+					       // 用户确认分享后执行的回调函数
+					    },
+					    cancel: function () { 
+					       // 用户取消分享后执行的回调函数
+					    }
+					});
+				}, 500);
+			});
 		</script>
-	</body>
 </html>

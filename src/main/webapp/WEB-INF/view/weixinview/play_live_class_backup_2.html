@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>点豆成兵直播课</title>
+		<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
+		<link href="/css/weixincss/jquery.countdown.css" rel="stylesheet" />
+		<!-- <link href="/css/weixincss/video-js.css" rel="stylesheet" /> -->
+		<style>
+			.upload-file {
+				position: fixed;
+				z-index: 998;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background-color: rgba(0, 0, 0, .8);
+			}
+			
+			.dialog {
+				position: fixed;
+				z-index: 998;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background-color: rgba(0, 0, 0, .4);
+			}
+			#note{
+				color: #666666;
+				font-size: 12px;
+				margin: 0 auto;
+				padding: 4px;
+				text-align: center;
+				text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
+				width: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<!-- <div id="data_loading" class="mui-loading" style="margin-top:50%;">
+				<div class="mui-spinner"></div>
+				<div style="text-align: center;">正在加载数据</div>
+			</div>
+			<div id="tips_info" style="display:none;margin-top:50%;">
+				<div style="text-align: center;" id="tips_info_detail">服务器暂时无法处理请求，请稍后重试！</div>
+			</div> -->
+			<div id="mui_scroll_wrapper" class="mui-scroll-wrapper" style="background-color: white;">
+				<div class="mui-scroll">
+					<div>
+						<video id="test_video" class="video-js vjs-default-skin" controls preload="none" width="640" height="264" 
+						poster="" data-setup="{}">
+    		<source src="http://7xknrw.media1.z0.glb.clouddn.com/ruhezuoyingxiao-xiaomasong.mp4" type='video/mp4'>
+    		
+  		</video>
+					</div>
+					<div id="player_video">
+						<div id="tempCountDiv" style="width:100%;padding-top:60px;padding-bottom: 60px;height:250px;background:url('/img/weixinimg/page_bg_center.jpg') no-repeat center center;">
+							<div id="countdown" style="width:100%;"></div>
+							<p id="note"></p>
+						</div>
+						<div id="endNoteDiv" style="display:none;text-align:center;width:100%;padding-top:100px;padding-bottom: 100px;height:250px;background:url('/img/weixinimg/page_bg_center.jpg') no-repeat center center;">
+							<p id="end_note"></p>
+						</div>
+					</div>
+					<div style="margin-bottom: 20px;">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell mui-media">
+								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">导师简介</p>
+								<img id="teacher_image" class="mui-media-object mui-pull-left" style="border-radius:50%;line-height: 84px;height:84px;width:84px;min-width: 84px;" src="">
+								<div class="mui-media-body">
+									<p id="teacher_name" class='mui-ellipsis' style="font-size:15px;color:black;"></p>
+									<p id="teacher_position" class='mui-ellipsis' style="color:black;"></p>
+									<p id="teacher_info" style="color:black;"></p>
+								</div>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">适合人群</p>
+								<p id="crowd" style="color:black;"></p>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<p style="font-size:20px;font-weight:500;color:#b4b4b4;margin:10px auto;">课程简介</p>
+								<p id="details" style="color:black;"></p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="scrollToTop" style="position:fixed;bottom: 75px;right:5px;z-index:9999999999;"><img class="scroll_to_top" style="width:25px;" src="/img/weixinimg/scroll_top.png"></div>
+			<div id="scrollToBottom" style="position:fixed;bottom: 50px;right:5px;z-index:9999999999;"><img class="scroll_to_bottom" style="width:25px;" src="/img/weixinimg/scroll_bottom.png"></div>
+		</div>
+	</body>
+	<script src="/js/weixinjs/mui.min.js"></script>
+	<script src="/js/weixinjs/jquery-1.11.1.min.js"></script>
+	<script src="/js/weixinjs/jquery.countdown.js"></script>
+	<script src="/js/weixinjs/jweixin-1.0.0.js"></script>
+	<!-- <script src="/js/weixinjs/video.js"></script> -->
+	<script>
+	var hasSetted = false;
+	var media = document.getElementById('test_video');
+	document.addEventListener("WeixinJSBridgeReady", function () {
+		media.play();
+		/* media.addEventListener("canplay", function(){
+			if(!hasSetted) {
+				hasSetted = true;
+				alert(media.duration);
+				media.currentTime = 600;
+				media.play();
+			}
+		}); */
+		media.addEventListener("timeupdate", function(){
+			if(!hasSetted && media.duration>1) {
+				hasSetted = true;
+				
+				media.currentTime = 600;
+				media.play();
+			} else if(!hasSetted) {
+				media.pause();
+			}
+		});
+    }, false);
+	//var myPlayer = videojs('test_video');
+	/* document.addEventListener("DOMContentLoaded",init,false);
+	function init() {
+	    videojs("test_video").ready(function(){
+	        var myPlayer = this;
+	        myPlayer.load();
+	        var hasSetted = false;
+	        myPlayer.on('durationchange', function () {
+	        	alert('durationchange');
+	        	alert(myPlayer.duration());
+			});
+	        myPlayer.on('timeupdate', function () {
+	        	alert('timeupdate');
+	        	alert(myPlayer.duration());
+			});
+	        myPlayer.on('canplay', function () {
+	        	alert('canplay');
+	        	alert(myPlayer.duration());
+			});
+	        myPlayer.on('loadedmetadata', function () {
+	        	alert('loadedmetadata');
+	        	alert(myPlayer.duration());
+			});
+	        myPlayer.on('loadeddata', function () {
+	        	alert('loadeddata');
+	        	alert(myPlayer.duration());
+			});
+	    });
+	}  */
+	/* var hasSetted = false;
+	var media = document.getElementById('test_video');
+	
+		alert('kkkk');
+		media.load();
+		media.addEventListener("canplay", function(){
+			alert('66666');
+			if(!hasSetted) {
+				hasSetted = true;
+				media.currentTime = 600;
+				media.play();
+			}
+		}); */
+/* 	var hasSetted = false;
+	var media = document.getElementById('test_video');
+	function init() {
+		media.play();
+		/* media.addEventListener("durationchange", function(){
+			alert('durationchange');
+        	alert(media.duration);
+        	
+		}); */
+		/* media.addEventListener("timeupdate", function(){
+			if(!hasSetted) {
+				hasSetted = true;
+				media.pause();
+	        	media.currentTime = 600;
+	        	media.play();
+			}
+		}); */
+		/* media.addEventListener("timeupdate", function(){
+			alert('timeupdate');
+        	alert(media.duration);
+        	
+		});
+		media.addEventListener("loadedmetadata", function(){
+			alert('loadedmetadata');
+        	alert(media.duration);
+        	
+		});
+		media.addEventListener("loadeddata", function(){
+			alert('loadeddata');
+        	alert(media.duration);
+        	
+		}); */
+	/* document.addEventListener("WeixinJSBridgeReady", function () {
+		media.load();
+		media.addEventListener("durationchange", function(){
+			alert('durationchange');
+        	alert(media.duration());
+        	
+		});
+		media.addEventListener("canplay", function(){
+			alert('canplay');
+        	alert(media.duration());
+        	
+		});
+		media.addEventListener("timeupdate", function(){
+			alert('timeupdate');
+        	alert(media.duration());
+        	
+		});
+		media.addEventListener("loadedmetadata", function(){
+			alert('loadedmetadata');
+        	alert(media.duration());
+        	
+		});
+		media.addEventListener("loadeddata", function(){
+			alert('loadeddata');
+        	alert(media.duration());
+        	
+		});
+    }, false); */
+   //var media = document.getElementById('test_video');
+    
+	/* media.load();
+	alert(111); */
+/*     var timer = setInterval(function(){
+    	alert(111);
+    	if(media.readyState > 0) {
+    		clearInterval(timer);
+        	media = document.getElementById('test_video');
+        	media.load();
+    		media.addEventListener("canplay", function(){
+    			if(!hasSetted) {
+    				hasSetted = true;
+    				media.currentTime = 600;
+    				media.play();
+    				alert(222);
+    			}
+    		});
+    		alert(111);
+    	}
+    }, 1000); */
+    /* var timer = setInterval(function(){
+    	
+        if(media.readyState > 0) {
+        	clearInterval(timer);
+        	
+        }
+    }, 1000); */
+    	
+    /* media.addEventListener("timeupdate", function(){
+	//alert(media.duration());
+	if(!hasSetted) {
+		hasSetted = true;
+		media.startTime = 600;
+		media.play();
+	}
+});
+document.getElementById('test_video').ontimeupdate = function () {
+	if(document.getElementById('test_video').duration() != 0 && !hasSetted) {
+		hasSetted = true;
+		alert(222);
+		document.getElementById('test_video').currentTime(100);
+		document.getElementById('test_video').play();
+	}
+}; */
+    /* var myPlayer = videojs('test_video');
+    document.addEventListener("WeixinJSBridgeReady", function () {
+		
+			videojs("test_video").ready(function(){
+		        var myPlayer = this;
+		        myPlayer.play();
+		        var hasSetted = false;
+		        myPlayer.on('timeupdate', function () {
+		        	if(myPlayer.duration() != 0 && !hasSetted) {
+		        		hasSetted = true;
+		        		myPlayer.currentTime(100);
+		        		myPlayer.play();
+		        	}
+				});
+			});
+    }, false);  */
+    /* var myPlayer = videojs('test_video');
+    videojs("test_video").ready(function(){
+        var myPlayer = this;
+        myPlayer.load();
+        var hasSetted = false;
+       myPlayer.on('timeupdate', function () {
+        	alert(myPlayer.currentTime());
+		});
+        myPlayer.on('durationchange', function () {
+        	if(myPlayer.duration() != 0 && !hasSetted) {
+        		hasSetted = true;
+        		myPlayer.currentTime(600);
+        		myPlayer.play();
+        	}
+		});
+        myPlayer.on('canplay', function () {
+        	if(myPlayer.duration() != 0 && hasSetted) {
+        		hasSetted = false;
+        		myPlayer.play();
+        	}
+		});
+    }); */
+       /*  myPlayer.on('onloadedmetadata', function () {
+        	alert(222);
+        	if(myPlayer.duration() != 0 && !hasSetted) {
+        		hasSetted = true;
+        		myPlayer.currentTime(100);
+        		myPlayer.play();
+        	}
+		});
+        myPlayer.on('canplay', function () {
+        	if(myPlayer.duration() != 0 && !hasSetted) {
+        		hasSetted = true;
+        		myPlayer.currentTime(100);
+        		myPlayer.play();
+        	}
+		}); */
+        /*var hasSetted = false;
+        myPlayer.on('timeupdate', function () {
+        	if(myPlayer.duration() != 0 && !hasSetted) {
+        		//alert(myPlayer.duration());
+        		hasSetted = true;
+        		myPlayer.currentTime(100);
+        	}
+		});*/
+   
+	</script>
+	<script src="/js/weixinjs/play_live_class.js?201601132004"></script>
+</html>

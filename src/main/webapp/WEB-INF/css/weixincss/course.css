@@ -187,9 +187,18 @@ div.teacherintro .open{font-size:1.3rem;color:#999;}
     display:block;
     width:95%;
     color:#2ab888;
-    line-height:1.1rem;
+    line-height:1.3rem;
     position:absolute;
     bottom:0;
+    white-space:nowrap;
+}
+.item-time{
+    display:block;
+    width:95%;
+    color:#888888;
+    line-height:1.6rem;
+    position:absolute;
+    bottom:16px;
     white-space:nowrap;
 }
 .item-teacher .menter{

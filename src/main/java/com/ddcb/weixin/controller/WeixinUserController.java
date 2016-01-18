@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ddcb.dao.IUserDao;
 import com.ddcb.model.UserModel;
 import com.ddcb.utils.UserPwdMD5Encrypt;
+import com.ddcb.utils.WeixinConstEnum;
+import com.ddcb.utils.WeixinTools;
 
 @Controller
 public class WeixinUserController {
@@ -142,7 +144,7 @@ public class WeixinUserController {
 				return retMap;
 			}
 		}
-	}
+	}	
 	
 	@RequestMapping("/weixin/weixinGetCheckCode")
 	@ResponseBody
@@ -158,6 +160,41 @@ public class WeixinUserController {
 			retMap.put("error_code", "1");
 			retMap.put("error_msg", "验证码服务器暂时不可用，请稍后重试！");
 		}
+		return retMap;
+	}
+	
+	@RequestMapping("/weixinLogin")
+	public String weixinAuthorizedLogin(HttpSession httpSession, HttpServletRequest request) {
+		String code = request.getParameter("code");
+		String accessToken = "";
+		String openId = "";
+		if(code == null || code.isEmpty()) {
+			return "redirect:/view/weixinview/recent_class.html";
+		}
+		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
+		url = url.replace("APPID", WeixinConstEnum.COMPANY_APP_ID.toString()).replace("SECRET",
+				WeixinConstEnum.COMPANY_APP_SECRET.toString()).replace("CODE",
+						code);
+		Map<Object, Object> map = WeixinTools.httpGet(url);
+		if (map != null && map.containsKey("access_token") && map.containsKey("refresh_token")) {
+			accessToken = (String) map.get("access_token");
+			openId = (String) map.get("openid");
+			url = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+			url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
+			Map<Object, Object> retMap = WeixinTools.httpGet(url);
+			httpSession.setAttribute("openid", retMap.get("openid"));
+			httpSession.setAttribute("nickname", retMap.get("nickname"));
+			httpSession.setAttribute("headimgurl", retMap.get("headimgurl"));
+		}
+		return "redirect:/view/weixinview/recent_class.html";
+	}
+	
+	@RequestMapping("/getWeixinLoginUserInfo")
+	@ResponseBody
+	public Map<String, String> getWeixinLoginUserInfo(HttpSession httpSession, HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		retMap.put("nickName", (String)httpSession.getAttribute("nickname"));
+		retMap.put("headimgurl", (String)httpSession.getAttribute("headimgurl"));
 		return retMap;
 	}
 	

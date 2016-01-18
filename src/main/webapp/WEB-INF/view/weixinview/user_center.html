@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<title>点豆大讲堂</title>
+        <link rel="stylesheet" href="/css/weixincss/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/weixincss/style.css">
+        <link rel="stylesheet" href="/css/weixincss/mygrowup.css">
+        <link rel="stylesheet" href="/css/weixincss/course.css" />
+    </head>
+    <body style="padding-bottom:54px;">
+        <div class="mygrowup">            
+            <div class="avatar">
+                <div class="avatarimg center-block">
+                    <a href="/perinfo/160454" uid="160454">
+                        <img id="person_img" src="" alt="个人头像"/>
+                    </a>
+                </div>
+            </div>
+            <h1 class="nickname text-center" id="nickname"></h1>
+            <h2 class="experience text-center"></h2>
+            <ul>
+                <li style="width:100%;margin:5px 0px;">
+                    <p style="margin-left:10px;padding-bottom:0px;">当前已购买课程列表</p>
+                </li>
+                
+            </ul>
+        </div>
+        <div id="load_tip" style="text-align: center; margin-top: 30%;">正在加载课程列表...</div>
+        <div class="courselist">
+			<ul id="courseList">
+			</ul>
+		</div>
+		<nav class="navbar  navbar-fixed-bottom" role="navigation">
+			<div>
+				<ul id="mynav" class="nav">
+				<li style="float:left;">
+					<a href="/view/weixinview/recent_class.html">
+						<div class="center-block icon">
+							<span style="font-size:20px;color:#81d742;" class='glyphicon glyphicon-stats'></span>
+						</div>
+						<h3 class="text-center">点豆直播课</h3>
+					</a>
+				</li>
+				<li style="float:right;">
+					<a href="/view/weixinview/user_center.html">
+						<div class="center-block icon">
+							<span style="font-size:20px;color:#81d742;" class='glyphicon glyphicon-user'></span>
+						</div>
+						<h3 class="text-center">个人中心</h3>
+				</a></li>
+			</ul>
+			</div>
+		</nav>
+    </body>
+    <script src="/js/weixinjs/jquery.js"></script>
+    <script>
+    var openid = "";
+    $.ajax({
+		url: '/getWeixinLoginUserInfo',
+		type: "POST",
+		data: {},
+		success: function(data) {
+			document.getElementById('person_img').setAttribute('src', data.headimgurl);
+			document.getElementById('nickname').innerHTML = data.nickName;
+			openId = data.openid;
+		},
+		error: function(status, error) {
+		}
+	});
+    function checkJsonIsEmpty(json) {
+		var isEmpty = true;
+		if (json == null) return true;
+		for (var jsonKey in json) {
+			isEmpty = false;
+			break;
+		}
+		return isEmpty;
+	}
+    function createDataList(data) {
+		var detailNode = document.getElementById('courseList');
+		for (var i in data) {
+			var liNode = document.createElement('li');
+			liNode.setAttribute('class', 'course-list-item clearfix');
+			liNode.setAttribute('course_id', data[i].id);
+			liNode.innerHTML = "<div class='item-avatar'><img src='/files/imgs/"+data[i].image+"'/></div><div class='item-content'><h3 class='item-title'>"+data[i].name+"</h3><div class='item-time'><span class='menter'><span class='glyphicon glyphicon-time'></span>"+data[i].course_date_readable+"</span></div><div class='item-teacher'><span class='menter'><span class='glyphicon glyphicon-user'></span>"+data[i].teacher+"</span></div></div>";
+			detailNode.appendChild(liNode);
+			if(!hasWriteShareInfo) {
+				hasWriteShareInfo = true;
+				imgUrl = "http://www.diandou.me/files/imgs/" + data[i].image;
+				descContent = data[i].teacher;
+				shareTitle = data[i].name;
+			}
+		}
+		$('.course-list-item.clearfix').each(function(){
+			$(this).click(function(event) {
+				var elem = this;
+				var course_id = elem.getAttribute('course_id');
+				window.location = "/course/playPayedLiveCourse?course_id=" + course_id;
+			});
+		});
+	}
+    $.ajax({
+		url: '/course/getUserPayedCourse',
+		type: "POST",
+		data: {openid:openid},
+		success: function(data) {
+			if (!checkJsonIsEmpty(data.data)) {
+				createDataList(data.data);
+				document.getElementById('load_tip').style.display = 'none';
+			} else {
+				document.getElementById('load_tip').innerHTML = '您还有购买过直播课，暂时没有数据！';
+			}
+		},
+		error: function(status, error) {
+		}
+	});
+    </script>
+</html>

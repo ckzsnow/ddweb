@@ -65,22 +65,15 @@ public class WeixinCourseController {
 	@RequestMapping("/course/getAllRecentCourse")
 	@ResponseBody
 	public Map<String, Object> getAllRecentCourse(HttpSession httpSession, HttpServletRequest request) {
-		String userId = (String)httpSession.getAttribute("user_id");
+		String userId = (String)httpSession.getAttribute("openid");
 		List<CourseModel> courseList = courseDao.getAllRecentCourse();
 		Map<String, Object> retMap = new HashMap<>();
-		if(userId == null || userId.isEmpty()) {
-			retMap.put("hasLogin", "0");
-			retMap.put("data", courseList);
-			return retMap;
-		}
 		for(CourseModel cm : courseList) {
 			UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, cm.getId());
 			if(ucm == null) {
-				cm.setSelect_status(0);
+				cm.setPay_status(0);
 			} else {
-				cm.setSelect_status(1);
-				cm.setPay_status(ucm.getPay_status());
-				cm.setForward_status(ucm.getForward_status());
+				cm.setPay_status(1);
 			}
 		}
 		retMap.put("hasLogin", "1");
@@ -92,6 +85,14 @@ public class WeixinCourseController {
 	@ResponseBody
 	public List<UserCourseModel> getUserCourse(HttpServletRequest request) {
 		List<UserCourseModel> courseList = userCourseDao.getAllUserCourseByHasUpload();
+		return courseList;
+	}
+	
+	@RequestMapping("/course/getUserPayedCourse")
+	@ResponseBody
+	public List<UserCourseModel> getUserPayedCourse(HttpServletRequest request) {
+		String userId = request.getParameter("openid");
+		List<UserCourseModel> courseList = userCourseDao.getUserCourseByUserId(userId);
 		return courseList;
 	}
 	
@@ -107,6 +108,24 @@ public class WeixinCourseController {
 		String courseId = request.getParameter("course_id");
 		httpSession.setAttribute("courseid", courseId);
 		return "redirect:/view/weixinview/play_live_class.html";
+	}
+	
+	@RequestMapping("/course/playPayedLiveCourse")
+	public String playPayedLiveCourse(HttpSession httpSession, HttpServletRequest request) {
+		String courseId = request.getParameter("course_id");
+		httpSession.setAttribute("courseid", courseId);
+		return "redirect:/view/weixinview/play_live_class.html";
+	}
+	
+	@RequestMapping("/course/clickLiveCourse")
+	public String clickLiveCourse(HttpSession httpSession, HttpServletRequest request) {
+		String courseId = request.getParameter("course_id");
+		String userId = (String)httpSession.getAttribute("userId");
+		if(userId == null || userId.isEmpty()) {
+			return "redirect:/view/weixinview/weixin_login.html";
+		} else {
+			return "redirect:/view/weixinview/play_live_class.html";
+		}
 	}
 	
 	@RequestMapping("/course/selectCourse")
