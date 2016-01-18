@@ -5,7 +5,7 @@ var shareTitle = "点豆成兵";
 function getJsConfigInfoSuccess(data,status) {
 	wx.config({
 		//debug:true,
-		appId: 'wx55d4da6e29cc6c83',
+		appId: 'wxbd6aef840715f99d',
 		timestamp: data.timestamp,
 		nonceStr: data.nonceStr,
 		signature: data.signature,

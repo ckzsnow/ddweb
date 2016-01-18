@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
+		<style>
+			.upload-file {
+				position: fixed;
+				z-index: 998;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background-color: rgba(0, 0, 0, .8);
+			}
+			
+			.dialog {
+				position: fixed;
+				z-index: 998;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background-color: rgba(0, 0, 0, .4);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-navbar-inner mui-bar mui-bar-nav" style="background-color:#1d8c3e;">
+			<h1 class="mui-title" style='text-align: center;color:white;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;'>点豆成兵公开课</h1>
+		</div>
+		<div class="mui-content">
+			<div id="mui_scroll_wrapper" class="mui-scroll-wrapper" style="background-color: white;">
+				<div class="mui-scroll">
+					<div style="margin-top:50px;margin-left:10px;margin-right:10px;">
+						<div id="slider" class="mui-slider">
+							<div class="mui-slider-group mui-slider-loop">
+								<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+								<div class="mui-slider-item mui-slider-item-duplicate">
+									<a href="#">
+										<img id="banner_begin" src="/files/bannerimgs/banner4.jpg">
+									</a>
+								</div>
+								<!-- 第一张 -->
+								<div class="mui-slider-item">
+									<a href="#">
+										<img id="banner1" src="/files/bannerimgs/banner1.jpg">
+									</a>
+								</div>
+								<!-- 第二张 -->
+								<div class="mui-slider-item">
+									<a href="#">
+										<img id="banner2" src="/files/bannerimgs/banner2.jpg">
+									</a>
+								</div>
+								<!-- 第三张 -->
+								<div class="mui-slider-item">
+									<a href="#">
+										<img id="banner3" src="/files/bannerimgs/banner3.jpg">
+									</a>
+								</div>
+								<!-- 第四张 -->
+								<div class="mui-slider-item">
+									<a href="#">
+										<img id="banner4" src="/files/bannerimgs/banner4.jpg">
+									</a>
+								</div>
+								<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+								<div class="mui-slider-item mui-slider-item-duplicate">
+									<a href="#">
+										<img id="banner_end" src="/files/bannerimgs/banner1.jpg">
+									</a>
+								</div>
+							</div>
+							<div class="mui-slider-indicator">
+								<div class="mui-indicator mui-active"></div>
+								<div class="mui-indicator"></div>
+								<div class="mui-indicator"></div>
+								<div class="mui-indicator"></div>
+							</div>
+						</div>
+					</div>
+					<div id="data_loading" class="mui-loading" style="margin-top:10px;">
+						<div class="mui-spinner"></div>
+						<div style="text-align: center;">正在加载数据</div>
+					</div>
+					<div id="tips_info" style="display:none;margin-top:10px;">
+						<div style="text-align: center;" id="tips_info_detail">服务器暂时无法处理请求，请稍后重试！</div>
+					</div>
+					<div id="courseList" style="display:none;margin-top:10px;">
+						<ul id="courseListDetail" class="mui-table-view">
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="scrollToTop" style="position:fixed;bottom: 75px;right:5px;z-index:9999999999;"><img class="scroll_to_top" style="width:25px;" src="/img/weixinimg/scroll_top.png"></div>
+			<div id="scrollToBottom" style="position:fixed;bottom: 50px;right:5px;z-index:9999999999;"><img class="scroll_to_bottom" style="width:25px;" src="/img/weixinimg/scroll_bottom.png"></div>
+		</div>
+	</body>
+	<script src="/js/weixinjs/mui.min.js"></script>
+	<script src="/js/weixinjs/jweixin-1.0.0.js"></script>
+	<script src="/js/weixinjs/weixin_share.js?201601062257"></script>
+	<script src="/js/weixinjs/open_class.js?201601062257"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	
+</html>

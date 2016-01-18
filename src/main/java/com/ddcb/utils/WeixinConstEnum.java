@@ -12,9 +12,9 @@ public enum WeixinConstEnum {
 
 	TEST_JS_TICKET_URL("https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=ACCESSTOKEN"),*/
 	
-	COMPANY_APP_ID("wx55d4da6e29cc6c83"),
+	COMPANY_APP_ID("wxbd6aef840715f99d"),
 
-	COMPANY_APP_SECRET("cecb286453f522f1141438a666fc5b07"),
+	COMPANY_APP_SECRET("fe6ad4e96e31bb5cc240904585629721"),
 
 	COMPANY_ACCESS_TOKEN_URL("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET"),
 	//COMPANY_ACCESS_TOKEN_URL("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET"),
