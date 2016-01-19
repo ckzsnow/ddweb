@@ -15,5 +15,7 @@ public interface ICourseDao {
 	public List<CourseModel> getAllOpenCourse();
 	
 	public List<CourseModel> getAllRecentCourse();
+	
+	public List<CourseModel> getAllUserPayedCourseRecentCourse();
 		
 }

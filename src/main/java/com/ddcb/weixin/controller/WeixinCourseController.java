@@ -94,10 +94,12 @@ public class WeixinCourseController {
 	public List<CourseModel> getUserPayedCourse(HttpSession httpSession, HttpServletRequest request) {
 		String userId = (String)httpSession.getAttribute("openid");
 		logger.debug("getUserPayedCourse userId : {}", userId);
-		List<CourseModel> courseList = courseDao.getAllRecentCourse();
+		List<CourseModel> courseList = courseDao.getAllUserPayedCourseRecentCourse();
+		logger.debug("getUserPayedCourse courseList : {}", courseList.size());
 		List<CourseModel> retList = new ArrayList<>();
 		for(CourseModel cm : courseList) {
 			UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, cm.getId(), 1);
+			logger.debug("getUserPayedCourse ucm : {}", ucm != null);
 			if(ucm != null) {
 				retList.add(cm);
 			}
