@@ -1,8 +1,11 @@
 package com.ddcb.weixin.controller;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,18 +18,25 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.xml.sax.InputSource;
 
+import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserDao;
+import com.ddcb.model.UserCourseModel;
 import com.ddcb.model.UserModel;
 import com.ddcb.utils.UserPwdMD5Encrypt;
 import com.ddcb.utils.WeixinConstEnum;
+import com.ddcb.utils.WeixinPayUtils;
 import com.ddcb.utils.WeixinTools;
+import com.ddcb.utils.WxPayDto;
+import com.ddcb.utils.WxPayResult;
 
 @Controller
 public class WeixinUserController {
@@ -36,6 +46,9 @@ public class WeixinUserController {
 	
 	@Autowired
 	private IUserDao userDao;
+	
+	@Autowired
+	private IUserCourseDao userCourseDao;
 	
 	@RequestMapping("/weixin/weixinRegisterUser")
 	@ResponseBody
@@ -166,11 +179,9 @@ public class WeixinUserController {
 	@RequestMapping("/weixinLogin")
 	public String weixinAuthorizedLogin(HttpSession httpSession, HttpServletRequest request) {
 		String code = request.getParameter("code");
+		String view = request.getParameter("view");
 		String accessToken = "";
 		String openId = "";
-		if(code == null || code.isEmpty()) {
-			return "redirect:/view/weixinview/recent_class.html";
-		}
 		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
 		url = url.replace("APPID", WeixinConstEnum.COMPANY_APP_ID.toString()).replace("SECRET",
 				WeixinConstEnum.COMPANY_APP_SECRET.toString()).replace("CODE",
@@ -185,8 +196,10 @@ public class WeixinUserController {
 			httpSession.setAttribute("openid", retMap.get("openid"));
 			httpSession.setAttribute("nickname", retMap.get("nickname"));
 			httpSession.setAttribute("headimgurl", retMap.get("headimgurl"));
+			logger.debug("Auth openid : {}", openId);
+			logger.debug("Auth openid 2: {}", retMap.get("openid"));
 		}
-		return "redirect:/view/weixinview/recent_class.html";
+		return "redirect:/view/weixinview/" + view;
 	}
 	
 	@RequestMapping("/getWeixinLoginUserInfo")
@@ -196,6 +209,108 @@ public class WeixinUserController {
 		retMap.put("nickName", (String)httpSession.getAttribute("nickname"));
 		retMap.put("headimgurl", (String)httpSession.getAttribute("headimgurl"));
 		return retMap;
+	}
+	
+	@RequestMapping("/userChooseWeixinPay")
+	@ResponseBody
+	public String userChooseWeixinPay(HttpSession httpSession, HttpServletRequest request) {
+		String openId = (String)httpSession.getAttribute("openid");
+		String courseName = request.getParameter("coursename");
+		String courseId = request.getParameter("courseid");
+		Long courseId_ = null;
+		if(openId == null || openId.isEmpty()) {
+			return "\"ddcb_error_msg\":\"无法获取到您的openId，请退出后重新进入当前页面！\"";
+		}
+		try {
+			courseId_ = Long.valueOf(courseId);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+			return "\"ddcb_error_msg\":\"课程ID号丢失，请退出后重新进入当前页面！\"";
+		}
+		
+		String fee = request.getParameter("fee");
+		logger.debug("userChooseWeixinPay openid : {}", openId);
+		logger.debug("userChooseWeixinPay courseName : {}", courseName);
+		logger.debug("userChooseWeixinPay fee : {}", fee);
+		WxPayDto tpWxPay = new WxPayDto();
+		tpWxPay.setOpenId(openId);
+		tpWxPay.setBody(courseName);
+		tpWxPay.setOrderId(WeixinPayUtils.getNonceStr());
+		tpWxPay.setSpbillCreateIp(request.getRemoteAddr());
+		tpWxPay.setTotalFee(fee);
+		String finalPK = WeixinPayUtils.getPackage(tpWxPay);
+		if(finalPK == null || finalPK.isEmpty()) {
+			return "\"ddcb_error_msg\":\"微信服务器无法获取到支付ID，请稍后重试！\"";
+		}
+		UserCourseModel ucm = new UserCourseModel();
+		ucm.setCourse_id(courseId_);
+		ucm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+		ucm.setForward_status(0);
+		ucm.setPay_status(0);
+		ucm.setTradeNo(tpWxPay.getOrderId());
+		ucm.setUser_id(openId);
+		logger.debug("weixinpay UserCourseModel : {}", ucm.toString());
+		UserCourseModel model = userCourseDao.newGetUserCourseByUserIdAndCourseId(openId, courseId_);
+		if(model == null) {
+			if(userCourseDao.addUserCourseModel(ucm)) {
+				return finalPK;
+			} else {
+				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
+			}
+		} else {
+			if(userCourseDao.updateTradeNo(openId, courseId_, tpWxPay.getOrderId())) {
+				return finalPK;
+			} else {
+				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
+			}
+		}
+	}
+	
+	@RequestMapping("/weixinPayResult")
+	@ResponseBody
+	public String weixinPayResult(HttpSession httpSession, HttpServletRequest request) {
+		String inputLine;
+		String notityXml = "";
+		String resXml = "";
+		try {
+			while ((inputLine = request.getReader().readLine()) != null) {
+				notityXml += inputLine;
+			}
+			request.getReader().close();
+		} catch (Exception e) {
+			logger.debug(e.toString());
+		}
+
+		logger.debug("receive xml：" + notityXml);
+		
+		Map m = parseXmlToList2(notityXml);
+		WxPayResult wpr = new WxPayResult();
+		wpr.setAppid(m.get("appid").toString());
+		wpr.setBankType(m.get("bank_type").toString());
+		wpr.setCashFee(m.get("cash_fee").toString());
+		wpr.setFeeType(m.get("fee_type").toString());
+		wpr.setIsSubscribe(m.get("is_subscribe").toString());
+		wpr.setMchId(m.get("mch_id").toString());
+		wpr.setNonceStr(m.get("nonce_str").toString());
+		wpr.setOpenid(m.get("openid").toString());
+		wpr.setOutTradeNo(m.get("out_trade_no").toString());
+		wpr.setResultCode(m.get("result_code").toString());
+		wpr.setReturnCode(m.get("return_code").toString());
+		wpr.setSign(m.get("sign").toString());
+		wpr.setTimeEnd(m.get("time_end").toString());
+		wpr.setTotalFee(m.get("total_fee").toString());
+		wpr.setTradeType(m.get("trade_type").toString());
+		wpr.setTransactionId(m.get("transaction_id").toString());
+		
+		if("SUCCESS".equals(wpr.getResultCode())){
+			resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
+			+ "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
+			userCourseDao.updatePayStatusByTradeNo(wpr.getOpenid(), wpr.getOutTradeNo(), 1);
+		}else{
+			resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
+			+ "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+		}
+		return resXml;
 	}
 	
 	private void sendSMSCode(Map<String, String> retMap, String phone) {
@@ -229,5 +344,28 @@ public class WeixinUserController {
 		} catch (DocumentException e) {
 			logger.error(e.toString());
 		}	
+	}
+	
+	private Map parseXmlToList2(String xml) {
+		Map retMap = new HashMap();
+		try {
+			StringReader read = new StringReader(xml);
+			// 创建新的输入源SAX 解析器将使用 InputSource 对象来确定如何读取 XML 输入
+			InputSource source = new InputSource(read);
+			// 创建一个新的SAXBuilder
+			org.jdom.input.SAXBuilder sb = new SAXBuilder();
+			// 通过输入源构造一个Document
+			org.jdom.Document doc = (org.jdom.Document) sb.build(source);
+			org.jdom.Element root = doc.getRootElement();// 指向根节点
+			List<org.jdom.Element> es = root.getChildren();
+			if (es != null && es.size() != 0) {
+				for (org.jdom.Element element : es) {
+					retMap.put(element.getName(), element.getValue());
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(e.toString());
+		}
+		return retMap;
 	}
 }

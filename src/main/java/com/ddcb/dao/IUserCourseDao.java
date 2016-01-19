@@ -10,12 +10,22 @@ public interface IUserCourseDao {
 	
 	public List<UserCourseModel> getAllUserCourseByHasUpload();
 	
+	public UserCourseModel newGetUserCourseByUserIdAndCourseId(String userId, long courseId);
+	
+	public List<UserCourseModel> getAllUserPayedCourse(String userId);
+	
 	public UserCourseModel getUserCourseByUserIdAndCourseId(String userId, long courseId);
+	
+	public UserCourseModel getUserCourseByUserIdAndCourseId(String userId, long courseId, int payStatus);
 	
 	public boolean addUserCourseModel(UserCourseModel userCourseModel);
 	
 	public boolean updatePayStatus(String userId, long courseId, int payStatus);
 	
+	public boolean updatePayStatusByTradeNo(String userId, String tradeNo, int payStatus);
+	
 	public boolean updateForwardStatus(String userId, long courseId, int forwardStatus);
+	
+	public boolean updateTradeNo(String userId, long courseId, String tradeNo);
 		
 }

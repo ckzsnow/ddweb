@@ -44,8 +44,8 @@ public class UserCourseDaoImpl implements IUserCourseDao {
 	@Override
 	public boolean addUserCourseModel(UserCourseModel userCourseModel) {
 		try{
-			String sql= "insert into user_course(user_id, pay_status, forward_status, course_id, create_time) values (?,?,?,?,?)";
-			int num = jdbcTemplate.update(sql, userCourseModel.getUser_id(), 
+			String sql= "insert into user_course(user_id, trade_no, pay_status, forward_status, course_id, create_time) values (?,?,?,?,?,?)";
+			int num = jdbcTemplate.update(sql, userCourseModel.getUser_id(), userCourseModel.getTradeNo(), 
 					userCourseModel.getPay_status(), userCourseModel.getForward_status(),
 					userCourseModel.getCourse_id(), userCourseModel.getCreate_time());
 			return num > 0;
@@ -90,5 +90,66 @@ public class UserCourseDaoImpl implements IUserCourseDao {
 			logger.debug("exception : {}", e.toString());
 		}
 		return list;
+	}
+
+	@Override
+	public boolean updatePayStatusByTradeNo(String userId, String tradeNo, int payStatus) {
+		String sql = "update user_course set pay_status=? where user_id=? and trade_no=?";
+		int affectedRows = 0;
+		try {
+			affectedRows = jdbcTemplate.update(sql, payStatus, userId, tradeNo);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return affectedRows != 0;
+	}
+
+	@Override
+	public UserCourseModel getUserCourseByUserIdAndCourseId(String userId, long courseId, int payStatus) {
+		UserCourseModel ucm = null;
+		try {
+			String sql = "select * from user_course where user_id=? and course_id=? and pay_status=?";
+			ucm = jdbcTemplate.queryForObject(sql, new Object[]{userId, courseId, payStatus}, new UserCourseMapper());
+		} catch (Exception e) {
+			logger.error("exception : {}", e.toString());
+		}
+		return ucm;
+	}
+
+	@Override
+	public List<UserCourseModel> getAllUserPayedCourse(String userId) {
+		List<UserCourseModel> list = null;
+		try {
+			String sql = "select * from user_course where user_id=? and pay_status=?";
+			list = jdbcTemplate.query(sql, new Object[]{userId, 1}, new RowMapperResultSetExtractor<UserCourseModel>(
+							new UserCourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public boolean updateTradeNo(String userId, long courseId, String tradeNo) {
+		String sql = "update user_course set trade_no=? where user_id=? and course_id=?";
+		int affectedRows = 0;
+		try {
+			affectedRows = jdbcTemplate.update(sql, tradeNo, userId, courseId);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return affectedRows != 0;
+	}
+
+	@Override
+	public UserCourseModel newGetUserCourseByUserIdAndCourseId(String userId, long courseId) {
+		UserCourseModel ucm = null;
+		try {
+			String sql = "select * from user_course where user_id=? and course_id=?";
+			ucm = jdbcTemplate.queryForObject(sql, new Object[]{userId, courseId}, new UserCourseMapper());
+		} catch (Exception e) {
+			logger.error("exception : {}", e.toString());
+		}
+		return ucm;
 	}
 }

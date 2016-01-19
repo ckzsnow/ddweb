@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="/css/weixincss/mygrowup.css">
         <link rel="stylesheet" href="/css/weixincss/course.css" />
     </head>
-    <body style="padding-bottom:54px;">
+    <body style="padding-bottom:10px;">
         <div class="mygrowup">            
             <div class="avatar">
                 <div class="avatarimg center-block">
@@ -35,7 +35,7 @@
 			<ul id="courseList">
 			</ul>
 		</div>
-		<nav class="navbar  navbar-fixed-bottom" role="navigation">
+		<!-- <nav class="navbar  navbar-fixed-bottom" role="navigation">
 			<div>
 				<ul id="mynav" class="nav">
 				<li style="float:left;">
@@ -55,7 +55,7 @@
 				</a></li>
 			</ul>
 			</div>
-		</nav>
+		</nav> -->
     </body>
     <script src="/js/weixinjs/jquery.js"></script>
     <script>
@@ -89,12 +89,6 @@
 			liNode.setAttribute('course_id', data[i].id);
 			liNode.innerHTML = "<div class='item-avatar'><img src='/files/imgs/"+data[i].image+"'/></div><div class='item-content'><h3 class='item-title'>"+data[i].name+"</h3><div class='item-time'><span class='menter'><span class='glyphicon glyphicon-time'></span>"+data[i].course_date_readable+"</span></div><div class='item-teacher'><span class='menter'><span class='glyphicon glyphicon-user'></span>"+data[i].teacher+"</span></div></div>";
 			detailNode.appendChild(liNode);
-			if(!hasWriteShareInfo) {
-				hasWriteShareInfo = true;
-				imgUrl = "http://www.diandou.me/files/imgs/" + data[i].image;
-				descContent = data[i].teacher;
-				shareTitle = data[i].name;
-			}
 		}
 		$('.course-list-item.clearfix').each(function(){
 			$(this).click(function(event) {
@@ -109,9 +103,9 @@
 		type: "POST",
 		data: {openid:openid},
 		success: function(data) {
-			if (!checkJsonIsEmpty(data.data)) {
-				createDataList(data.data);
+			if (!checkJsonIsEmpty(data)) {
 				document.getElementById('load_tip').style.display = 'none';
+				createDataList(data);
 			} else {
 				document.getElementById('load_tip').innerHTML = '您还有购买过直播课，暂时没有数据！';
 			}

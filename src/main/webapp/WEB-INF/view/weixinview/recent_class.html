@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="/css/weixincss/course.css" />
 </head>
 
-<body style="mrgin-bottom: 0px;">
+<body style="padding-bottom: 10px;">
 	<!--标题-->
 	<h1 class="text-center mantoutitle">点豆直播课</h1>
 	<div id="load_tip" style="text-align: center; margin-top: 50%;">正在加载直播课程列表...</div>
@@ -23,7 +23,7 @@
 		<ul id="courseList">
 		</ul>
 	</div>
-	<nav class="navbar  navbar-fixed-bottom" role="navigation">
+	<!-- <nav class="navbar  navbar-fixed-bottom" role="navigation">
 		<div>
 				<ul id="mynav" class="nav">
 				<li style="float:left;">
@@ -43,151 +43,11 @@
 				</a></li>
 			</ul>
 			</div>
-	</nav>
+	</nav> -->
 </body>
 <script src="/js/weixinjs/jquery.js"></script>
-<script src="/js/weixinjs/lazyloadv3.js"></script>
-<script src="/js/weixinjs/md5.js"></script>
-<script src="/js/weixinjs/sha1.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script>
-function Trim(str,is_global)
-{
-    var result;
-    result = str.replace(/(^\s+)|(\s+$)/g,"");
-    if(is_global.toLowerCase()=="g") result = result.replace(/\s/g,"");
-    return result;
-}
-function clearBr(key)
-{
-    key = Trim(key,"g");
-    key = key.replace(/<\/?.+?>/g,"");
-    key = key.replace(/[\r\n]/g, "");
-    return key;
-}
-
-//获取随机数
-function getANumber()
-{
-    var date = new Date();
-    var times1970 = date.getTime();
-    var times = date.getDate() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds();
-    var encrypt = times * times1970;
-    if(arguments.length == 1){
-        return arguments[0] + encrypt;
-    }else{
-        return encrypt;
-    }
-    
-}
-
-var oldPackageString;
-
-function getPartnerId()
-{
-    return "1304885801";
-}
-
-function getPartnerKey()
-{
-    return "zaq12wsxcde34rfvbgt56yhnmju78ki9";
-}
-
-function getPackage()
-{
-    var banktype = "WX";
-    var body = document.form1.body.value;//商品名称信息，这里由测试网页填入。
-    var fee_type = "1";//费用类型，这里1为默认的人民币
-    var input_charset = "GBK";//字符集，这里将统一使用GBK
-    var notify_url = "http://www.qq.com";//支付成功后将通知该地址
-    var out_trade_no = ""+getANumber();//订单号，商户需要保证该字段对于本商户的唯一性
-    var partner = getPartnerId();//测试商户号
-    var spbill_create_ip = "127.0.0.1";//用户浏览器的ip，这个需要在前端获取。这里使用127.0.0.1测试值
-    var total_fee = document.form1.totalFee.value;//总金额。
-    var partnerKey = getPartnerKey();//这个值和以上其他值不一样是：签名需要它，而最后组成的传输字符串不能含有它。这个key是需要商户好好保存的。
-    
-    //首先第一步：对原串进行签名，注意这里不要对任何字段进行编码。这里是将参数按照key=value进行字典排序后组成下面的字符串,在这个字符串最后拼接上key=XXXX。由于这里的字段固定，因此只需要按照这个顺序进行排序即可。
-    var signString = "bank_type="+banktype+"&body="+body+"&fee_type="+fee_type+"&input_charset="+input_charset+"&notify_url="+notify_url+"&out_trade_no="+out_trade_no+"&partner="+partner+"&spbill_create_ip="+spbill_create_ip+"&total_fee="+total_fee+"&key="+partnerKey;
-    
-    var md5SignValue =  ("" + CryptoJS.MD5(signString)).toUpperCase();
-    //然后第二步，对每个参数进行url转码，如果您的程序是用js，那么需要使用encodeURIComponent函数进行编码。
-    
-    
-    banktype = encodeURIComponent(banktype);
-    body=encodeURIComponent(body);
-    fee_type=encodeURIComponent(fee_type);
-    input_charset = encodeURIComponent(input_charset);
-    notify_url = encodeURIComponent(notify_url);
-    out_trade_no = encodeURIComponent(out_trade_no);
-    partner = encodeURIComponent(partner);
-    spbill_create_ip = encodeURIComponent(spbill_create_ip);
-    total_fee = encodeURIComponent(total_fee);
-    
-    //然后进行最后一步，这里按照key＝value除了sign外进行字典序排序后组成下列的字符串,最后再串接sign=value
-    var completeString = "bank_type="+banktype+"&body="+body+"&fee_type="+fee_type+"&input_charset="+input_charset+"&notify_url="+notify_url+"&out_trade_no="+out_trade_no+"&partner="+partner+"&spbill_create_ip="+spbill_create_ip+"&total_fee="+total_fee;
-    completeString = completeString + "&sign="+md5SignValue;
-    
-    
-    oldPackageString = completeString;//记住package，方便最后进行整体签名时取用
-    
-    return completeString;
-}
-
-
-//下面是app进行签名的操作：
-
-var oldTimeStamp ;//记住timestamp，避免签名时的timestamp与传入的timestamp时不一致
-var oldNonceStr ; //记住nonceStr,避免签名时的nonceStr与传入的nonceStr不一致
-
-function getAppId()
-{
-    return document.form1.appId.value;
-}
-
-function getAppKey()
-{
-    return "2Wozy2aksie1puXUBpWD8oZxiD1DfQuEaiC7KcRATv1Ino3mdopKaPGQQ7TtkNySuAmCaDCrw4xhPY5qKTBl7Fzm0RgR3c0WaVYIXZARsxzHV2x7iwPPzOz94dnwPWSn";
-}
-
-
-
-function getTimeStamp()
-{
-    var timestamp=new Date().getTime();
-    var timestampstring = timestamp.toString();//一定要转换字符串
-    oldTimeStamp = timestampstring;
-    return timestampstring;
-}
-
-function getNonceStr()
-{
-    var $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var maxPos = $chars.length;
-    var noceStr = "";
-    for (i = 0; i < 32; i++) {
-        noceStr += $chars.charAt(Math.floor(Math.random() * maxPos));
-    }
-    oldNonceStr = noceStr;
-    return noceStr;
-}
-
-function getSignType()
-{
-    return "SHA1";
-}
-
-function getSign()
-{
-    var app_id = getAppId().toString();
-    var app_key = getAppKey().toString();
-    var nonce_str = oldNonceStr;
-    var package_string = oldPackageString;
-    var time_stamp = oldTimeStamp;
-    //第一步，对所有需要传入的参数加上appkey作一次key＝value字典序的排序
-    var keyvaluestring = "appid="+app_id+"&appkey="+app_key+"&noncestr="+nonce_str+"&package="+package_string+"&timestamp="+time_stamp;
-    sign = CryptoJS.SHA1(keyvaluestring).toString();
-    return sign;
-}
 		var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 		var lineLink = window.location.href;
 		var descContent = "点豆成兵---为进取心而生，专注职场“传、帮、带”";
@@ -203,61 +63,6 @@ function getSign()
 			}
 			return isEmpty;
 		}
-		function createDataList(data) {
-			var detailNode = document.getElementById('courseList');
-			for (var i in data) {
-				var liNode = document.createElement('li');
-				liNode.setAttribute('class', 'course-list-item clearfix');
-				liNode.setAttribute('course_id', data[i].id);
-				liNode.setAttribute('pay_status', data[i].pay_status);
-				if(data[i].pay_status == "1") {
-					liNode.innerHTML = "<div class='item-avatar'><img src='/files/imgs/"+data[i].image+"'/></div><div class='item-content'><h3 class='item-title'>"+data[i].name+"</h3><div class='item-time'><span class='menter'><span class='glyphicon glyphicon-time'></span>"+data[i].course_date_readable+"</span></div><div class='item-teacher'><span class='menter'><span class='glyphicon glyphicon-user'></span>"+data[i].teacher+"</span></div></div><div style='float:right;padding-right:10px;color:#888888;'>已购买</div>";
-				} else {
-					liNode.innerHTML = "<div class='item-avatar'><img src='/files/imgs/"+data[i].image+"'/></div><div class='item-content'><h3 class='item-title'>"+data[i].name+"</h3><div class='item-time'><span class='menter'><span class='glyphicon glyphicon-time'></span>"+data[i].course_date_readable+"</span></div><div class='item-teacher'><span class='menter'><span class='glyphicon glyphicon-user'></span>"+data[i].teacher+"</span></div></div><div style='float:right;padding-right:10px;'><button course_id='"+data[i].id+"' type='button' class='btn btn-success btn-xs'>点击购买</button></div>";
-				}
-				detailNode.appendChild(liNode);
-				if(!hasWriteShareInfo) {
-					hasWriteShareInfo = true;
-					imgUrl = "http://www.diandou.me/files/imgs/" + data[i].image;
-					descContent = data[i].teacher;
-					shareTitle = data[i].name;
-				}
-			}
-			$('.course-list-item.clearfix').each(function(){
-				$(this).click(function(event) {
-					var elem = this;
-					var course_id = elem.getAttribute('course_id');
-					var pay_status = elem.getAttribute('pay_status');
-					if(pay_status == "1") {
-						window.location = "/course/playPayedLiveCourse?course_id=" + course_id;
-					}
-				});
-			});
-			$('.course-list-item.clearfix button').each(function(){
-				$(this).click(function(event) {
-					var elem = this;
-					var course_id = elem.getAttribute('course_id');
-					window.location = "/view/weixinview/buy_course.html";
-				});
-			});
-		}
-		$.ajax({
-			url: '/course/getAllRecentCourse',
-			type: "POST",
-			data: {},
-			success: function(data) {
-				if (!checkJsonIsEmpty(data.data)) {
-					createDataList(data.data);
-					document.getElementById('load_tip').style.display = 'none';
-				} else {
-					document.getElementById('load_tip').innerHTML = '暂时没有公开课，敬请关注！';
-				}
-			},
-			error: function(status, error) {
-				document.getElementById('load_tip').innerHTML = '暂时没有公开课，敬请关注！';
-			}
-		});
-
 		function getJsConfigInfoSuccess(data, status) {
 			wx.config({
 				appId: 'wxbd6aef840715f99d',
@@ -318,6 +123,94 @@ function getSign()
 					}
 				});
 			}, 500);
+			function createDataList(data) {
+				var detailNode = document.getElementById('courseList');
+				for (var i in data) {
+					var liNode = document.createElement('li');
+					liNode.setAttribute('class', 'course-list-item clearfix');
+					liNode.setAttribute('course_id', data[i].id);
+					liNode.setAttribute('pay_status', data[i].pay_status);
+					liNode.setAttribute('course_name', data[i].name);
+					if(data[i].pay_status == "1") {
+						liNode.innerHTML = "<div class='item-avatar'><img src='/files/imgs/"+data[i].image+"'/></div><div class='item-content'><h3 class='item-title'>"+data[i].name+"</h3><div class='item-time'><span class='menter'><span class='glyphicon glyphicon-time'></span>"+data[i].course_date_readable+"</span></div><div class='item-teacher'><span class='menter'><span class='glyphicon glyphicon-user'></span>"+data[i].teacher+"</span></div></div><div style='float:left;margin-top:10px;'><button style='width:115px;' course_id='"+data[i].id+"' course_name='"+data[i].name+"' type='button' disabled class='btn btn-success btn-xs'>已经购买</button></div></div>";
+					} else {
+						liNode.innerHTML = "<div class='item-avatar'><img src='/files/imgs/"+data[i].image+"'/></div><div class='item-content'><h3 class='item-title'>"+data[i].name+"</h3><div class='item-time'><span class='menter'><span class='glyphicon glyphicon-time'></span>"+data[i].course_date_readable+"</span></div><div class='item-teacher'><span class='menter'><span class='glyphicon glyphicon-user'></span>"+data[i].teacher+"</span></div></div><div style='float:left;margin-top:10px;'><button style='width:115px;' course_id='"+data[i].id+"' course_name='"+data[i].name+"' type='button' class='btn btn-success btn-xs'>点击购买</button></div>";
+					}
+					detailNode.appendChild(liNode);
+					if(!hasWriteShareInfo) {
+						hasWriteShareInfo = true;
+						imgUrl = "http://www.diandou.me/files/imgs/" + data[i].image;
+						descContent = data[i].teacher;
+						shareTitle = data[i].name;
+					}
+				}
+				$('.course-list-item.clearfix').each(function(){
+					$(this).click(function(event) {
+						var elem = this;
+						var pay_status = elem.getAttribute('pay_status');
+						var course_id = elem.getAttribute('course_id');
+						if(pay_status == "1") {
+							window.location = "/course/playPayedLiveCourse?course_id=" + course_id;
+						}
+					});
+				});
+				$('.course-list-item.clearfix button').each(function(){
+					$(this).click(function(event) {
+						var elem = this;
+						var course_name = elem.getAttribute('course_name');
+						var course_id = elem.getAttribute('course_id');
+						$.ajax({
+							url: '/userChooseWeixinPay',
+							type: "POST",
+							data: {coursename:course_name,courseid:course_id,fee:"0.01"},
+							success: function(data) {
+								var jsonData = JSON.parse("{"+data+"}");
+								if(jsonData.ddcb_error_msg != null) {
+									alert(jsonData.ddcb_error_msg);
+								} else {
+									wx.chooseWXPay({
+							            timestamp: jsonData.timeStamp,
+							            nonceStr: jsonData.nonceStr,
+							            package: jsonData.package,
+							            signType: jsonData.signType,
+							            paySign: jsonData.paySign,
+							            success: function (res) {
+							            	if(res.errMsg != null && res.errMsg == "chooseWXPay:ok") {
+							            		alert("支付成功，若课程未显示已购买，可稍后重新进入公开课页面查看。");
+							            		window.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbd6aef840715f99d&redirect_uri=http%3A%2F%2Fwww.diandou.me%2FweixinLogin%3Fview%3Drecent_class.html&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+							            	} else {
+							            		alert("支付失败！");
+							            	}																            
+							            },
+							            fail:function(res) {
+							            	alert(JSON.stringify(res));
+							            }
+							        });
+								}
+							},
+							error: function(status, error) {
+								alert("支付失败！");
+							}
+						});
+					});
+				});
+			}
+			$.ajax({
+				url: '/course/getAllRecentCourse',
+				type: "POST",
+				data: {},
+				success: function(data) {
+					if (!checkJsonIsEmpty(data.data)) {
+						createDataList(data.data);
+						document.getElementById('load_tip').style.display = 'none';
+					} else {
+						document.getElementById('load_tip').innerHTML = '暂时没有公开课，敬请关注！';
+					}
+				},
+				error: function(status, error) {
+					document.getElementById('load_tip').innerHTML = '暂时没有公开课，敬请关注！';
+				}
+			});
 		});
 	</script>
 

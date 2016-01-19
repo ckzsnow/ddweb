@@ -8,21 +8,19 @@ public class UserCourseModel {
 	private Integer pay_status;
 	private Integer forward_status;
 	private Long course_id;
-	private String upload_time;
-	private String screenshot;
+	private String tradeNo;
 	private Timestamp create_time;
 	
 	public UserCourseModel() {}
 	
-	public UserCourseModel(String user_id, Integer pay_status, Integer forward_status, Long course_id,
-			String upload_time, String screenshot, Timestamp create_time) {
+	public UserCourseModel(String user_id, String tradeNo, Integer pay_status, Integer forward_status, Long course_id,
+			Timestamp create_time) {
 		super();
 		this.user_id = user_id;
+		this.tradeNo = tradeNo;
 		this.pay_status = pay_status;
 		this.forward_status = forward_status;
 		this.course_id = course_id;
-		this.upload_time = upload_time;
-		this.screenshot = screenshot;
 		this.create_time = create_time;
 	}
 
@@ -32,6 +30,14 @@ public class UserCourseModel {
 
 	public void setUser_id(String user_id) {
 		this.user_id = user_id;
+	}
+
+	public String getTradeNo() {
+		return tradeNo;
+	}
+
+	public void setTradeNo(String tradeNo) {
+		this.tradeNo = tradeNo;
 	}
 
 	public Integer getPay_status() {
@@ -65,28 +71,12 @@ public class UserCourseModel {
 	public void setCreate_time(Timestamp create_time) {
 		this.create_time = create_time;
 	}
-
-	public String getUpload_time() {
-		return upload_time;
-	}
-
-	public void setUpload_time(String upload_time) {
-		this.upload_time = upload_time;
-	}
-
-	public String getScreenshot() {
-		return screenshot;
-	}
-
-	public void setScreenshot(String screenshot) {
-		this.screenshot = screenshot;
-	}
-
+	
 	@Override
 	public String toString() {
 		return "UserCourseModel [user_id=" + user_id + ", pay_status=" + pay_status + ", forward_status="
-				+ forward_status + ", course_id=" + course_id + ", upload_time=" + upload_time + ", screenshot="
-				+ screenshot + ", create_time=" + create_time + "]";
+				+ forward_status + ", course_id=" + course_id + ", tradeNo=" + tradeNo + ", create_time=" + create_time
+				+ "]";
 	}
 		
 }

@@ -3,6 +3,7 @@ package com.ddcb.weixin.controller;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,7 @@ public class WeixinCourseController {
 		List<CourseModel> courseList = courseDao.getAllRecentCourse();
 		Map<String, Object> retMap = new HashMap<>();
 		for(CourseModel cm : courseList) {
-			UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, cm.getId());
+			UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, cm.getId(), 1);
 			if(ucm == null) {
 				cm.setPay_status(0);
 			} else {
@@ -90,10 +91,18 @@ public class WeixinCourseController {
 	
 	@RequestMapping("/course/getUserPayedCourse")
 	@ResponseBody
-	public List<UserCourseModel> getUserPayedCourse(HttpServletRequest request) {
-		String userId = request.getParameter("openid");
-		List<UserCourseModel> courseList = userCourseDao.getUserCourseByUserId(userId);
-		return courseList;
+	public List<CourseModel> getUserPayedCourse(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
+		logger.debug("getUserPayedCourse userId : {}", userId);
+		List<CourseModel> courseList = courseDao.getAllRecentCourse();
+		List<CourseModel> retList = new ArrayList<>();
+		for(CourseModel cm : courseList) {
+			UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, cm.getId(), 1);
+			if(ucm != null) {
+				retList.add(cm);
+			}
+		}
+		return retList;
 	}
 	
 	@RequestMapping("/course/playCourse")
