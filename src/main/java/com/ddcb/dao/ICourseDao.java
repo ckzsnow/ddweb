@@ -12,9 +12,15 @@ public interface ICourseDao {
 	
 	public List<CourseModel> getAllCourse();
 	
+	public List<CourseModel> getAllOpenCourse(int page, int count);
+	
 	public List<CourseModel> getAllOpenCourse();
 	
-	public List<CourseModel> getAllRecentCourse();
+	public List<CourseModel> getAllOpenCourseByCondition(int page, int count, String field, String industry, String competency);
+		
+	public List<CourseModel> getAllLiveCourse(int page, int count);
+	
+	public List<CourseModel> getAllLiveCourseByCondition(int page, int count, String field, String industry, String competency);
 	
 	public List<CourseModel> getAllUserPayedCourseRecentCourse();
 		

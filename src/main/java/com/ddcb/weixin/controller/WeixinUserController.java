@@ -4,6 +4,9 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +32,10 @@ import org.xml.sax.InputSource;
 
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserDao;
+import com.ddcb.dao.IWeixinUserDao;
 import com.ddcb.model.UserCourseModel;
 import com.ddcb.model.UserModel;
+import com.ddcb.model.WeixinUserModel;
 import com.ddcb.utils.UserPwdMD5Encrypt;
 import com.ddcb.utils.WeixinConstEnum;
 import com.ddcb.utils.WeixinPayUtils;
@@ -49,6 +54,9 @@ public class WeixinUserController {
 	
 	@Autowired
 	private IUserCourseDao userCourseDao;
+	
+	@Autowired
+	private IWeixinUserDao weixinUserDao;
 	
 	@RequestMapping("/weixin/weixinRegisterUser")
 	@ResponseBody
@@ -178,28 +186,35 @@ public class WeixinUserController {
 	
 	@RequestMapping("/weixinLogin")
 	public String weixinAuthorizedLogin(HttpSession httpSession, HttpServletRequest request) {
+		String sessionOpenId = (String)httpSession.getAttribute("openid");
 		String code = request.getParameter("code");
 		String view = request.getParameter("view");
-		String accessToken = "";
-		String openId = "";
-		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
-		url = url.replace("APPID", WeixinConstEnum.COMPANY_APP_ID.toString()).replace("SECRET",
-				WeixinConstEnum.COMPANY_APP_SECRET.toString()).replace("CODE",
-						code);
-		Map<Object, Object> map = WeixinTools.httpGet(url);
-		if (map != null && map.containsKey("access_token") && map.containsKey("refresh_token")) {
-			accessToken = (String) map.get("access_token");
-			openId = (String) map.get("openid");
-			url = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-			url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
-			Map<Object, Object> retMap = WeixinTools.httpGet(url);
-			httpSession.setAttribute("openid", retMap.get("openid"));
-			httpSession.setAttribute("nickname", retMap.get("nickname"));
-			httpSession.setAttribute("headimgurl", retMap.get("headimgurl"));
-			logger.debug("Auth openid : {}", openId);
-			logger.debug("Auth openid 2: {}", retMap.get("openid"));
+		httpSession.setAttribute("url_code", code);
+		if(sessionOpenId == null || sessionOpenId.isEmpty()) {
+			String accessToken = "";
+			String openId = "";
+			String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
+			url = url.replace("APPID", WeixinConstEnum.COMPANY_APP_ID.toString()).replace("SECRET",
+					WeixinConstEnum.COMPANY_APP_SECRET.toString()).replace("CODE",
+							code);
+			Map<Object, Object> map = WeixinTools.httpGet(url);
+			if (map != null && map.containsKey("access_token") && map.containsKey("refresh_token")) {
+				accessToken = (String) map.get("access_token");
+				openId = (String) map.get("openid");
+				url = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+				url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
+				Map<Object, Object> retMap = WeixinTools.httpGet(url);
+				httpSession.setAttribute("openid", retMap.get("openid"));
+				httpSession.setAttribute("nickname", retMap.get("nickname"));
+				httpSession.setAttribute("headimgurl", retMap.get("headimgurl"));
+				logger.debug("Auth openid : {}", openId);
+				logger.debug("Auth openid 2: {}", retMap.get("openid"));
+			}
 		}
-		return "redirect:/view/weixinview/" + view;
+		if(sessionOpenId == null || sessionOpenId.isEmpty()) {
+			
+		}
+		return "view/weixinview/" + view;
 	}
 	
 	@RequestMapping("/getWeixinLoginUserInfo")
@@ -211,6 +226,117 @@ public class WeixinUserController {
 		return retMap;
 	}
 	
+	@RequestMapping("/userVIPWeixinPay")
+	@ResponseBody
+	public String userVIPWeixinPay(HttpSession httpSession, HttpServletRequest request) {
+		String openId = (String)httpSession.getAttribute("openid");
+		String userType = request.getParameter("user_type");
+		logger.debug("userVIPWeixinPay userType : {}", userType);
+		if(openId == null || openId.isEmpty()) {
+			return "\"ddcb_error_msg\":\"无法获取到您的openId，请关闭所有页面，从公众号菜单重新进入！\"";
+		}
+		WeixinPayUtils.setNotifyurl("http://www.diandou.me/weixinVIPPayResult");
+		String fee = request.getParameter("fee");
+		logger.debug("userChooseWeixinPay openid : {}", openId);
+		logger.debug("userChooseWeixinPay fee : {}", fee);
+		WxPayDto tpWxPay = new WxPayDto();
+		tpWxPay.setOpenId(openId);
+		tpWxPay.setBody("点都大讲堂VIP会员");
+		tpWxPay.setOrderId(WeixinPayUtils.getNonceStr());
+		tpWxPay.setSpbillCreateIp(request.getRemoteAddr());
+		tpWxPay.setTotalFee(fee);
+		tpWxPay.setAttach(userType);
+		String finalPK = WeixinPayUtils.getPackage(tpWxPay);
+		if(finalPK == null || finalPK.isEmpty()) {
+			return "\"ddcb_error_msg\":\"微信服务器无法获取到支付ID，请稍后重试！\"";
+		}
+		WeixinUserModel model = weixinUserDao.getWeixinUserByUserId(openId);
+		if(model == null) {
+			model = new WeixinUserModel();
+			model.setUser_id(openId);
+			model.setCreate_time(new Timestamp(System.currentTimeMillis()));
+			model.setTrade_no(tpWxPay.getOrderId());
+			model.setUser_type(Integer.valueOf(userType));
+			if(weixinUserDao.addWeixinUser(model)) {
+				return finalPK;
+			} else {
+				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
+			}
+		} else {
+			if(weixinUserDao.updateWeixinUser(openId, tpWxPay.getOrderId(), 0, null)) {
+				return finalPK;
+			} else {
+				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
+			}
+		}
+	}
+	
+	@RequestMapping("/weixinVIPPayResult")
+	@ResponseBody
+	public String weixinVIPPayResult(HttpSession httpSession, HttpServletRequest request) {
+		String inputLine;
+		String notityXml = "";
+		String resXml = "";
+		try {
+			while ((inputLine = request.getReader().readLine()) != null) {
+				notityXml += inputLine;
+			}
+			request.getReader().close();
+		} catch (Exception e) {
+			logger.debug(e.toString());
+		}
+
+		logger.debug("receive xml:" + notityXml);
+		Map m = parseXmlToList2(notityXml);
+		WxPayResult wpr = new WxPayResult();
+		wpr.setAppid(m.get("appid").toString());
+		wpr.setBankType(m.get("bank_type").toString());
+		wpr.setCashFee(m.get("cash_fee").toString());
+		wpr.setFeeType(m.get("fee_type").toString());
+		wpr.setIsSubscribe(m.get("is_subscribe").toString());
+		wpr.setMchId(m.get("mch_id").toString());
+		wpr.setNonceStr(m.get("nonce_str").toString());
+		wpr.setOpenid(m.get("openid").toString());
+		wpr.setOutTradeNo(m.get("out_trade_no").toString());
+		wpr.setResultCode(m.get("result_code").toString());
+		wpr.setReturnCode(m.get("return_code").toString());
+		wpr.setSign(m.get("sign").toString());
+		wpr.setTimeEnd(m.get("time_end").toString());
+		wpr.setTotalFee(m.get("total_fee").toString());
+		wpr.setTradeType(m.get("trade_type").toString());
+		wpr.setTransactionId(m.get("transaction_id").toString());
+		String user_vip_type = m.get("attach").toString();
+		logger.debug("user_vip_type:" + user_vip_type);
+		logger.debug("user_vip_type openid:" + wpr.getOpenid());
+		if("SUCCESS".equals(wpr.getResultCode())){
+			resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
+			+ "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
+			Date date=new Date();
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			if(("1").equals(user_vip_type)) {
+				calendar.add(Calendar.MONTH, 1);
+				calendar.getTime().getTime();
+				Timestamp tm = new Timestamp(calendar.getTime().getTime());
+				weixinUserDao.updateWeixinUser(wpr.getOpenid(), wpr.getOutTradeNo(), 1, tm);
+			} else if(("2").equals(user_vip_type)) {
+				calendar.add(Calendar.MONTH, 3);
+				calendar.getTime().getTime();
+				Timestamp tm = new Timestamp(calendar.getTime().getTime());
+				weixinUserDao.updateWeixinUser(wpr.getOpenid(), wpr.getOutTradeNo(), 1, tm);
+			} else if(("3").equals(user_vip_type)) {
+				calendar.add(Calendar.MONTH, 12);
+				calendar.getTime().getTime();
+				Timestamp tm = new Timestamp(calendar.getTime().getTime());
+				weixinUserDao.updateWeixinUser(wpr.getOpenid(), wpr.getOutTradeNo(), 1, tm);
+			}
+		}else{
+			resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
+			+ "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+		}
+		return resXml;
+	}
+	
 	@RequestMapping("/userChooseWeixinPay")
 	@ResponseBody
 	public String userChooseWeixinPay(HttpSession httpSession, HttpServletRequest request) {
@@ -218,6 +344,7 @@ public class WeixinUserController {
 		String courseName = request.getParameter("coursename");
 		String courseId = request.getParameter("courseid");
 		Long courseId_ = null;
+		WeixinPayUtils.setNotifyurl("http://www.diandou.me/weixinPayResult");
 		if(openId == null || openId.isEmpty()) {
 			return "\"ddcb_error_msg\":\"无法获取到您的openId，请退出后重新进入当前页面！\"";
 		}
@@ -367,5 +494,15 @@ public class WeixinUserController {
 			logger.debug(e.toString());
 		}
 		return retMap;
+	}
+	
+	public static void main(String[] args) {
+		Date date=new Date();
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH,5);
+		calendar.getTime().getTime();
+		Timestamp tm = new Timestamp(calendar.getTime().getTime());
+		System.out.println(tm.toString());
 	}
 }

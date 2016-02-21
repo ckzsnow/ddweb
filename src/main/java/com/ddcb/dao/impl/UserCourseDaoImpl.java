@@ -28,6 +28,18 @@ public class UserCourseDaoImpl implements IUserCourseDao {
 	public List<UserCourseModel> getUserCourseByUserId(String userId) {
 		return null;
 	}
+	
+	public List<CourseModel> getUserCourseByUserIdAndPayStatus(String userId, int payStatus) {
+		List<CourseModel> list = null;
+		try {
+			String sql = "select * from user_course as a inner join course as b on b.id=a.course_id and a.user_id=? and a.pay_status=?";
+			list = jdbcTemplate.query(sql, new Object[]{userId, payStatus}, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
 
 	@Override
 	public UserCourseModel getUserCourseByUserIdAndCourseId(String userId, long courseId) {

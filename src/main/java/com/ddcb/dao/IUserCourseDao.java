@@ -2,11 +2,14 @@ package com.ddcb.dao;
 
 import java.util.List;
 
+import com.ddcb.model.CourseModel;
 import com.ddcb.model.UserCourseModel;
 
 public interface IUserCourseDao {
 
 	public List<UserCourseModel> getUserCourseByUserId(String userId);
+	
+	public List<CourseModel> getUserCourseByUserIdAndPayStatus(String userId, int payStatus);
 	
 	public List<UserCourseModel> getAllUserCourseByHasUpload();
 	

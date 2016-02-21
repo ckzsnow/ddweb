@@ -1,5 +1,7 @@
 package com.ddcb.dao.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -46,7 +48,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllOpenCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where (select date_add(c.course_date, interval c.course_length minute)) <= current_timestamp and c.course_type=0 order by c.course_date desc";
+			String sql = "select c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -56,11 +58,26 @@ public class CourseDaoImpl implements ICourseDao {
 	}
 	
 	@Override
-	public List<CourseModel> getAllRecentCourse() {
+	public List<CourseModel> getAllOpenCourse(int page, int count) {
 		List<CourseModel> list = null;
+		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where (select date_add(c.course_date, interval c.course_length minute)) > current_timestamp order by c.course_date desc";
-			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
+			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc limit ?,?";
+			list = jdbcTemplate.query(sql, new Object[]{beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+	
+	@Override
+	public List<CourseModel> getAllOpenCourseByCondition(int page, int count, String field, String industry, String competency) {
+		List<CourseModel> list = null;
+		int beginIndex = page == 1? 0:(page - 1) * count;
+		try {
+			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
+			list = jdbcTemplate.query(sql, new Object[]{field, industry, competency, beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());
@@ -75,7 +92,7 @@ public class CourseDaoImpl implements ICourseDao {
 			jdbcTemplate.update(new PreparedStatementCreator() {
 				public PreparedStatement createPreparedStatement(
 						Connection connection) throws SQLException {
-					String sql = "insert into course(name, course_abstract, teacher, image, course_time, course_date, course_length, create_time, course_type) values (?,?,?,?,?,?,?,?,?)";
+					String sql = "insert into course(name, course_abstract, teacher, image, course_time, course_date, course_length, create_time, course_type, course_field, course_industry, course_competency, price) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 					PreparedStatement ps = connection.prepareStatement(sql,
 							Statement.RETURN_GENERATED_KEYS);
 					ps.setString(1, courseModel.getName());
@@ -87,6 +104,10 @@ public class CourseDaoImpl implements ICourseDao {
 					ps.setString(7, courseModel.getCourse_length());
 					ps.setTimestamp(8, courseModel.getCreate_time());
 					ps.setInt(9, courseModel.getCourseType());
+					ps.setString(10, courseModel.getCourseField());
+					ps.setString(11, courseModel.getCourseIndustry());
+					ps.setString(12, courseModel.getCourseCompetency());
+					ps.setString(13, courseModel.getPrice());
 					return ps;
 				}
 			}, keyHolder);
@@ -102,7 +123,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
+			String sql = "select c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -115,8 +136,37 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllUserPayedCourseRecentCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
+			String sql = "select c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<CourseModel> getAllLiveCourse(int page, int count) {
+		List<CourseModel> list = null;
+		int beginIndex = page == 1? 0:(page - 1) * count;
+		try {
+			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=1 order by c.course_date desc limit ?,?";
+			list = jdbcTemplate.query(sql, new Object[]{beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<CourseModel> getAllLiveCourseByCondition(int page, int count, String field, String industry,
+			String competency) {
+		List<CourseModel> list = null;
+		int beginIndex = page == 1? 0:(page - 1) * count;
+		try {
+			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=1 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
+			list = jdbcTemplate.query(sql, new Object[]{field, industry, competency, beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());

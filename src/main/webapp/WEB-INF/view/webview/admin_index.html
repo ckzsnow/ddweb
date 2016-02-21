@@ -204,6 +204,12 @@
 												</div>
 												<!-- /.form-group -->
 												<div class="form-group">
+													<label for="course_length" class="control-label col-lg-4">课程价格(单位：元)</label>
+													<div class="col-lg-8">
+														<input type="text" id="course_price" placeholder="" class="form-control" value="0">
+													</div>
+												</div>
+												<div class="form-group">
 													<label for="course_length" class="control-label col-lg-4">课程时常(单位：分钟)</label>
 													<div class="col-lg-8">
 														<input type="text" id="course_length" placeholder="" class="form-control">
@@ -215,6 +221,60 @@
 							                          <select id="course_type" class="form-control">
 							                            <option value='0'>公开课</option>
 							                            <option value='1'>非公开课</option>
+							                          </select>
+							                        </div>
+							                      </div>
+							                      <div class="form-group">
+							                        <label class="control-label col-lg-4">课程领域</label>
+							                        <div class="col-lg-8">
+							                          <select id="course_field" class="form-control">
+							                            <option value='0'>互联网</option>
+							                          </select>
+							                        </div>
+							                      </div>
+							                      <div class="form-group">
+							                        <label class="control-label col-lg-4">课程行业</label>
+							                        <div class="col-lg-8">
+							                          <select id="course_industry" class="form-control">
+							                            <option value='0'>社交</option>
+							                            <option value='1'>游戏</option>
+							                            <option value='2'>电商</option>
+							                            <option value='3'>教育</option>
+							                            <option value='4'>金融</option>
+							                            <option value='5'>医疗</option>
+							                            <option value='6'>旅游</option>
+							                            <option value='7'>餐饮</option>
+							                            <option value='8'>交通</option>
+							                            <option value='9'>智能硬件</option>
+							                            <option value='10'>可穿戴</option>
+							                            <option value='11'>招聘</option>
+							                            <option value='12'>工具</option>
+							                            <option value='13'>O2O</option>
+							                            <option value='14'>汽车</option>
+							                            <option value='15'>房地产</option>
+							                            <option value='16'>企业服务</option>
+							                            <option value='17'>IT服务</option>
+							                            <option value='18'>大数据</option>
+							                            <option value='19'>传媒</option>
+							                            <option value='20'>娱乐</option>
+							                            <option value='21'>安全</option>
+							                            <option value='22'>能源</option>
+							                            <option value='23'>其它</option>
+							                          </select>
+							                        </div>
+							                      </div>
+							                      <div class="form-group">
+							                        <label class="control-label col-lg-4">课程职能</label>
+							                        <div class="col-lg-8">
+							                          <select id="course_competency" class="form-control">
+							                            <option value='0'>技术</option>
+							                            <option value='1'>产品</option>
+							                            <option value='1'>运营</option>
+							                            <option value='1'>市场</option>
+							                            <option value='1'>招聘</option>
+							                            <option value='1'>管理</option>
+							                            <option value='1'>投融资</option>
+							                            <option value='1'>战略</option>
 							                          </select>
 							                        </div>
 							                      </div>
@@ -317,9 +377,32 @@
 													</div>
 												</div> -->
 												<div class="form-group">
-													<label for="details" class="control-label col-lg-4">课程视频链接地址</label>
+													<label for="details" class="control-label col-lg-4">课程视频</label>
 													<div class="col-lg-8">
-														<input id="video_src" name="video_src" class="form-control"></input>
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+								                            <div class="input-group" style="width:270px;">
+								                              <div class="form-control uneditable-input span3" style="width:200px;" data-trigger="fileinput">
+								                                <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename" style="width:150px;"></span> </div>
+								                              <span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new">选择文件</span> <span class="fileinput-exists">修改</span> 
+								                                <input type="hidden" value="" name="..."><input type="file" name="video_src" id="video_src">
+								                              </span> 
+								                              <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">删除</a> 
+								                            </div>
+								                         </div>
+								                         <a href="javascript:addCourseMenu();" class="btn btn-success btn-sm btn-grad pull-right">添加课时</a>
+								                         <a href="javascript:delCourseMenu();" class="btn btn-warning btn-sm btn-grad pull-right">删除课时</a>
+													</div>
+												</div>
+												<div class="form-group" id="course_menu">
+													<div id="course_menu_1">
+														<label for="teacher_position" class="control-label col-lg-4">课时1标题</label>
+														<div class="col-lg-8">
+															<input type="text" id="course_menu_1_title" placeholder="" class="form-control">
+														</div>
+														<label for="teacher_position" class="control-label col-lg-4">课时1时间结束点</label>
+														<div class="col-lg-8">
+															<input type="text" id="course_menu_1_time" placeholder="" class="form-control">
+														</div>
 													</div>
 												</div>
 											</form>
@@ -392,6 +475,18 @@
 		<!-- Metis demo scripts -->
 		<script src="/js/webjs/app.js"></script>
 		<script>
+			var course_menu_count = 1;
+			function delCourseMenu() {
+				if(course_menu_count == 1) return;
+				var lastNode = document.getElementById("course_menu").lastChild;
+				document.getElementById("course_menu").removeChild(lastNode);
+				course_menu_count--;
+			}
+			function addCourseMenu() {
+				course_menu_count++;
+				var courseMenu = "<div id='course_menu_"+course_menu_count+"'><label for='teacher_position' class='control-label col-lg-4'>课时"+course_menu_count+"标题</label><div class='col-lg-8'><input type='text' id='course_menu_"+course_menu_count+"_title' placeholder='' class='form-control'></div><label for='teacher_position' class='control-label col-lg-4'>课时"+course_menu_count+"时间结束点</label><div class='col-lg-8'><input type='text' id='course_menu_"+course_menu_count+"_time' placeholder='' class='form-control'></div></div>";
+				$('#course_menu').append(courseMenu);
+			}
 			$('.outer').height($('#left').height() - 48 - 61 - 19);
 			$('.inner').height($('#left').height() - 48 - 61 - 20 - 20);
 			$(window).resize(function() {
@@ -422,8 +517,12 @@
 				var course_img = $('#course_img').val();
 				var teacher_img = $('#teacher_img').val();
 				var course_type = $('#course_type').val();
+				course_field = $('#course_field option:selected').text();
+				course_industry = $('#course_industry option:selected').text();
+				course_competency = $('#course_competency option:selected').text();
 				var video_img = $('#video_img').val();
 				var video_src = $('#video_src').val();
+				var course_price = $('#course_price').val();
 				if(name == null || name == "" ||
 					teacher == null || teacher == "" ||
 					teacher_name == null || teacher_name == "" ||
@@ -436,25 +535,54 @@
 					course_length == null || course_length == "" ||
 					teacher_img == null || teacher_img == "" ||
 					video_img == null || video_img == "" ||
-					video_src == null || video_src == "") {
+					video_src == null || video_src == "" ||
+					course_field == null || course_field == "" ||
+					course_industry == null || course_industry == "" ||
+					course_competency == null || course_competency == "") {
 					$('#tips_info').html("<p>所有选项全部需要填写，您当前还有未填写的，请检查！</p>");
 					$('#helpModal').modal("show");
 					return null;
-				} else {
+				}
+				var hasFinish = true;
+				$('#course_menu>div input').each(function(){
+					if(course_type == 1) return;
+					if($(this).val() == null || $(this).val() == "") {
+						$('#tips_info').html("<p>课时标题或时间节点还有未填写的，请检查！</p>");
+						$('#helpModal').modal("show");
+						hasFinish = false;
+					}
+				});
+				if(hasFinish) {
+					var course_menu = "";
+					var course_menu_index = 1;
+					$('#course_menu>div input').each(function(){
+						if(course_menu_index % 2 == 0) {
+							course_menu += $(this).val() + ";";
+						} else {
+							course_menu += $(this).val() + "###DDCB###";
+						}
+						course_menu_index++;
+					});
 					var data = {
-						name:name,
-						teacher:teacher,
-						teacher_name:teacher_name,
-						teacher_position:teacher_position,
-						teacher_info:teacher_info,
-						crowd:crowd,
-						details:details,
-						course_date:course_date,
-						course_length:course_length,
-						course_type:course_type,
-						video_src:video_src
-					};
-					return data;
+							name:name,
+							teacher:teacher,
+							teacher_name:teacher_name,
+							teacher_position:teacher_position,
+							teacher_info:teacher_info,
+							crowd:crowd,
+							details:details,
+							course_date:course_date,
+							course_length:course_length,
+							course_type:course_type,
+							course_menu:course_menu,
+							course_field:course_field,
+							course_industry:course_industry,
+							course_competency:course_competency,
+							course_price:course_price
+						};
+						return data;
+				} else {
+					return null;
 				}
 			}
 			$('#submit_course').click(function() {
@@ -478,6 +606,7 @@
 					fd.append("files", document.getElementById("course_img").files[0]);
 					fd.append("files", document.getElementById("teacher_img").files[0]);
 					fd.append("files", document.getElementById("video_img").files[0]);
+					fd.append("files", document.getElementById("video_src").files[0]);
 					//fd.append("files", document.getElementById("video_src").files[0]);
 					xhr.upload.addEventListener("progress", function(evt) {
 						if (evt.lengthComputable) {
@@ -505,6 +634,9 @@
 							$('#video_img').val("");
 							$('#video_src').val("");
 							$('#course_length').val("");
+							$('#course_menu>div input').each(function(){
+								$(this).val("");
+							});
 							$(".btn.btn-default.fileinput-exists").each(function(){
 								this.click();
 							});

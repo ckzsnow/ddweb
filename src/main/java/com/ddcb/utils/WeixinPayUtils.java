@@ -19,6 +19,14 @@ public class WeixinPayUtils {
 	// 微信支付成功后通知地址 必须要求80端口并且地址不能带参数
 	private static String notifyurl = "http://www.diandou.me/weixinPayResult"; // Key
 
+	public static String getNotifyurl() {
+		return notifyurl;
+	}
+
+	public static void setNotifyurl(String notifyurl) {
+		WeixinPayUtils.notifyurl = notifyurl;
+	}
+
 	/**
 	 * @param args
 	 */
@@ -43,7 +51,7 @@ public class WeixinPayUtils {
 		// 订单号
 		String orderId = tpWxPayDto.getOrderId();
 		// 附加数据 原样返回
-		String attach = "";
+		String attach = tpWxPayDto.getAttach();
 		// 总金额以分为单位，不带小数点
 		String totalFee = getMoney(tpWxPayDto.getTotalFee());
 
@@ -93,7 +101,7 @@ public class WeixinPayUtils {
 		String createOrderURL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
 		code_url = GetWxOrderno.getCodeUrl(createOrderURL, xml);
-		System.out.println("code_url----------------" + code_url);
+		logger.debug("code_url----------------" + code_url);
 
 		return code_url;
 	}
@@ -111,7 +119,7 @@ public class WeixinPayUtils {
 		// 订单号
 		String orderId = tpWxPayDto.getOrderId();
 		// 附加数据 原样返回
-		String attach = "";
+		String attach = tpWxPayDto.getAttach();
 		// 总金额以分为单位，不带小数点
 		String totalFee = getMoney(tpWxPayDto.getTotalFee());
 

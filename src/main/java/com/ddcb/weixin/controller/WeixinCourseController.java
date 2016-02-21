@@ -63,10 +63,60 @@ public class WeixinCourseController {
 		return courseList;
 	}
 	
+	@RequestMapping("/course/getAllOpenCourseByPage")
+	@ResponseBody
+	public List<CourseModel> getAllOpenCourseByPage(HttpServletRequest request) {
+		String page = request.getParameter("page");
+		String count = request.getParameter("count");
+		int page_ = Integer.valueOf(page);
+		int count_ = Integer.valueOf(count);
+		List<CourseModel> courseList = courseDao.getAllOpenCourse(page_, count_);
+		return courseList;
+	}
+	
+	@RequestMapping("/course/getAllOpenCourseByCondition")
+	@ResponseBody
+	public List<CourseModel> getAllOpenCourseByCondition(HttpServletRequest request) {
+		String field = request.getParameter("field");
+		String industry = request.getParameter("industry");
+		String competency = request.getParameter("competency");
+		String page = request.getParameter("page");
+		String count = request.getParameter("count");
+		int page_ = Integer.valueOf(page);
+		int count_ = Integer.valueOf(count);
+		List<CourseModel> courseList = courseDao.getAllOpenCourseByCondition(page_, count_, field, industry, competency);
+		return courseList;
+	}
+	
+	@RequestMapping("/course/getAllLiveCourseByPage")
+	@ResponseBody
+	public List<CourseModel> getAllLiveCourseByPage(HttpServletRequest request) {
+		String page = request.getParameter("page");
+		String count = request.getParameter("count");
+		int page_ = Integer.valueOf(page);
+		int count_ = Integer.valueOf(count);
+		List<CourseModel> courseList = courseDao.getAllLiveCourse(page_, count_);
+		return courseList;
+	}
+	
+	@RequestMapping("/course/getAllLiveCourseByCondition")
+	@ResponseBody
+	public List<CourseModel> getAllLiveCourseByCondition(HttpServletRequest request) {
+		String field = request.getParameter("field");
+		String industry = request.getParameter("industry");
+		String competency = request.getParameter("competency");
+		String page = request.getParameter("page");
+		String count = request.getParameter("count");
+		int page_ = Integer.valueOf(page);
+		int count_ = Integer.valueOf(count);
+		List<CourseModel> courseList = courseDao.getAllLiveCourseByCondition(page_, count_, field, industry, competency);
+		return courseList;
+	}
+	
 	@RequestMapping("/course/getAllRecentCourse")
 	@ResponseBody
 	public Map<String, Object> getAllRecentCourse(HttpSession httpSession, HttpServletRequest request) {
-		String userId = (String)httpSession.getAttribute("openid");
+		/*String userId = (String)httpSession.getAttribute("openid");
 		List<CourseModel> courseList = courseDao.getAllRecentCourse();
 		Map<String, Object> retMap = new HashMap<>();
 		for(CourseModel cm : courseList) {
@@ -79,7 +129,8 @@ public class WeixinCourseController {
 		}
 		retMap.put("hasLogin", "1");
 		retMap.put("data", courseList);
-		return retMap;
+		return retMap;*/
+		return null;
 	}
 	
 	@RequestMapping("/course/getUserCourse")
@@ -161,7 +212,7 @@ public class WeixinCourseController {
 	public CourseDetailModel getCourseDetailByCourseId(HttpSession httpSession) {
 		String courseId = (String)httpSession.getAttribute("courseid");
 		CourseDetailModel courseDetailModel = null;
-		try {
+		/*try {
 			long id = Long.valueOf(courseId);
 			courseDetailModel = courseDetailDao.getCourseDetailByCourseId(id);
 			CourseModel cm = courseDao.getCourseByCourseId(id);
@@ -170,7 +221,7 @@ public class WeixinCourseController {
 			courseDetailModel.setName(cm.getName());
 		} catch(Exception e) {
 			logger.debug("exception : {}", e.toString());
-		}
+		}*/
 		return courseDetailModel;
 	}
 	

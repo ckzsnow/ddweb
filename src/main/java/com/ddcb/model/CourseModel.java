@@ -15,6 +15,10 @@ public class CourseModel {
 	private String course_length;
 	private Timestamp create_time;
 	private Integer courseType;
+	private String courseField;
+	private String courseIndustry;
+	private String courseCompetency;
+	private String price;
 	
 	private Integer select_status;
 	private Integer pay_status;
@@ -24,7 +28,8 @@ public class CourseModel {
 	
 	public CourseModel(Long id, String name, String course_abstract, String teacher, String image,
 			Timestamp course_date, String course_date_readable, String course_time, 
-			String course_length, Timestamp create_time, Integer courseType) {
+			String course_length, Timestamp create_time, Integer courseType,
+			String courseField, String courseIndustry, String courseCompetency, String price) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -37,6 +42,10 @@ public class CourseModel {
 		this.course_length = course_length;
 		this.create_time = create_time;
 		this.courseType = courseType;
+		this.courseField = courseField;
+		this.courseIndustry = courseIndustry;
+		this.courseCompetency = courseCompetency;
+		this.price = price;
 	}
 
 	public Long getId() {
@@ -151,12 +160,46 @@ public class CourseModel {
 		this.courseType = courseType;
 	}
 
+	public String getCourseField() {
+		return courseField;
+	}
+
+	public void setCourseField(String courseField) {
+		this.courseField = courseField;
+	}
+
+	public String getCourseIndustry() {
+		return courseIndustry;
+	}
+
+	public void setCourseIndustry(String courseIndustry) {
+		this.courseIndustry = courseIndustry;
+	}
+
+	public String getCourseCompetency() {
+		return courseCompetency;
+	}
+
+	public void setCourseCompetency(String courseCompetency) {
+		this.courseCompetency = courseCompetency;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+
 	@Override
 	public String toString() {
 		return "CourseModel [id=" + id + ", name=" + name + ", course_abstract=" + course_abstract + ", teacher="
 				+ teacher + ", image=" + image + ", course_date=" + course_date + ", course_date_readable="
 				+ course_date_readable + ", course_time=" + course_time + ", course_length=" + course_length
-				+ ", create_time=" + create_time + ", courseType=" + courseType + ", select_status=" + select_status
-				+ ", pay_status=" + pay_status + ", forward_status=" + forward_status + "]";
+				+ ", create_time=" + create_time + ", courseType=" + courseType + ", courseField=" + courseField
+				+ ", courseIndustry=" + courseIndustry + ", courseCompetency=" + courseCompetency + ", price=" + price
+				+ ", select_status=" + select_status + ", pay_status=" + pay_status + ", forward_status="
+				+ forward_status + "]";
 	}
 }
