@@ -11,7 +11,7 @@ ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 List<CourseModel> list = courseDao.getAllOpenCourse(1,8);
 String code = (String)session.getAttribute("url_code");
 Map<String, String> result = new HashMap<>();
-result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_open_class&code="+code+"&state=123");
+result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb_open_class&code="+code+"&state=123");
 %>
 <!DOCTYPE html>
 <html>
@@ -172,10 +172,10 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_open_c
 	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
 	    						rootNode.appendChild(liNode);
 	    						liNode.addEventListener('tap',function(){
-	    					        window.location.href=liNode.getAttribute('course_path'); 
+	    					        window.location.href=this.getAttribute('course_path'); 
 	    					    });
             				}
-            				if(i<8) {
+            				if(i<7) {
             					mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
             				} else {
             					mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
@@ -226,7 +226,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_open_c
 		    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
 		    						rootNode.appendChild(liNode);
 		    						liNode.addEventListener('tap',function(){
-		    					        window.location.href=liNode.getAttribute('course_path'); 
+		    					        window.location.href=this.getAttribute('course_path'); 
 		    					    });
 	            				}
 	    					} else {
@@ -258,7 +258,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_open_c
 		    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
 		    						rootNode.appendChild(liNode);
 		    						liNode.addEventListener('tap',function(){
-		    					        window.location.href=liNode.getAttribute('course_path'); 
+		    					        window.location.href=this.getAttribute('course_path'); 
 		    					    });
 	            				}
 	    					} else {

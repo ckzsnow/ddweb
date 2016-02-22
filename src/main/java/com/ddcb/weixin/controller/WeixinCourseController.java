@@ -24,10 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.ICourseDetailDao;
+import com.ddcb.dao.IUserCollectionDao;
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserForwardDao;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
+import com.ddcb.model.LiveCourseModel;
+import com.ddcb.model.UserCollectionModel;
 import com.ddcb.model.UserCourseModel;
 import com.ddcb.model.UserForwardModel;
 
@@ -45,6 +48,9 @@ public class WeixinCourseController {
 	
 	@Autowired
 	private IUserForwardDao userForwardDao;
+	
+	@Autowired
+	private IUserCollectionDao userCollectionDao;
 	
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
@@ -90,18 +96,20 @@ public class WeixinCourseController {
 	
 	@RequestMapping("/course/getAllLiveCourseByPage")
 	@ResponseBody
-	public List<CourseModel> getAllLiveCourseByPage(HttpServletRequest request) {
+	public List<LiveCourseModel> getAllLiveCourseByPage(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
 		String page = request.getParameter("page");
 		String count = request.getParameter("count");
 		int page_ = Integer.valueOf(page);
 		int count_ = Integer.valueOf(count);
-		List<CourseModel> courseList = courseDao.getAllLiveCourse(page_, count_);
+		List<LiveCourseModel> courseList = courseDao.getAllLiveCourse(page_, count_, userId);
 		return courseList;
 	}
 	
 	@RequestMapping("/course/getAllLiveCourseByCondition")
 	@ResponseBody
-	public List<CourseModel> getAllLiveCourseByCondition(HttpServletRequest request) {
+	public List<LiveCourseModel> getAllLiveCourseByCondition(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
 		String field = request.getParameter("field");
 		String industry = request.getParameter("industry");
 		String competency = request.getParameter("competency");
@@ -109,7 +117,7 @@ public class WeixinCourseController {
 		String count = request.getParameter("count");
 		int page_ = Integer.valueOf(page);
 		int count_ = Integer.valueOf(count);
-		List<CourseModel> courseList = courseDao.getAllLiveCourseByCondition(page_, count_, field, industry, competency);
+		List<LiveCourseModel> courseList = courseDao.getAllLiveCourseByCondition(page_, count_, field, industry, competency, userId);
 		return courseList;
 	}
 	
@@ -204,6 +212,37 @@ public class WeixinCourseController {
 		httpSession.setAttribute("courseid", courseId);
 		retMap.put("error_code", "0");
 		retMap.put("error_msg", "");
+		return retMap;
+	}
+	
+	@RequestMapping("/course/userCollectionCourse")
+	@ResponseBody
+	public Map<String, String> userCollectionCourse(HttpSession httpSession, HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		String courseId = request.getParameter("course_id");
+		String userId = (String) httpSession.getAttribute("openid");
+		long courseId_ = 0;
+		if(userId == null) {
+			retMap.put("error_code", "1");
+			retMap.put("error_msg", "无法获取您的身份信息，请退出重新进入该页面！");
+			return retMap;
+		}
+		try {
+			courseId_ = Long.valueOf(courseId);
+			if(!userCollectionDao.isFinishCollection(userId, courseId_)) {
+				UserCollectionModel ucm = new UserCollectionModel();
+				ucm.setCourse_id(courseId_);
+				ucm.setUser_id(userId);
+				ucm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+				userCollectionDao.addUserCollection(ucm);
+			}
+			retMap.put("error_code", "0");
+			retMap.put("error_msg", "");
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+			retMap.put("error_code", "2");
+			retMap.put("error_msg", "获取课程编号信息错误，请退出重新进入该页面！");
+		}
 		return retMap;
 	}
 	

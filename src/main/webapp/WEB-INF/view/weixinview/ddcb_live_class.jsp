@@ -2,8 +2,10 @@
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@ page import="org.springframework.web.context.WebApplicationContext"%>
 <%@ page import="com.ddcb.dao.ICourseDao"%>
+<%@ page import="com.ddcb.dao.IUserCollectionDao"%>
 <%@ page import="com.ddcb.dao.IUserCourseDao"%>
-<%@ page import="com.ddcb.model.CourseModel"%>
+<%@ page import="com.ddcb.model.LiveCourseModel"%>
+<%@ page import="com.ddcb.model.UserCollectionModel"%>
 <%@ page import="com.ddcb.model.UserCourseModel"%>
 <%@ page import="com.ddcb.utils.WeixinTools"%>
 <%@ page import="java.util.*"%>
@@ -11,21 +13,11 @@
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IUserCourseDao userCourseDao = (IUserCourseDao)wac.getBean("userCourseDao");
-List<CourseModel> list = courseDao.getAllLiveCourse(1, 1);
 String userId = (String)session.getAttribute("openid");
-if(list != null) {
-	for(CourseModel cm : list) {
-		UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, cm.getId(), 1);
-		if(ucm == null) {
-			cm.setPay_status(0);
-		} else {
-			cm.setPay_status(1);
-		}
-	}
-}
+List<LiveCourseModel> list = courseDao.getAllLiveCourse(1, 8, userId);
 String code = (String)session.getAttribute("url_code");
 Map<String, String> result = new HashMap<>();
-result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_class&code="+code+"&state=123");
+result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb_live_class&code="+code+"&state=123");
 %>
 <!DOCTYPE html>
 <html>
@@ -90,7 +82,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 			<%} else {%>
 			<div style="margin-top:10px;">
 				<ul id="data_list" class="mui-table-view">
-					<%for(CourseModel cm : list) { %>
+					<%for(LiveCourseModel cm : list) { %>
 					<li class="mui-table-view-cell mui-media" course_id="<%=cm.getId()%>">
 						<img class="mui-media-object mui-pull-left" style="height:50px;width:80px;max-width:100px;" src="/files/imgs/<%=cm.getImage()%>">
 						<div class="mui-media-body">
@@ -100,8 +92,16 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 						</div>
 						<div style="margin-top:5px;">
 							<div style="float:left;height:25px;line-height:25px;"><p style="font-size:12px;">课程售价：<%=cm.getPrice() %>元</p></div>
-							<div style="float:right;"><button onclick="buyCourseClick('<%=cm.getId()%>')" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">购买课程</button></div>
-							<div style="float:right;margin-right:5px;"><button onclick="collectionClick('<%=cm.getId()%>')" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">收藏课程</button></div>
+							<%if(cm.getPay_status() != null && cm.getPay_status() == 1) { %>
+								<div style="float:right;"><button onclick="enterClass(null, this)" course_id="<%=cm.getId()%>" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">点击进入</button></div>
+							<%} else {%>
+								<div style="float:right;"><button class="buy_class" course_price="<%=cm.getPrice() %>" course_id="<%=cm.getId()%>" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">购买课程</button></div>							
+							<%} %>
+							<%if(("1").equals(cm.getHasCollection())) { %>
+								<div style="float:right;margin-right:5px;"><button onclick="collectionClick('<%=cm.getId()%>', null)" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;" disabled>已经收藏</button></div>
+							<%} else {%>
+								<div style="float:right;margin-right:5px;"><button onclick="collectionClick('<%=cm.getId()%>', this)" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">收藏课程</button></div>							
+							<%} %>
 						</div>
 					</li>
 					<%} %>
@@ -127,7 +127,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 	                <div class="weui_loading_leaf weui_loading_leaf_10"></div>
 	                <div class="weui_loading_leaf weui_loading_leaf_11"></div>
 	            </div>
-	            <p style="color:white;" class="weui_toast_content">数据加载中</p>
+	            <p id="loadingToastTips" style="color:white;" class="weui_toast_content">数据加载中</p>
 	        </div>
         </div>
         <div id="collection_toast" style="display: none;">
@@ -154,11 +154,94 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 					}
 				}
 			});
-			function collectionClick(courseId) {
-				alert(courseId);
+			wx.config({
+				appId: 'wxbd6aef840715f99d',
+				timestamp: <%=result.get("timestamp")%>,
+				nonceStr: '<%=result.get("nonceStr")%>',
+				signature: '<%=result.get("signature")%>',
+				jsApiList: [
+					'onMenuShareQQ',
+					'onMenuShareTimeline',
+					'onMenuShareAppMessage',
+					'chooseWXPay'
+				]
+			});
+			function collectionClick(courseId, ele) {
+				document.getElementById("loadingToastTips").innerHTML = "正在处理请求";
+				document.getElementById("loadingToast").style.display = "";
+				mui.ajax({
+            		url: "/course/userCollectionCourse",
+            		type: "POST",
+            		data: {course_id:courseId},
+            		success: function(data) {
+            			document.getElementById("loadingToast").style.display = "none";
+        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+            			if(data.error_code != "0") {
+            				alert(data.error_msg);
+            			} else {
+            				document.getElementById("collection_toast").style.display = "";
+            				setTimeout(function(){document.getElementById("collection_toast").style.display = "none";}, 1500);
+            				ele.setAttribute("disabled", "true");
+            				ele.innerHTML = "已经收藏";
+            			}
+            		},
+            		error: function(status, error) {
+            			document.getElementById("loadingToast").style.display = "none";
+        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+            			alert("服务器暂时无法处理您的请求，请稍后重试！");
+            		}
+            	});
 			}
-			function buyCourseClick(courseId) {
-				alert(courseId);
+			wx.ready(function() {
+				var handler = function(event) {
+					document.getElementById("loadingToast").style.display = "";
+					var ele = event.target;
+					var courseId = ele.getAttribute("course_id");
+					var coursePrice = ele.getAttribute("course_price");
+					mui.ajax({
+	            		url: '/userLiveClassWeixinPay',
+	            		type: "POST",
+	            		data: {fee:"0.01",course_id:courseId},
+	            		success: function(data) {
+	            			document.getElementById("loadingToast").style.display = "none";
+	            			var jsonData = JSON.parse("{"+data+"}");
+	            			if(jsonData.ddcb_error_msg != null) {
+	            				alert(jsonData.ddcb_error_msg);
+	            			} else {
+	            				wx.chooseWXPay({
+	            		            timestamp: jsonData.timeStamp,
+	            		            nonceStr: jsonData.nonceStr,
+	            		            package: jsonData.package,
+	            		            signType: jsonData.signType,
+	            		            paySign: jsonData.paySign,
+	            		            success: function (res) {
+	            		            	if(res.errMsg != null && res.errMsg == "chooseWXPay:ok") {
+	                        				ele.innerHTML = "点击进入";
+	                        				ele.removeEventListener('tap', handler);
+	                        				ele.addEventListener('tap', enterClass);
+	            		            		alert("支付成功!");
+	            		            	} else {
+	            		            		alert("支付失败！");
+	            		            	}																            
+	            		            },
+	            		            fail:function(res) {
+	            		            	alert(JSON.stringify(res));
+	            		            }
+	            		        });
+	            			}
+	            		},
+	            		error: function(status, error) {
+	            			alert("支付失败！");
+	            		}
+	            	});
+				}
+				mui(".buy_class").each(function(){
+					this.addEventListener('tap', handler);
+				});
+			});
+			function enterClass(event, btn) {
+				var ele = event == null ? btn : event.target;
+				alert(ele.getAttribute('course_id'))
 			}
 			function checkJsonIsEmpty(json) {
 				var isEmpty = true;
@@ -187,10 +270,22 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_id', data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div><div style='float:right;'><button onclick='buyCourseClick(\""+data[i].id+"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div><div style='float:right;margin-right:5px;'><button onclick='collectionClick(\""+data[i].id+"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div></div>";
+	    						var liNodeStr = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
+	    						if(data[i].pay_status != null && data[i].pay_status=="1") {
+	    							liNodeStr += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
+	    						} else {
+	    							liNodeStr += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+	    						}
+								if(dta[i].hasCollection == "1") {
+									liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
+	    						} else {
+	    							liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\", this)' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
+	    						}
+	    						liNodeStr += "</div>";
+	    						liNode.innerHTML = liNodeStr;
 	    						rootNode.appendChild(liNode);
             				}
-            				if(i<8) {
+            				if(i<7) {
             					mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
             				} else {
             					mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
@@ -238,7 +333,19 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 		    						var liNode = document.createElement('li');
 		    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 		    						liNode.setAttribute('course_id', data[i].id);
-		    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div><div style='float:right;'><button onclick='buyCourseClick(\""+data[i].id+"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div><div style='float:right;margin-right:5px;'><button onclick='collectionClick(\""+data[i].id+"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div></div>";
+		    						var liNodeStr = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
+		    						if(data[i].pay_status != null && data[i].pay_status=="1") {
+		    							liNodeStr += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
+		    						} else {
+		    							liNodeStr += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+		    						}
+									if(data[i].hasCollection == "1") {
+										liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
+		    						} else {
+		    							liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\", this)' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
+		    						}
+		    						liNodeStr += "</div>";
+		    						liNode.innerHTML = liNodeStr;
 		    						rootNode.appendChild(liNode);
 	            				}
 	    					} else {
@@ -267,7 +374,19 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 	            					var liNode = document.createElement('li');
 		    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 		    						liNode.setAttribute('course_id', data[i].id);
-		    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div><div style='float:right;'><button onclick='buyCourseClick(\""+data[i].id+"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div><div style='float:right;margin-right:5px;'><button onclick='collectionClick(\""+data[i].id+"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div></div>";
+		    						var liNodeStr = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
+		    						if(data[i].pay_status != null && data[i].pay_status=="1") {
+		    							liNodeStr += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
+		    						} else {
+		    							liNodeStr += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+		    						}
+									if(data[i].hasCollection == "1") {
+										liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
+		    						} else {
+		    							liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
+		    						}
+		    						liNodeStr += "</div>";
+		    						liNode.innerHTML = liNodeStr;
 		    						rootNode.appendChild(liNode);
 	            				}
 	    					} else {
@@ -310,17 +429,6 @@ result = WeixinTools.getSign("http://www.diandou.me/weixinLogin?view=ddcb_live_c
 				descContent = "<%=list.get(0).getTeacher()%>";
 				shareTitle = "<%=list.get(0).getName()%>";
 			<%}%>
-			wx.config({
-				appId: 'wxbd6aef840715f99d',
-				timestamp: <%=result.get("timestamp")%>,
-				nonceStr: '<%=result.get("nonceStr")%>',
-				signature: '<%=result.get("signature")%>',
-				jsApiList: [
-					'onMenuShareQQ',
-					'onMenuShareTimeline',
-					'onMenuShareAppMessage'
-				]
-			});
 			wx.ready(function() {
 				setTimeout(function() {
 					wx.onMenuShareTimeline({

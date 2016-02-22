@@ -45,7 +45,7 @@ public class UserCourseDaoImpl implements IUserCourseDao {
 	public UserCourseModel getUserCourseByUserIdAndCourseId(String userId, long courseId) {
 		UserCourseModel ucm = null;
 		try {
-			String sql = "select a.user_id, a.course_id, a.pay_status, a.forward_status, a.create_time, b.screenshot, DATE_FORMAT(b.create_time,'%Y-%m-%d %T') as upload_time from user_course as a INNER JOIN user_forward as b on a.user_id = b.user_id and a.course_id=b.course_id and a.user_id=? and a.course_id=?";
+			String sql = "select * from user_course where user_id=? and course_id=? ";
 			ucm = jdbcTemplate.queryForObject(sql, new Object[]{userId, courseId}, new UserCourseMapper());
 		} catch (Exception e) {
 			logger.error("exception : {}", e.toString());
@@ -56,9 +56,8 @@ public class UserCourseDaoImpl implements IUserCourseDao {
 	@Override
 	public boolean addUserCourseModel(UserCourseModel userCourseModel) {
 		try{
-			String sql= "insert into user_course(user_id, trade_no, pay_status, forward_status, course_id, create_time) values (?,?,?,?,?,?)";
-			int num = jdbcTemplate.update(sql, userCourseModel.getUser_id(), userCourseModel.getTradeNo(), 
-					userCourseModel.getPay_status(), userCourseModel.getForward_status(),
+			String sql= "insert into user_course(user_id, trade_no, course_id, create_time) values (?,?,?,?)";
+			int num = jdbcTemplate.update(sql, userCourseModel.getUser_id(), userCourseModel.getTradeNo(),
 					userCourseModel.getCourse_id(), userCourseModel.getCreate_time());
 			return num > 0;
 		}catch(Exception e){

@@ -15,6 +15,7 @@ ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDa
 IWeixinUserDao weixinUserDao = (IWeixinUserDao)wac.getBean("weixinUserDao");
 List<CourseDetailModel> list = null;
 long id = Long.valueOf((String)request.getParameter("course_id"));
+System.out.println("current_course_id:" + id);
 session.setAttribute("course_id", String.valueOf(id));
 list = courseDetailDao.getCourseDetailByCourseId(id);
 Map<String, String> result = new HashMap<>();
