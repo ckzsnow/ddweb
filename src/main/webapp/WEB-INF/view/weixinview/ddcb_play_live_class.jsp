@@ -101,6 +101,7 @@ String courseLength = cm.getCourse_length();
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
 	document.addEventListener("WeixinJSBridgeReady", function () {
+		document.getElementById("video").play();
 		var courseDate = new Date("<%=courseDate%>").getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
@@ -112,14 +113,11 @@ String courseLength = cm.getCourse_length();
 			if(courseDate + courseLength < currentDate) {
 				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;'>课程直播已经结束，感谢您的关注！</p>";
 			} else {
-				alert(111);
 				document.getElementById("playClassTimeTips").style.display = "none";
 				document.getElementById("video_div").style.display = "";
-				document.getElementById("video").play();
 				var hasSetTime = false;
 				document.getElementById("video").addEventListener("timeupdate", function(){
 					if(!hasSetTime && document.getElementById("video").duration > 1) {
-						alert(document.getElementById("video").duration);
 						document.getElementById("video").pause();
 						document.getElementById("video").currentTime = 30;
 						document.getElementById("video").play();
