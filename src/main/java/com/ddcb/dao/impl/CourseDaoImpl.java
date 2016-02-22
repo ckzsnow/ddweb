@@ -35,7 +35,7 @@ public class CourseDaoImpl implements ICourseDao {
 	
 	@Override
 	public CourseModel getCourseByCourseId(long id) {
-		String sql = "select c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.id = ?";
+		String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.id = ?";
 		CourseModel courseModel = null;
 		try {
 			courseModel = jdbcTemplate.queryForObject(sql,

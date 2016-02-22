@@ -33,4 +33,10 @@ public class JspController {
 		return "view/weixinview/ddcb_live_class";
 	}
 	
+	@RequestMapping("/playDDCBLiveClass")
+	public String playDDCBLiveClass(HttpSession httpSession,
+			HttpServletRequest request) {
+		return "view/weixinview/ddcb_play_live_class";
+	}
+	
 }
