@@ -39,4 +39,16 @@ public class JspController {
 		return "view/weixinview/ddcb_play_live_class";
 	}
 	
+	@RequestMapping("/weixin/getDDCBUserCenter")
+	public String getUserCenter(HttpSession httpSession,
+			HttpServletRequest request) {
+		return "view/weixinview/ddcb_user_center";
+	}
+	
+	@RequestMapping("/weixin/browserLiveClass")
+	public String browserLiveClass(HttpSession httpSession,
+			HttpServletRequest request) {
+		return "view/weixinview/ddcb_browser_live_class";
+	}
+	
 }

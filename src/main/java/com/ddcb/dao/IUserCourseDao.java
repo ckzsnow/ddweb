@@ -30,5 +30,7 @@ public interface IUserCourseDao {
 	public boolean updateForwardStatus(String userId, long courseId, int forwardStatus);
 	
 	public boolean updateTradeNo(String userId, long courseId, String tradeNo);
+	
+	public List<CourseModel> getUserBuyClass(String userId);
 		
 }

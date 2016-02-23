@@ -15,7 +15,6 @@ ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDa
 IWeixinUserDao weixinUserDao = (IWeixinUserDao)wac.getBean("weixinUserDao");
 List<CourseDetailModel> list = null;
 long id = Long.valueOf((String)request.getParameter("course_id"));
-System.out.println("current_course_id:" + id);
 session.setAttribute("course_id", String.valueOf(id));
 list = courseDetailDao.getCourseDetailByCourseId(id);
 Map<String, String> result = new HashMap<>();
@@ -36,7 +35,7 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 		<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
 		<meta name="keywords" content="" />
 		<meta name="description" content="" />
-		<title></title>
+		<title>点豆大讲堂</title>
 		<link rel="stylesheet" href="/css/weixincss/bootstrap.min.css">
 		<link rel="stylesheet" href="/css/weixincss/style.css">
 		<link rel="stylesheet" href="/css/weixincss/newplay.css">
@@ -224,6 +223,15 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	   $(this).attr('style', 'font-size:15px;color:#22cc99;');
 	   document.getElementById('video').load();
 	   //document.getElementById('video').play();
+	});
+	$.ajax({
+		url: "/course/addStudyRecord",
+		type: "POST",
+		data: {courseId:<%=id%>},
+		success: function(data) {
+		},
+		error: function(status, error) {
+		}
 	});
 	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 	var lineLink = window.location.href;

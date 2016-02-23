@@ -306,6 +306,7 @@ String course_id = (String)session.getAttribute("course_id");
             			}
             		},
             		error: function(status, error) {
+            			document.getElementById("loadingToast").style.display = "none";
             			alert("支付失败！");
             		}
             	});

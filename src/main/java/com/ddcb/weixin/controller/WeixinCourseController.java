@@ -27,12 +27,14 @@ import com.ddcb.dao.ICourseDetailDao;
 import com.ddcb.dao.IUserCollectionDao;
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserForwardDao;
+import com.ddcb.dao.IUserStudyRecordDao;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveCourseModel;
 import com.ddcb.model.UserCollectionModel;
 import com.ddcb.model.UserCourseModel;
 import com.ddcb.model.UserForwardModel;
+import com.ddcb.model.UserStudyRecordModel;
 
 @Controller
 public class WeixinCourseController {
@@ -51,6 +53,9 @@ public class WeixinCourseController {
 	
 	@Autowired
 	private IUserCollectionDao userCollectionDao;
+	
+	@Autowired
+	private IUserStudyRecordDao userStudyRecordDao;
 	
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
@@ -383,5 +388,70 @@ public class WeixinCourseController {
 		 ucm.setForward_status(0);
 		 ucm.setCreate_time(new Timestamp(System.currentTimeMillis()));
 		 userCourseDao.addUserCourseModel(ucm);
+	}
+	
+	@RequestMapping("/course/addStudyRecord")
+	@ResponseBody
+	public List<CourseModel> addStudyRecord(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
+		String courseId = request.getParameter("courseId");
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			if(userStudyRecordDao.isFinishAddUserStudyRecord(userId, courseId_)) {
+				userStudyRecordDao.updateUserStudyRecord(userId, courseId_);
+			} else {
+				UserStudyRecordModel usrm = new UserStudyRecordModel();
+				usrm.setCourse_id(courseId_);
+				usrm.setUser_id(userId);
+				usrm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+				usrm.setUpdate_time(new Timestamp(System.currentTimeMillis()));
+				userStudyRecordDao.addUserStudyRecord(usrm);
+			}
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return null;
+	}
+	
+	@RequestMapping("/course/delStudyRecord")
+	@ResponseBody
+	public List<CourseModel> delStudyRecord(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
+		String courseId = request.getParameter("courseId");
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			userStudyRecordDao.delUserStudyRecord(userId, courseId_);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return null;
+	}
+	
+	@RequestMapping("/course/delUserCollection")
+	@ResponseBody
+	public List<CourseModel> delUserCollection(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
+		String courseId = request.getParameter("courseId");
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			userCollectionDao.delUserCollection(userId, courseId_);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return null;
+	}
+	
+	@RequestMapping("/course/getLiveCourseByCourseId")
+	@ResponseBody
+	public List<CourseDetailModel> getLiveCourseByCourseId(HttpSession httpSession, HttpServletRequest request) {
+		String courseId = request.getParameter("course_id");
+		List<CourseDetailModel> list = null;
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			list = courseDetailDao.getCourseDetailByCourseId(courseId_);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return list;
 	}
 }

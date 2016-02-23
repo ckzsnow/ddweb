@@ -26,7 +26,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav" style="background-color: #66d6a6;">
-			<h1 class="mui-title" style="color:white;">点豆大讲堂</h1>
+			<h1 class="mui-title" style="color:white;">点豆公开课</h1>
 			<a id="searchButton" style="color:white;font-size: 25px;font-weight:600;" class="mui-icon mui-icon-search mui-pull-right"></a>
 		</header>
 		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:5px;">

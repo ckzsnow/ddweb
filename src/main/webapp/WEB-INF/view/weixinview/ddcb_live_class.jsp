@@ -14,7 +14,6 @@ WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplication
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IUserCourseDao userCourseDao = (IUserCourseDao)wac.getBean("userCourseDao");
 String userId = (String)session.getAttribute("openid");
-userId="os3bVs6Qiq2Bo1dbu36Tu9WkDEa8";
 List<LiveCourseModel> list = courseDao.getAllLiveCourse(1, 8, userId);
 String code = (String)session.getAttribute("url_code");
 Map<String, String> result = new HashMap<>();
@@ -30,6 +29,10 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 		<link href="/css/weixincss/mui.picker.min.css" rel="stylesheet" />
 		<link href="/css/weixincss/mui.poppicker.css" rel="stylesheet" />
 		<link href="/css/weixincss/loading.css" rel="stylesheet" />
+		<link rel="stylesheet" href="/css/weixincss/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/weixincss/style.css">
+		<link rel="stylesheet" href="/css/weixincss/newplay.css">
+		<link rel="stylesheet" href="/css/weixincss/android.css">
 		<script>
 			var hasData = true;
 		</script>
@@ -66,50 +69,254 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 			  /* Uncomment for 3D effect */
 			  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 			}
+			.mui-views,
+			.mui-view,
+			.mui-pages,
+			.mui-page,
+			.mui-page-content {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				background-color: #efeff4;
+			}
+			.mui-pages {
+				top: 46px;
+				height: auto;
+			}
+			.mui-scroll-wrapper,
+			.mui-scroll {
+				background-color: #efeff4;
+			}
+			.mui-page.mui-transitioning {
+				-webkit-transition: -webkit-transform 300ms ease;
+				transition: transform 300ms ease;
+			}
+			.mui-page-left {
+				-webkit-transform: translate3d(0, 0, 0);
+				transform: translate3d(0, 0, 0);
+			}
+			.mui-ios .mui-page-left {
+				-webkit-transform: translate3d(-20%, 0, 0);
+				transform: translate3d(-20%, 0, 0);
+			}
+			.mui-navbar {
+				position: fixed;
+				right: 0;
+				left: 0;
+				z-index: 10;
+				height: 44px;
+				background-color: #f7f7f8;
+			}
+			.mui-navbar .mui-bar {
+				position: absolute;
+				background: transparent;
+				text-align: center;
+			}
+			.mui-android .mui-navbar-inner.mui-navbar-left {
+				opacity: 0;
+			}
+			.mui-ios .mui-navbar-left .mui-left,
+			.mui-ios .mui-navbar-left .mui-center,
+			.mui-ios .mui-navbar-left .mui-right {
+				opacity: 0;
+			}
+			.mui-navbar .mui-btn-nav {
+				-webkit-transition: none;
+				transition: none;
+				-webkit-transition-duration: .0s;
+				transition-duration: .0s;
+			}
+			.mui-navbar .mui-bar .mui-title {
+				display: inline-block;
+				width: auto;
+			}
+			.mui-page-shadow {
+				position: absolute;
+				right: 100%;
+				top: 0;
+				width: 16px;
+				height: 100%;
+				z-index: -1;
+				content: '';
+			}
+			.mui-page-shadow {
+				background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+				background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+			}
+			.mui-navbar-inner.mui-transitioning,
+			.mui-navbar-inner .mui-transitioning {
+				-webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+				transition: opacity 300ms ease, transform 300ms ease;
+			}
+			.mui-page {
+				display: none;
+			}
+			.mui-pages .mui-page {
+				display: block;
+			}
+			.mui-page .mui-table-view:first-child {
+				margin-top: 0px;
+			}
+			.mui-page .mui-table-view:last-child {
+				margin-bottom: 0px;
+			}
+			.mui-table-view {
+				margin-top: 20px;
+			}
+			
+			.mui-table-view span.mui-pull-right {
+				color: #999;
+			}
+			.mui-table-view-divider {
+				background-color: #efeff4;
+				font-size: 14px;
+			}
+			.mui-table-view-divider:before,
+			.mui-table-view-divider:after {
+				height: 0;
+			}
+			.head {
+				height: 40px;
+			}
+			#head {
+				line-height: 40px;
+			}
+			.head-img {
+				width: 40px;
+				height: 40px;
+			}
+			#head-img1 {
+				position: absolute;
+				bottom: 10px;
+				right: 40px;
+				width: 40px;
+				height: 40px;
+			}
+			.update {
+				font-style: normal;
+				color: #999999;
+				margin-right: -25px;
+				font-size: 15px
+			}
+			.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			.mui-ios .mui-navbar .mui-bar .mui-title {
+				position: static;
+			}
 		</style>
 	</head>
 	<body>
-		<header class="mui-bar mui-bar-nav" style="background-color: #66d6a6;">
-			<h1 class="mui-title" style="color:white;">点豆直播课</h1>
-			<a id="searchButton" style="color:white;font-size: 25px;font-weight:600;" class="mui-icon mui-icon-search mui-pull-right"></a>
-		</header>
-		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:5px;">
-			<div class="mui-scroll">
-			<%if(list == null || list.isEmpty()) {%>
-			<div style="margin-top:50%;text-align:center;">暂时没有数据，请稍后重试！</div>
-			<script>
-				hasData = false;
-			</script>
-			<%} else {%>
-			<div style="margin-top:10px;">
-				<ul id="data_list" class="mui-table-view">
-					<%for(LiveCourseModel cm : list) { %>
-					<li class="mui-table-view-cell mui-media" course_id="<%=cm.getId()%>">
-						<img class="mui-media-object mui-pull-left" style="height:50px;width:80px;max-width:100px;" src="/files/imgs/<%=cm.getImage()%>">
-						<div class="mui-media-body">
-							<h4 style="font-size:12px;margin-top:0px;margin-bottom:0px;"><%=cm.getName() %></h4>
-							<h6 style="color:#2ab888;margin-top:2px;margin-bottom:2px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-contact"></span><%=cm.getTeacher() %></h6>
-							<h6 style="color:#888888;margin-top:2px;margin-bottom:2px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span>直播时间<%=cm.getCourse_date_readable() %></h6>
-						</div>
-						<div style="margin-top:5px;">
-							<div style="float:left;height:25px;line-height:25px;"><p style="font-size:12px;">课程售价：<%=cm.getPrice() %>元</p></div>
-							<%if(cm.getPay_status() != null && cm.getPay_status() == 1) { %>
-								<div style="float:right;"><button onclick="enterClass(null, this)" course_id="<%=cm.getId()%>" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">点击进入</button></div>
-							<%} else {%>
-								<div style="float:right;"><button class="buy_class" course_price="<%=cm.getPrice() %>" course_id="<%=cm.getId()%>" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">购买课程</button></div>							
-							<%} %>
-							<%if(("1").equals(cm.getHasCollection())) { %>
-								<div style="float:right;margin-right:5px;"><button onclick="collectionClick('<%=cm.getId()%>', null)" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;" disabled>已经收藏</button></div>
-							<%} else {%>
-								<div style="float:right;margin-right:5px;"><button onclick="collectionClick('<%=cm.getId()%>', this)" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">收藏课程</button></div>							
-							<%} %>
-						</div>
-					</li>
-					<%} %>
-				</ul>
+		<div id="ddcb_live_class" class="mui-views">
+			<div class="mui-view">
+				<div class="mui-navbar">
+				</div>
+				<div class="mui-pages">
+				</div>
 			</div>
-			<%} %>
+		</div>
+		<div id="mainpage" class="mui-page">
+    		<div class="mui-navbar-inner mui-bar mui-bar-nav" style="background-color: #66d6a6;">
+				<h1 class="mui-center mui-title" style="color:white;">点豆直播课</h1>
+				<a id="searchButton" style="color:white;font-size: 25px;font-weight:600;" class="mui-icon mui-icon-search mui-pull-right"></a>
 			</div>
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:5px;">
+				<div class="mui-scroll">
+				<%if(list == null || list.isEmpty()) {%>
+				<div style="margin-top:50%;text-align:center;">暂时没有数据，请稍后重试！</div>
+				<script>
+					hasData = false;
+				</script>
+				<%} else {%>
+				<div style="margin-top:10px;">
+					<ul id="data_list" class="mui-table-view">
+						<%for(LiveCourseModel cm : list) { %>
+						<li class="mui-table-view-cell mui-media" course_id="<%=cm.getId()%>">
+							<a href="#courseBrowser">
+							<div class="browser_class" course_id="<%=cm.getId()%>">
+							<img class="mui-media-object mui-pull-left" style="height:50px;width:80px;max-width:100px;" src="/files/imgs/<%=cm.getImage()%>">
+							<div class="mui-media-body">
+								<h4 style="font-size:12px;margin-top:0px;margin-bottom:0px;"><%=cm.getName() %></h4>
+								<h6 style="color:#2ab888;margin-top:2px;margin-bottom:2px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-contact"></span><%=cm.getTeacher() %></h6>
+								<h6 style="color:#888888;margin-top:2px;margin-bottom:2px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span>直播时间<%=cm.getCourse_date_readable() %></h6>
+							</div>
+							</div>
+							</a>
+							<div style="margin-top:5px;">
+								<div style="float:left;height:25px;line-height:25px;"><p style="font-size:12px;">课程售价：<%=cm.getPrice() %>元</p></div>
+								<%if(cm.getPay_status() != null && cm.getPay_status() == 1) { %>
+									<div style="float:right;"><button onclick="enterClass(null, this)" course_id="<%=cm.getId()%>" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">点击进入</button></div>
+								<%} else {%>
+									<div style="float:right;"><button class="buy_class" course_price="<%=cm.getPrice() %>" course_id="<%=cm.getId()%>" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">购买课程</button></div>							
+								<%} %>
+								<%if(("1").equals(cm.getHasCollection())) { %>
+									<div style="float:right;margin-right:5px;"><button onclick="collectionClick('<%=cm.getId()%>', null)" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;" disabled>已经收藏</button></div>
+								<%} else {%>
+									<div style="float:right;margin-right:5px;"><button onclick="collectionClick('<%=cm.getId()%>', this)" style="height:25px;line-height:25px;padding:0px 5px;font-size:12px;">收藏课程</button></div>							
+								<%} %>
+							</div>
+						</li>
+						<%} %>
+					</ul>
+				</div>
+				<%} %>
+				</div>
+			</div>
+		</div>
+		
+		<div id="courseBrowser" class="mui-page" course_id="">
+    		<div class="mui-navbar-inner mui-bar mui-bar-nav" style="background-color: #66d6a6;">
+    			<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav" style="color:white;"></span>
+				</button>
+				<h1 class="mui-center mui-title" style="color:white;">课程简介</h1>
+			</div>
+			<div class="mui-page-content" >
+				<div class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div id="myTabContent" class="tab-content" style="display:none">
+							<div class="tab-pane fade in active" id="summary">
+								<div class="container">
+									<div class="row csdetials">
+										<div class="col-xs-12  mantoutitle"><span class="color-block"></span>导师简介</div>
+										<div class="col-xs-12  mentername">
+											<div class="row">
+												<div class="col-xs-12">
+													<div class="avatar">
+														<img id="teacher_image" src="/files/imgs/" />
+													</div>
+												</div>
+												<div class="col-xs-12">
+													<div class="teacher-name" id="teacher_name"></div>
+													<div class="teacher-title" id="teacher_position"></div>
+													<div class="infolabel">
+														<div>Ta的经验</div>
+													</div>
+													<p id="teacher_info"></p>
+												</div>
+											</div>
+										</div>
+										<div class="col-xs-12  mantoutitle"><span class="color-block"></span>适合人群</div>
+										<div class="col-xs-12  courseintro">
+											<p id="crowd"></p>
+										</div>
+										<div class="col-xs-12  mantoutitle"><span class="color-block"></span>课程简介</div>
+										<div class="col-xs-12  courseintro">
+											<p id="details"></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>			
 		</div>
 		<div id="loadingToast" class="weui_loading_toast" style="display:none;">
 	        <div class="weui_mask_transparent"></div>
@@ -140,11 +347,11 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	    </div>
 	</body>
 	<script type="text/javascript" src="/js/weixinjs/mui.min.js" ></script>
+    <script src="/js/weixinjs/mui.view.js"></script>
 	<script src="/js/weixinjs/mui.picker.min.js"></script>
 	<script src="/js/weixinjs/mui.poppicker.min.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script type="text/javascript" charset="utf-8">
-			mui('.mui-scroll-wrapper').scroll();
 			mui.init({
 				swipeBack:true,
 				pullRefresh: {
@@ -155,6 +362,19 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 					}
 				}
 			});
+			var viewApi = mui('#ddcb_live_class').view({
+		    	defaultPage: '#mainpage'
+		    });
+		    mui('.mui-scroll-wrapper').scroll();
+		    var view = viewApi.view;
+		    var oldBack = mui.back;
+		    mui.back = function() {
+		    	if (viewApi.canBack()) { //如果view可以后退，则执行view的后退
+		    		viewApi.back();
+		    	} else { //执行webview后退
+		    		oldBack();
+		    	}
+		    };
 			wx.config({
 				appId: 'wxbd6aef840715f99d',
 				timestamp: <%=result.get("timestamp")%>,
@@ -168,6 +388,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 				]
 			});
 			function collectionClick(courseId, ele) {
+				this.event.stopPropagation();
 				document.getElementById("loadingToastTips").innerHTML = "正在处理请求";
 				document.getElementById("loadingToast").style.display = "";
 				mui.ajax({
@@ -195,6 +416,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 			}
 			wx.ready(function() {
 				var handler = function(event) {
+					event.stopPropagation();
 					document.getElementById("loadingToast").style.display = "";
 					var ele = event.target;
 					var courseId = ele.getAttribute("course_id");
@@ -272,20 +494,32 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_id', data[i].id);
-	    						var liNodeStr = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
+	    						var aNode = document.createElement('a');
+	    						aNode.setAttribute('href', '#courseBrowser');
+	    						var browserDiv = document.createElement('div');
+	    						browserDiv.setAttribute('class', 'browser_class');
+	    						browserDiv.setAttribute('course_id', data[i].id);
+	    						var btnDiv = document.createElement('div');
+	    						btnDiv.setAttribute('style', 'margin-top:5px');
+	    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div>";
+	    						btnDiv.innerHTML = "<div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
 	    						if(data[i].pay_status != null && data[i].pay_status=="1") {
-	    							liNodeStr += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
+	    							btnDiv.innerHTML += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
 	    						} else {
-	    							liNodeStr += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+	    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
 	    						}
-								if(dta[i].hasCollection == "1") {
-									liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
+								if(data[i].hasCollection == "1") {
+									btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
 	    						} else {
-	    							liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\", this)' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
+	    							btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\", this)' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
 	    						}
-	    						liNodeStr += "</div>";
-	    						liNode.innerHTML = liNodeStr;
+								aNode.appendChild(browserDiv);
+								liNode.appendChild(aNode);
+								liNode.appendChild(btnDiv);
 	    						rootNode.appendChild(liNode);
+	    						browserDiv.addEventListener('tap',function(){
+	    							document.getElementById("courseBrowser").setAttribute("course_id", this.getAttribute("course_id"));
+	    					    });
             				}
             				if(i<7) {
             					mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
@@ -335,20 +569,32 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 		    						var liNode = document.createElement('li');
 		    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 		    						liNode.setAttribute('course_id', data[i].id);
-		    						var liNodeStr = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
+		    						var aNode = document.createElement('a');
+		    						aNode.setAttribute('href', '#courseBrowser');
+		    						var browserDiv = document.createElement('div');
+		    						browserDiv.setAttribute('class', 'browser_class');
+		    						browserDiv.setAttribute('course_id', data[i].id);
+		    						var btnDiv = document.createElement('div');
+		    						btnDiv.setAttribute('style', 'margin-top:5px');
+		    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div>";
+		    						btnDiv.innerHTML = "<div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
 		    						if(data[i].pay_status != null && data[i].pay_status=="1") {
-		    							liNodeStr += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
+		    							btnDiv.innerHTML += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
 		    						} else {
-		    							liNodeStr += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+		    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
 		    						}
 									if(data[i].hasCollection == "1") {
-										liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
+										btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
 		    						} else {
-		    							liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\", this)' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
+		    							btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\", this)' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
 		    						}
-		    						liNodeStr += "</div>";
-		    						liNode.innerHTML = liNodeStr;
+									aNode.appendChild(browserDiv);
+									liNode.appendChild(aNode);
+									liNode.appendChild(btnDiv);
 		    						rootNode.appendChild(liNode);
+		    						browserDiv.addEventListener('tap',function(){
+		    							document.getElementById("courseBrowser").setAttribute("course_id", this.getAttribute("course_id"));
+		    					    });
 	            				}
 	    					} else {
 	    						alert("您搜索的数据为空，请稍后重试！");
@@ -374,22 +620,34 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	    						rootNode.innerHTML = "";
 	            				for (i in data) {
 	            					var liNode = document.createElement('li');
-		    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
+	            					liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 		    						liNode.setAttribute('course_id', data[i].id);
-		    						var liNodeStr = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div><div style='margin-top:5px;'><div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
+		    						var aNode = document.createElement('a');
+		    						aNode.setAttribute('href', '#courseBrowser');
+		    						var browserDiv = document.createElement('div');
+		    						browserDiv.setAttribute('class', 'browser_class');
+		    						browserDiv.setAttribute('course_id', data[i].id);
+		    						var btnDiv = document.createElement('div');
+		    						btnDiv.setAttribute('style', 'margin-top:5px');
+		    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div>";
+		    						btnDiv.innerHTML = "<div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
 		    						if(data[i].pay_status != null && data[i].pay_status=="1") {
-		    							liNodeStr += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
+		    							btnDiv.innerHTML += "<div style='float:right;'><button onclick='enterClass(null, this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>点击进入</button></div>";
 		    						} else {
-		    							liNodeStr += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+		    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
 		    						}
 									if(data[i].hasCollection == "1") {
-										liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
+										btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
 		    						} else {
-		    							liNodeStr += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
+		    							btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\", this)' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>收藏课程</button></div>";
 		    						}
-		    						liNodeStr += "</div>";
-		    						liNode.innerHTML = liNodeStr;
+									aNode.appendChild(browserDiv);
+									liNode.appendChild(aNode);
+									liNode.appendChild(btnDiv);
 		    						rootNode.appendChild(liNode);
+		    						browserDiv.addEventListener('tap',function(){
+		    							document.getElementById("courseBrowser").setAttribute("course_id", this.getAttribute("course_id"));
+		    					    });
 	            				}
 	    					} else {
 	    						ajaxURL = "/course/getAllOpenCourseByPage";
@@ -471,6 +729,48 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 						}
 					});
 				}, 500);
+			});
+			mui('.browser_class').each(function(){
+				this.addEventListener('tap',function(){
+					document.getElementById("courseBrowser").setAttribute("course_id", this.getAttribute("course_id"));
+			    });
+		    });
+			var hasEnterPageShow = false;
+		    view.addEventListener('pageShow', function(e) {
+		    	if(!hasEnterPageShow && e.detail.page.id!="mainpage") {
+		    		hasEnterPageShow = true;
+		    		document.getElementById("loadingToast").style.display = "";
+					var courseId = e.detail.page.getAttribute("course_id");
+					mui.ajax({
+	            		url: '/course/getLiveCourseByCourseId',
+	            		type: "POST",
+	            		data: {course_id:courseId},
+	            		success: function(data) {
+	            			document.getElementById("loadingToast").style.display = "none";
+	            			if (!checkJsonIsEmpty(data)) {
+	            				document.getElementById("myTabContent").style.display = "";
+	            				document.getElementById('teacher_image').setAttribute('src', "/files/imgs/" + data[0].teacher_image);
+	            				document.getElementById('teacher_name').innerHTML = data[0].teacher_name;
+	            				document.getElementById('teacher_info').innerHTML = data[0].teacher_info;
+	            				document.getElementById('teacher_position').innerHTML = data[0].teacher_position;
+	            				document.getElementById('crowd').innerHTML = data[0].crowd;
+	            				document.getElementById('details').innerHTML = data[0].details;
+	    					} else {
+	    						alert("服务器暂时无法获取当前课程数据，请稍后重试！");
+	    					}
+	            		},
+	            		error: function(status, error) {
+	            			document.getElementById("loadingToast").style.display = "none";
+	            			alert("服务器暂时无法获取当前课程数据，请稍后重试！");
+	            		}
+	            	});
+		    	}
+			});
+		    view.addEventListener('pageBack', function(e) {
+		    	if(e.detail.page.id!="mainpage") {
+		    		document.getElementById("myTabContent").style.display = "none";
+			    	hasEnterPageShow = false;
+		    	}
 			});
 		</script>
 </html>

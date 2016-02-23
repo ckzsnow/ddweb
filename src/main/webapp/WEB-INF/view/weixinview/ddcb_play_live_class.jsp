@@ -34,7 +34,7 @@ String courseLength = cm.getCourse_length();
 		<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
 		<meta name="keywords" content="" />
 		<meta name="description" content="" />
-		<title></title>
+		<title>点豆大讲堂</title>
 		<link rel="stylesheet" href="/css/weixincss/bootstrap.min.css">
 		<link rel="stylesheet" href="/css/weixincss/style.css">
 		<link rel="stylesheet" href="/css/weixincss/newplay.css">
@@ -108,9 +108,11 @@ String courseLength = cm.getCourse_length();
 		if(courseDate>currentDate) {
 			//document.getElementById("video").style.display = "none";
 			//document.getElementById("playClassTimeTips").style.display = "";
+			document.getElementById("video").pause();
 			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;'>课程直播时间：<%=courseDateReadable%></p>";
 		} else {
 			if(courseDate + courseLength < currentDate) {
+				document.getElementById("video").pause();
 				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;'>课程直播已经结束，感谢您的关注！</p>";
 			} else {
 				document.getElementById("playClassTimeTips").style.display = "none";
@@ -132,6 +134,15 @@ String courseLength = cm.getCourse_length();
 					}
 				},500); */
 			}
+		}
+	});
+	$.ajax({
+		url: "/course/addStudyRecord",
+		type: "POST",
+		data: {courseId:<%=id%>},
+		success: function(data) {
+		},
+		error: function(status, error) {
 		}
 	});
 	</script>

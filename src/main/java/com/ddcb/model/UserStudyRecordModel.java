@@ -6,25 +6,16 @@ public class UserStudyRecordModel {
 
 	private String user_id;
 	private Long course_id;
-	private Integer course_type;
-	private Integer pay_status;
-	private String name;
-	private String teacher;
-	private String image;
+	private Timestamp update_time;
 	private Timestamp create_time;
 	
 	public UserStudyRecordModel() {}
 
-	public UserStudyRecordModel(String user_id, Long course_id, Integer course_type, Integer pay_status, String name,
-			String teacher, String image, Timestamp create_time) {
+	public UserStudyRecordModel(String user_id, Long course_id, Timestamp update_time, Timestamp create_time) {
 		super();
 		this.user_id = user_id;
 		this.course_id = course_id;
-		this.course_type = course_type;
-		this.pay_status = pay_status;
-		this.name = name;
-		this.teacher = teacher;
-		this.image = image;
+		this.update_time = update_time;
 		this.create_time = create_time;
 	}
 
@@ -44,44 +35,12 @@ public class UserStudyRecordModel {
 		this.course_id = course_id;
 	}
 
-	public Integer getCourse_type() {
-		return course_type;
+	public Timestamp getUpdate_time() {
+		return update_time;
 	}
 
-	public void setCourse_type(Integer course_type) {
-		this.course_type = course_type;
-	}
-
-	public Integer getPay_status() {
-		return pay_status;
-	}
-
-	public void setPay_status(Integer pay_status) {
-		this.pay_status = pay_status;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getTeacher() {
-		return teacher;
-	}
-
-	public void setTeacher(String teacher) {
-		this.teacher = teacher;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
+	public void setUpdate_time(Timestamp update_time) {
+		this.update_time = update_time;
 	}
 
 	public Timestamp getCreate_time() {
@@ -94,8 +53,7 @@ public class UserStudyRecordModel {
 
 	@Override
 	public String toString() {
-		return "UserStudyRecordModel [user_id=" + user_id + ", course_id=" + course_id + ", course_type=" + course_type
-				+ ", pay_status=" + pay_status + ", name=" + name + ", teacher=" + teacher + ", image=" + image
+		return "UserStudyRecordModel [user_id=" + user_id + ", course_id=" + course_id + ", update_time=" + update_time
 				+ ", create_time=" + create_time + "]";
 	}
 
