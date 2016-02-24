@@ -8,6 +8,6 @@ public interface IBannerDao {
 
 	public List<BannerModel> getAllBanner();
 	
-	public boolean updateBanner(String id, String fileName);
+	public boolean updateBanner(String id, String fileName, long courseId);
 		
 }

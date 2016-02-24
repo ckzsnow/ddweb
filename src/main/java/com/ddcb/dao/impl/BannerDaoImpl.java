@@ -36,11 +36,11 @@ public class BannerDaoImpl implements IBannerDao {
 	}
 
 	@Override
-	public boolean updateBanner(String id, String fileName) {
-		String sql = "update banner set file_name=? where id=?";
+	public boolean updateBanner(String id, String fileName, long courseId) {
+		String sql = "update banner set file_name=?, course_id=? where id=?";
 		int affectedRows = 0;
 		try {
-			affectedRows = jdbcTemplate.update(sql, fileName, id);
+			affectedRows = jdbcTemplate.update(sql, fileName, courseId, id);
 		} catch(Exception ex) {
 			logger.error(ex.toString());
 		}

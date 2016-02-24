@@ -21,8 +21,10 @@ import org.springframework.stereotype.Repository;
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.mapper.CourseMapper;
 import com.ddcb.mapper.LiveCourseMapper;
+import com.ddcb.mapper.SelectCourseMapper;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveCourseModel;
+import com.ddcb.model.SelectCourseModel;
 
 @Repository("courseDao")
 public class CourseDaoImpl implements ICourseDao {
@@ -125,7 +127,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
+			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.create_time desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -170,6 +172,47 @@ public class CourseDaoImpl implements ICourseDao {
 			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where c.course_type=1 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{userId, userId, field, industry, competency, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<SelectCourseModel> getLatestCourse() {
+		List<SelectCourseModel> list = null;
+		try {
+			String sql = "select c.id, c.name, c.image, c.course_length, COUNT(a.course_id) as people_count from course as c LEFT JOIN user_study_record as a on a.course_id=c.id GROUP BY c.id ORDER BY c.create_time desc limit 0, 5";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<SelectCourseModel>(
+							new SelectCourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<SelectCourseModel> getHotestCourse() {
+		List<SelectCourseModel> list = null;
+		try {
+			String sql = "select c.id, c.name, c.image, c.course_length, COUNT(a.course_id) as people_count from course as c LEFT JOIN user_study_record as a on a.course_id=c.id GROUP BY c.id ORDER BY COUNT(a.course_id) desc limit 0, 5";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<SelectCourseModel>(
+							new SelectCourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<CourseModel> getOpenCourseByCondition(int page, int count, String type, String field, String industry,
+			String competeny, String grade) {
+		List<CourseModel> list = null;
+		int beginIndex = page == 1? 0:(page - 1) * count;
+		try {
+			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
+			list = jdbcTemplate.query(sql, new Object[]{field, industry, competeny, beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());
 		}

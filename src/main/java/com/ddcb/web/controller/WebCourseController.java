@@ -181,10 +181,13 @@ public class WebCourseController {
 		int index = 1;
 		if (files.length != 0) {
 			for (MultipartFile file : files) {
+				String imgFileNameTmp = "banner" + String.valueOf(index) + "_tmp.jpg";
 				String imgFileName = "banner" + String.valueOf(index) + ".jpg";
+				String courseId = request.getParameter("courseId" + index);
 				try {
-					FileUtils.copyInputStreamToFile(file.getInputStream(), new File(imgPath, imgFileName));
-					bannerDao.updateBanner("banner" + String.valueOf(index), imgFileName);
+					long courseId_ = Long.valueOf(courseId);
+					FileUtils.copyInputStreamToFile(file.getInputStream(), new File(imgPath, imgFileNameTmp));					
+					bannerDao.updateBanner("banner" + String.valueOf(index), imgFileName, courseId_);
 				} catch (IOException e) {
 					logger.debug(e.toString());
 				}

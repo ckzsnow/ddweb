@@ -129,7 +129,7 @@
 			                        <tr>
 			                          <th nowrap="nowrap">课程ID</th>
 			                          <th nowrap="nowrap">课程名称</th>
-			                          <th nowrap="nowrap">课程摘要</th>
+			                          <th nowrap="nowrap">课程类型</th>
 			                          <th nowrap="nowrap">导师摘要</th>
 			                          <th nowrap="nowrap">上课时间</th>
 			                          <th nowrap="nowrap">课程时长(分钟)</th>
@@ -196,7 +196,7 @@
 				var detailNode = document.getElementById('data_detail');
 				for (var i in data) {
 					var thNode = document.createElement('tr');
-					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].id+"</td><td nowrap='nowrap'>"+data[i].name+"</td><td>"+data[i].course_abstract+"</td><td nowrap='nowrap'>"+data[i].teacher+"</td><td nowrap='nowrap'>"+data[i].course_date_readable+"</td><td>"+data[i].course_length+"</td>";
+					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].id+"</td><td nowrap='nowrap'>"+data[i].name+"</td><td>"+(data[i].courseType == "0" ? "公开课":"直播课")+"</td><td nowrap='nowrap'>"+data[i].teacher+"</td><td nowrap='nowrap'>"+data[i].course_date_readable+"</td><td>"+data[i].course_length+"</td>";
 					detailNode.appendChild(thNode);
 				}
 			}

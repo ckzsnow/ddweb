@@ -454,4 +454,20 @@ public class WeixinCourseController {
 		}
 		return list;
 	}
+	
+	@RequestMapping("/course/getOpenCourseByCondition")
+	@ResponseBody
+	public List<CourseModel> getOpenCourseByCondition(HttpSession httpSession, HttpServletRequest request) {
+		String field = request.getParameter("selectField");
+		String industry = request.getParameter("selectIndustry");
+		String competency = request.getParameter("selectCompetency");
+		String type = request.getParameter("latestOrHotest");
+		String grade = request.getParameter("selectGrade");
+		String page = request.getParameter("page");
+		String count = request.getParameter("countPerPage");
+		int page_ = Integer.valueOf(page);
+		int count_ = Integer.valueOf(count);
+		List<CourseModel> courseList = courseDao.getOpenCourseByCondition(page_, count_, type, field, industry, competency, grade);
+		return courseList;
+	}
 }

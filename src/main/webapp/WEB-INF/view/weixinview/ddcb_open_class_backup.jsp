@@ -12,7 +12,9 @@
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IBannerDao bannerDao = (IBannerDao)wac.getBean("bannerDao");
-List<CourseModel> list = courseDao.getAllOpenCourse(1,8, "最新", "全部领域", "全部行业", "全部职能", "全部等级");
+List<CourseModel> list = courseDao.getAllOpenCourse(1,8);
+List<SelectCourseModel> latestCourseList = courseDao.getLatestCourse();
+List<SelectCourseModel> hotestCourseList = courseDao.getHotestCourse();
 List<BannerModel> bannerList = bannerDao.getAllBanner();
 String code = (String)session.getAttribute("url_code");
 Map<String, String> result = new HashMap<>();
@@ -117,6 +119,38 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 							<div class="mui-control-item" style="padding:8px 0px;margin-right:10px;">
 								<a href="#selectGrade"><div id="selectGradeTips" style="width:80px;max-width:80px;" class='mui-ellipsis'>全部等级</div></a>
 							</div>
+						</div>
+					</div>
+				</div>
+				<div class="mui-card" style="margin:10px 0px;border:none;border-radius:0px;">
+					<div style="margin-top:5px;margin-left:5px;"><p>最新课程</p></div>
+					<div id="latest_course" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background-color: white;height:110px;margin-top:5px;margin-left: 5px;">
+						<div class="mui-scroll" style="background-color: white;height:110px;">
+							<%for(SelectCourseModel scm : latestCourseList) { %>
+								<div class="mui-control-item" course_path='/playDDCBOpenClass?course_id=<%=scm.getId() %>' style="padding:0px 5px;">
+									<div style="text-align:left;padding-top:0px;" >
+										<img style="width:130px;height:60px;" src="/files/imgs/<%=scm.getImage()%>">
+										<p style="margin-bottom:0px;max-width:130px;" class='mui-ellipsis'><%=scm.getName() %></p>
+										<p><%=scm.getCourse_length() %>分钟&nbsp;&nbsp;<%=scm.getPeople_count() %>人学习</p>
+									</div>
+								</div>
+							<%} %>
+						</div>
+					</div>
+				</div>
+				<div class="mui-card" style="margin:10px 0px;border:none;border-radius:0px;">
+					<div style="margin-top:5px;margin-left:5px;"><p>热门课程</p></div>
+					<div id="hot_course" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background-color: white;height:110px;margin-top:5px;margin-left: 5px;">
+						<div class="mui-scroll" style="background-color: white;height:110px;">
+							<%for(SelectCourseModel scm : hotestCourseList) { %>
+								<div class="mui-control-item" course_path='/playDDCBOpenClass?course_id=<%=scm.getId() %>' style="padding:0px 5px;">
+									<div style="text-align:left;padding-top:0px;" >
+										<img style="width:130px;height:60px;" src="/files/imgs/<%=scm.getImage()%>">
+										<p style="margin-bottom:0px;max-width:130px;" class='mui-ellipsis'><%=scm.getName() %></p>
+										<p><%=scm.getCourse_length() %>分钟&nbsp;&nbsp;<%=scm.getPeople_count() %>人学习</p>
+									</div>
+								</div>
+							<%} %>
 						</div>
 					</div>
 				</div>
@@ -260,10 +294,10 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	<script src="/js/weixinjs/mui.poppicker.min.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script type="text/javascript" charset="utf-8">
-			function searchKeyCancel() {
+			function searchCancel() {
 				mui('#searchInput').popover('toggle');
 			}
-			function searchKeyContent() {
+			function searchContent() {
 				mui('#searchInput').popover('toggle');
 				alert(document.getElementById("search_key").value);
 			}
@@ -296,18 +330,14 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 				}
 				return isEmpty;
 			}
-			var latestOrHotest = "最新";
-			var selectField = "全部领域";
-			var selectIndustry = "全部行业";
-			var selectCompetency = "全部职能";
-			var selectGrade = "全部等级";
 			var page = 1;
 			var count = 8;
-			var ajaxData = {page:1, countPerPage:8, latestOrHotest:latestOrHotest, selectField:selectField, selectIndustry:selectIndustry, selectCompetency:selectCompetency, selectGrade:selectGrade};
+			var ajaxData = {page:page, count:count};
+			var ajaxURL = "/course/getAllOpenCourseByPage";
 			function pullupRefresh() {
 				ajaxData.page = ajaxData.page + 1;
 				mui.ajax({
-            		url: "/course/getOpenCourseByCondition",
+            		url: ajaxURL,
             		type: "POST",
             		data: ajaxData,
             		success: function(data) {
@@ -339,91 +369,107 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
             		}
             	});
 			}
-			function searchCourseByCondition() {
+			var searchOne = "";
+			var searchTwo = "";
+			var searchThree = "";
+			var competencyData = [{value:'',text:"技术"},{value:'',text:"产品"},{value:'',text:"运营"},{	value:'',text:"市场"},{value:'',text:"招聘"},{value:'',text:"管理"},{value:'',text:"投融资"},{	value:'',text:"战略"}];
+			var courseTypeData = [{
+				value:'',
+				text:'全部领域',
+				children:[{value:'',text:'全部行业',children:[{value:'',text:'全部职能'}]}]
+			},{
+				value:'',
+				text:'互联网',
+				children:[{value:'',text:'社交',children:competencyData},{value:'',text:'游戏',children:competencyData},{value:'',text:'电商',children:competencyData},{value:'',text:'教育',children:competencyData},{value:'',text:'金融',children:competencyData},{value:'',text:'医疗',children:competencyData},{value:'',text:'旅游',children:competencyData},{value:'',text:'餐饮',children:competencyData},{value:'',text:'交通',children:competencyData},{value:'',text:'智能硬件',children:competencyData},{value:'',text:'可穿戴',children:competencyData},{value:'',text:'招聘',children:competencyData},{value:'',text:'工具',children:competencyData},{value:'',text:'O2O',children:competencyData},{value:'',text:'汽车',children:competencyData},{value:'',text:'房地产',children:competencyData},{value:'',text:'企业服务',children:competencyData},{value:'',text:'IT服务',children:competencyData},{value:'',text:'大数据',children:competencyData},{value:'',text:'传媒',children:competencyData},{value:'',text:'娱乐',children:competencyData},{value:'',text:'安全',children:competencyData},{value:'',text:'能源',children:competencyData},{value:'',text:'其它',children:competencyData}]
+			}];
+			function searchCourse(coursePicker) {
+				coursePicker.hide();
 				document.getElementById("loadingToast").style.display = "";
-				mui.ajax({
-            		url: '/course/getOpenCourseByCondition',
-            		type: "POST",
-            		data: {page:"1", countPerPage:"8", latestOrHotest:latestOrHotest, selectField:selectField, selectIndustry:selectIndustry, selectCompetency:selectCompetency, selectGrade:selectGrade},
-            		success: function(data) {
-            			if (!checkJsonIsEmpty(data)) {
-            				var i = 0;
-            				var rootNode = document.getElementById("data_list");
-    						rootNode.innerHTML = "";
-            				for (i in data) {
-	    						var liNode = document.createElement('li');
-	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
-	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
-	    						rootNode.appendChild(liNode);
-	    						liNode.addEventListener('tap',function(){
-	    					        window.location.href=this.getAttribute('course_path'); 
-	    					    });
-            				}
-            				ajaxData.page = 1;
-    					} else {
-    						alert("您搜索的数据为空，请稍后重试！");
-    					}
-            			document.getElementById("loadingToast").style.display = "none";
-            		},
-            		error: function(status, error) {
-            			document.getElementById("loadingToast").style.display = "none";
-            			alert("服务器暂时无法获取导数据，请稍后重试！");
-            		}
-            	});
+				if(searchOne == "全部领域") {
+					ajaxData = {page:1,count:8};
+					ajaxURL = "/course/getAllOpenCourseByPage";
+					mui('#pullrefresh').pullRefresh().refresh(true);
+					mui.ajax({
+	            		url: ajaxURL,
+	            		type: "POST",
+	            		data: {page:1,count:8},
+	            		success: function(data) {
+	            			if (!checkJsonIsEmpty(data)) {
+	            				var i = 0;
+	            				var rootNode = document.getElementById("data_list");
+	    						rootNode.innerHTML = "";
+	            				for (i in data) {
+		    						var liNode = document.createElement('li');
+		    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
+		    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
+		    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
+		    						rootNode.appendChild(liNode);
+		    						liNode.addEventListener('tap',function(){
+		    					        window.location.href=this.getAttribute('course_path'); 
+		    					    });
+	            				}
+	    					} else {
+	    						alert("您搜索的数据为空，请稍后重试！");
+	    					}
+	            			document.getElementById("loadingToast").style.display = "none";
+	            		},
+	            		error: function(status, error) {
+	            			document.getElementById("loadingToast").style.display = "none";
+	            			alert("服务器暂时无法获取导数据，请稍后重试！");
+	            		}
+	            	});
+				} else {
+					ajaxData ={field:searchOne,industry:searchTwo,competency:searchThree,page:1,count:8};
+					ajaxURL = "/course/getAllOpenCourseByCondition";
+					mui.ajax({
+	            		url: '/course/getAllOpenCourseByCondition',
+	            		type: "POST",
+	            		data: {field:searchOne,industry:searchTwo,competency:searchThree,page:1,count:8},
+	            		success: function(data) {
+	            			if (!checkJsonIsEmpty(data)) {
+	            				var i = 0;
+	            				var rootNode = document.getElementById("data_list");
+	    						rootNode.innerHTML = "";
+	            				for (i in data) {
+		    						var liNode = document.createElement('li');
+		    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
+		    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
+		    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
+		    						rootNode.appendChild(liNode);
+		    						liNode.addEventListener('tap',function(){
+		    					        window.location.href=this.getAttribute('course_path'); 
+		    					    });
+	            				}
+	    					} else {
+	    						ajaxURL = "/course/getAllOpenCourseByPage";
+	    						alert("您搜索的数据为空，请稍后重试！");
+	    					}
+	            			document.getElementById("loadingToast").style.display = "none";
+	            		},
+	            		error: function(status, error) {
+	            			document.getElementById("loadingToast").style.display = "none";
+	            			alert("服务器暂时无法获取导数据，请稍后重试！");
+	            		}
+	            	});
+				}
 			}
-			
-			mui('#latestOrHotest li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("latestOrHotestTips").innerHTML = this.innerHTML;
-					mui('#latestOrHotest').popover('toggle');
-					if(latestOrHotest != this.innerHTML) {
-						latestOrHotest = this.innerHTML;
-						searchCourseByCondition();
-					}
-			    });
-			});
-			mui('#selectField li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectFieldTips").innerHTML = this.innerHTML;
-					mui('#selectField').popover('toggle');
-					if(selectField != this.innerHTML) {
-						selectField = this.innerHTML;
-						searchCourseByCondition();
-					}
-			    });
-			});
-			mui('#selectIndustry li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectIndustryTips").innerHTML = this.innerHTML;
-					mui('#selectIndustry').popover('toggle');
-					if(selectIndustry != this.innerHTML) {
-						selectIndustry = this.innerHTML;
-						searchCourseByCondition();
-					}
-			    });
-			});
-			mui('#selectCompetency li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectCompetencyTips").innerHTML = this.innerHTML;
-					mui('#selectCompetency').popover('toggle');
-					if(selectCompetency != this.innerHTML) {
-						selectCompetency = this.innerHTML;
-						searchCourseByCondition();
-					}
-			    });
-			});
-			mui('#selectGrade li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectGradeTips").innerHTML = this.innerHTML; 
-					mui('#selectGrade').popover('toggle');
-					if(selectGrade != this.innerHTML) {
-						selectGrade = this.innerHTML;
-						searchCourseByCondition();
-					}
-			    });
-			});
-			
+			(function($, doc) {
+				$.ready(function() {
+					var coursePicker = new $.PopPicker({
+						layer: 3
+					});
+					coursePicker.setData(courseTypeData);
+					/* var searchButton = doc.getElementById('searchButton');
+					searchButton.addEventListener('tap', function(event) {
+						coursePicker.show(function(items) {
+							searchOne = (items[0] || {}).text;
+							searchTwo = (items[1] || {}).text;
+							searchThree = (items[2] || {}).text;
+							searchCourse(coursePicker);
+						});
+					}, false); */
+				});
+			})(mui, document);
 			var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 			var lineLink = window.location.href;
 			var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
@@ -484,6 +530,114 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 						}
 					});
 				}, 500);
+			});
+			mui('#latest_course .mui-control-item').each(function(){
+				this.addEventListener('tap',function(){
+					window.location.href=this.getAttribute("course_path");					
+			    });
+			});
+			mui('#hot_course .mui-control-item').each(function(){
+				this.addEventListener('tap',function(){
+					window.location.href=this.getAttribute("course_path");					
+			    });
+			});
+			mui('.mui-slider-item').each(function(){
+				this.addEventListener('tap',function(){
+					window.location.href=this.getAttribute("course_path");					
+			    });
+			});
+			
+			var latestOrHotest = "最新";
+			var selectField = "全部领域";
+			var selectIndustry = "全部行业";
+			var selectCompetency = "全部职能";
+			var selectGrade = "全部等级";
+			var searchConditionHasChange = false;
+			var page = 1;
+			var countPerPage = 8;
+			function searchCourseByCondition() {
+				document.getElementById("loadingToast").style.display = "";
+				if(searchConditionHasChange) {
+					page = 1;
+					searchConditionHasChange = false;
+				} else {
+					page++;
+				}
+				mui.ajax({
+            		url: '/course/getCourseByCondition',
+            		type: "POST",
+            		data: {page:page, countPerPage:countPerPage, latestOrHotest:latestOrHotest, selectField:selectField, selectIndustry:selectIndustry, selectCompetency:selectCompetency, selectGrade:selectGrade},
+            		success: function(data) {
+            			if (!checkJsonIsEmpty(data)) {
+            				var i = 0;
+            				var rootNode = document.getElementById("data_list");
+    						rootNode.innerHTML = "";
+            				for (i in data) {
+	    						var liNode = document.createElement('li');
+	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
+	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
+	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
+	    						rootNode.appendChild(liNode);
+	    						liNode.addEventListener('tap',function(){
+	    					        window.location.href=this.getAttribute('course_path'); 
+	    					    });
+            				}
+    					} else {
+    						alert("您搜索的数据为空，请稍后重试！");
+    					}
+            			document.getElementById("loadingToast").style.display = "none";
+            		},
+            		error: function(status, error) {
+            			document.getElementById("loadingToast").style.display = "none";
+            			alert("服务器暂时无法获取导数据，请稍后重试！");
+            		}
+            	});
+			}
+			
+			mui('#latestOrHotest li').each(function(){
+				this.addEventListener('tap',function(){
+					document.getElementById("latestOrHotestTips").innerHTML = this.innerHTML;
+					mui('#latestOrHotest').popover('toggle');
+					if(latestOrHotest != this.innerHTML) searchConditionHasChange = true;
+					latestOrHotest = this.innerHTML;
+					searchCourseByCondition();
+			    });
+			});
+			mui('#selectField li').each(function(){
+				this.addEventListener('tap',function(){
+					document.getElementById("selectFieldTips").innerHTML = this.innerHTML;
+					mui('#selectField').popover('toggle');
+					if(selectField != this.innerHTML) searchConditionHasChange = true;
+					selectField = this.innerHTML;
+					searchCourseByCondition();
+			    });
+			});
+			mui('#selectIndustry li').each(function(){
+				this.addEventListener('tap',function(){
+					document.getElementById("selectIndustryTips").innerHTML = this.innerHTML;
+					mui('#selectIndustry').popover('toggle');
+					if(selectIndustry != this.innerHTML) searchConditionHasChange = true;
+					selectIndustry = this.innerHTML;
+					searchCourseByCondition();
+			    });
+			});
+			mui('#selectCompetency li').each(function(){
+				this.addEventListener('tap',function(){
+					document.getElementById("selectCompetencyTips").innerHTML = this.innerHTML;
+					mui('#selectCompetency').popover('toggle');
+					if(selectCompetency != this.innerHTML) searchConditionHasChange = true;
+					selectCompetency = this.innerHTML;
+					searchCourseByCondition();
+			    });
+			});
+			mui('#selectGrade li').each(function(){
+				this.addEventListener('tap',function(){
+					document.getElementById("selectGradeTips").innerHTML = this.innerHTML; 
+					mui('#selectGrade').popover('toggle');
+					if(selectGrade != this.innerHTML) searchConditionHasChange = true;
+					selectGrade = this.innerHTML;
+					searchCourseByCondition();
+			    });
 			});
 		</script>
 </html>

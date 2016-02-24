@@ -147,6 +147,12 @@
 																</span>
 																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
 															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="banner1_course_id" placeholder="" class="form-control">
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -160,6 +166,12 @@
 																<input type="file" name="banner2" id="banner2">
 																</span>
 																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="banner2_course_id" placeholder="" class="form-control">
+																</div>
 															</div>
 														</div>
 													</div>
@@ -177,6 +189,12 @@
 																</span>
 																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
 															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="banner3_course_id" placeholder="" class="form-control">
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -190,6 +208,12 @@
 																<input type="file" name="banner4" id="banner4">
 																</span>
 																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="banner4_course_id" placeholder="" class="form-control">
+																</div>
 															</div>
 														</div>
 													</div>
@@ -271,11 +295,19 @@
 				var banner2 = $('#banner2').val();
 				var banner3 = $('#banner3').val();
 				var banner4 = $('#banner4').val();
+				var banner1_course_id = $('#banner1_course_id').val();
+				var banner2_course_id = $('#banner2_course_id').val();
+				var banner3_course_id = $('#banner3_course_id').val();
+				var banner4_course_id = $('#banner4_course_id').val();
 				if(banner1 == null || banner1 == "" ||
 						banner2 == null || banner2 == "" ||
 						banner3 == null || banner3 == "" ||
-						banner4 == null || banner4 == "") {
-					$('#tips_info').html("<p>所有Banner必须选择图片，请检查！</p>");
+						banner4 == null || banner4 == "" ||
+						banner1_course_id == null || banner1_course_id == "" ||
+						banner2_course_id == null || banner2_course_id == "" ||
+						banner3_course_id == null || banner3_course_id == "" ||
+						banner4_course_id == null || banner4_course_id == "") {
+					$('#tips_info').html("<p>所有Banner必须选择图片并且课程ID不能为空，请检查！</p>");
 					$('#helpModal').modal("show");
 					return false;
 				} else {
@@ -286,11 +318,18 @@
 				/* $('#helpModal').modal();
 				$('.progress.progress-striped').show(); */
 				if(checkInput()) {
+					var banner1_course_id = $('#banner1_course_id').val();
+					var banner2_course_id = $('#banner2_course_id').val();
+					var banner3_course_id = $('#banner3_course_id').val();
+					var banner4_course_id = $('#banner4_course_id').val();
 					$("#submit_banner").attr('disabled', "");
 					$("#progress_tip").show();
-					var formData = {};
 					var xhr = new XMLHttpRequest();
 					var fd = new FormData();
+					fd.append("courseId1", banner1_course_id);
+					fd.append("courseId2", banner2_course_id);
+					fd.append("courseId3", banner3_course_id);
+					fd.append("courseId4", banner4_course_id);
 					fd.append("files", document.getElementById("banner1").files[0]);
 					fd.append("files", document.getElementById("banner2").files[0]);
 					fd.append("files", document.getElementById("banner3").files[0]);

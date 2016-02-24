@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveCourseModel;
+import com.ddcb.model.SelectCourseModel;
 
 public interface ICourseDao {
 
@@ -24,5 +25,11 @@ public interface ICourseDao {
 	public List<LiveCourseModel> getAllLiveCourseByCondition(int page, int count, String field, String industry, String competency, String userId);
 	
 	public List<CourseModel> getAllUserPayedCourseRecentCourse();
+	
+	public List<SelectCourseModel> getLatestCourse();
+	
+	public List<SelectCourseModel> getHotestCourse();
+	
+	public List<CourseModel> getOpenCourseByCondition(int page, int count, String type, String field, String industry, String competeny, String grade);
 		
 }

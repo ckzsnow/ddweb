@@ -6,20 +6,23 @@ public class BannerModel {
 
 	private String id;
 	private String file_name;
+	private Long course_id;
 	private Timestamp create_time;
 	
 	public BannerModel() {}
 
-	public BannerModel(String id, String file_name, Timestamp create_time) {
+	public BannerModel(String id, String file_name, Timestamp create_time, Long courseId) {
 		super();
 		this.id = id;
 		this.file_name = file_name;
 		this.create_time = create_time;
+		this.course_id = courseId;
 	}
 
 	@Override
 	public String toString() {
-		return "BannerModel [id=" + id + ", file_name=" + file_name + ", create_time=" + create_time + "]";
+		return "BannerModel [id=" + id + ", file_name=" + file_name + ", course_id=" + course_id + ", create_time="
+				+ create_time + "]";
 	}
 
 	public String getId() {
@@ -44,6 +47,14 @@ public class BannerModel {
 
 	public void setCreate_time(Timestamp create_time) {
 		this.create_time = create_time;
+	}
+
+	public Long getCourse_id() {
+		return course_id;
+	}
+
+	public void setCourse_id(Long course_id) {
+		this.course_id = course_id;
 	}
 	
 }
