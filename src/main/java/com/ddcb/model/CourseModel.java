@@ -19,6 +19,7 @@ public class CourseModel {
 	private String courseIndustry;
 	private String courseCompetency;
 	private String price;
+	private Integer people_count;
 	
 	private Integer select_status;
 	private Integer pay_status;
@@ -29,7 +30,7 @@ public class CourseModel {
 	public CourseModel(Long id, String name, String course_abstract, String teacher, String image,
 			Timestamp course_date, String course_date_readable, String course_time, 
 			String course_length, Timestamp create_time, Integer courseType,
-			String courseField, String courseIndustry, String courseCompetency, String price) {
+			String courseField, String courseIndustry, String courseCompetency, String price, Integer people_count) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -46,6 +47,7 @@ public class CourseModel {
 		this.courseIndustry = courseIndustry;
 		this.courseCompetency = courseCompetency;
 		this.price = price;
+		this.people_count = people_count;
 	}
 
 	public Long getId() {
@@ -192,6 +194,14 @@ public class CourseModel {
 		this.price = price;
 	}
 
+	public Integer getPeople_count() {
+		return people_count;
+	}
+
+	public void setPeople_count(Integer people_count) {
+		this.people_count = people_count;
+	}
+
 	@Override
 	public String toString() {
 		return "CourseModel [id=" + id + ", name=" + name + ", course_abstract=" + course_abstract + ", teacher="
@@ -199,7 +209,7 @@ public class CourseModel {
 				+ course_date_readable + ", course_time=" + course_time + ", course_length=" + course_length
 				+ ", create_time=" + create_time + ", courseType=" + courseType + ", courseField=" + courseField
 				+ ", courseIndustry=" + courseIndustry + ", courseCompetency=" + courseCompetency + ", price=" + price
-				+ ", select_status=" + select_status + ", pay_status=" + pay_status + ", forward_status="
-				+ forward_status + "]";
+				+ ", people_count=" + people_count + ", select_status=" + select_status + ", pay_status=" + pay_status
+				+ ", forward_status=" + forward_status + "]";
 	}
 }
