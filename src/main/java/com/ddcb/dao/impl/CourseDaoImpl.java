@@ -207,27 +207,30 @@ public class CourseDaoImpl implements ICourseDao {
 
 	@Override
 	public List<CourseModel> getOpenCourseByCondition(int page, int count, String type, String field, String industry,
-			String competeny, String grade) {
+			String competeny, String grade, String key) {
 		List<CourseModel> list = null;
 		String sql = "select COUNT(a.course_id) as people_count,  c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c LEFT JOIN user_study_record as a on a.course_id=c.id ";
 		StringBuilder whereSql = new StringBuilder();
 		List<Object> args = new ArrayList<>();
 		whereSql.append(" where c.course_type=0 ");
-		if(!("全部领域").equals(field)) {
+		if(!("全部").equals(field)) {
 			whereSql.append(" and c.course_field=? ");
 			args.add(field);
 		}
-		if(!("全部行业").equals(industry)) {
+		if(!("全部").equals(industry)) {
 			whereSql.append(" and c.course_industry=? ");
 			args.add(industry);
 		}
-		if(!("全部职能").equals(competeny)) {
+		if(!("全部").equals(competeny)) {
 			whereSql.append(" and c.course_competency=? ");
 			args.add(competeny);
 		}
-		if(!("全部等级").equals(grade)) {
+		if(!("全部").equals(grade)) {
 			whereSql.append(" and c.course_grade=? ");
 			args.add(grade);
+		}
+		if(key != null && !key.isEmpty()) {
+			whereSql.append(" and (c.name like '%"+key+"%' or c.teacher like '%"+key+"%') ");
 		}
 		if(("最新").equals(type)) {
 			sql = sql + whereSql.toString() + " GROUP BY c.id order by c.create_time desc limit ?,?";

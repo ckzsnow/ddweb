@@ -224,9 +224,9 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 		<div id="mainpage" class="mui-page">
     		<div class="mui-navbar-inner mui-bar mui-bar-nav" style="background-color: #66d6a6;">
 				<h1 class="mui-center mui-title" style="color:white;">点豆直播课</h1>
-				<a id="searchButton" style="color:white;font-size: 25px;font-weight:600;" class="mui-icon mui-icon-search mui-pull-right"></a>
+				<!-- <a id="searchButton" style="color:white;font-size: 25px;font-weight:600;" class="mui-icon mui-icon-search mui-pull-right"></a> -->
 			</div>
-			<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:5px;">
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
 				<div class="mui-scroll">
 				<%if(list == null || list.isEmpty()) {%>
 				<div style="margin-top:50%;text-align:center;">暂时没有数据，请稍后重试！</div>
@@ -234,7 +234,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 					hasData = false;
 				</script>
 				<%} else {%>
-				<div style="margin-top:10px;">
+				<div style="margin-top:5px;">
 					<ul id="data_list" class="mui-table-view">
 						<%for(LiveCourseModel cm : list) { %>
 						<li class="mui-table-view-cell mui-media" course_id="<%=cm.getId()%>">
@@ -662,7 +662,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	            	});
 				}
 			}
-			(function($, doc) {
+			/* (function($, doc) {
 				$.ready(function() {
 					var coursePicker = new $.PopPicker({
 						layer: 3
@@ -679,7 +679,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 						});
 					}, false);
 				});
-			})(mui, document);
+			})(mui, document); */
 			var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 			var lineLink = window.location.href;
 			var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";

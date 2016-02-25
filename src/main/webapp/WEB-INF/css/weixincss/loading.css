@@ -1,6 +1,6 @@
 .weui_toast {
   position: fixed;
-  z-index: 13;
+  z-index: 139999999;
   width: 7.6em;
   min-height: 7.6em;
   top: 180px;

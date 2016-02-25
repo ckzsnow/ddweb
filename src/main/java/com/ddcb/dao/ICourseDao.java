@@ -30,6 +30,6 @@ public interface ICourseDao {
 	
 	public List<SelectCourseModel> getHotestCourse();
 	
-	public List<CourseModel> getOpenCourseByCondition(int page, int count, String type, String field, String industry, String competeny, String grade);
+	public List<CourseModel> getOpenCourseByCondition(int page, int count, String type, String field, String industry, String competeny, String grade, String key);
 		
 }

@@ -44,7 +44,7 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 		<style>
 			.dialog {
 				position: fixed;
-				z-index: 998;
+				z-index: 99899999999999999;
 				top: 0;
 				right: 0;
 				bottom: 0;
@@ -91,16 +91,16 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 								if(index != 1) {
 									if(userStatus != 1) {
 						%>						
-							 			<li class="mui-table-view-cell" id="" style="font-size:15px;" data_src="">课时<%=index %>:<%=cdm.getSubTitle()%>&nbsp;<%=cdm.getCourse_time_length()%></li>
+							 			<li class="mui-table-view-cell" id="" style="font-size:15px;" data_src=""><span style='float:left;'>课时<%=index %>:<%=cdm.getSubTitle()%></span><span style='float:right;'><%=cdm.getCourse_time_length()%></span></li>
 						<%
 									} else {			
 						%>
-										<li class="mui-table-view-cell" style="font-size:15px;" id="course_list_<%=index %>" data_src="<%=cdm.getVideosrc()%>">课时<%=index %>:<%=cdm.getSubTitle()%>&nbsp;<%=cdm.getCourse_time_length()%></li>										
+										<li class="mui-table-view-cell" style="font-size:15px;" id="course_list_<%=index %>" data_src="<%=cdm.getVideosrc()%>"><span style='float:left;'>课时<%=index %>:<%=cdm.getSubTitle()%></span><span style='float:right;'><%=cdm.getCourse_time_length()%></span></li>										
 						<%
 									}
 								} else {
 						%>
-									<li class="mui-table-view-cell" style="font-size:15px;color:#22cc99;" id="course_list_<%=index %>" data_src="<%=cdm.getVideosrc()%>" style="color:#22cc99;">课时<%=index %>:<%=cdm.getSubTitle()%>&nbsp;<%=cdm.getCourse_time_length()%></li>
+									<li class="mui-table-view-cell" style="font-size:15px;color:#22cc99;" id="course_list_<%=index %>" data_src="<%=cdm.getVideosrc()%>" style="color:#22cc99;"><span style='float:left;'>课时<%=index %>:<%=cdm.getSubTitle()%></span><span style='float:right;'><%=cdm.getCourse_time_length()%></span></li>
 					    <%
 								}
 								index++;
@@ -206,10 +206,10 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	   if($(this).attr('data_src') == "") {
 		   var confirmDialog = mui.createConfirmDialog('您不是VIP会员，只能观看课时1的视频！观看更多视频，请购买VIP会员！',
 				function() {
-					confirmDialog.close();
+					//confirmDialog.close();
 				},
 				function() {
-					confirmDialog.close();
+					//confirmDialog.close();
 					window.location.href="/weixin/getDDCBBuyVip";
 				}
 			);
@@ -222,7 +222,7 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	   });
 	   $(this).attr('style', 'font-size:15px;color:#22cc99;');
 	   document.getElementById('video').load();
-	   //document.getElementById('video').play();
+	   document.getElementById('video').play();
 	});
 	$.ajax({
 		url: "/course/addStudyRecord",

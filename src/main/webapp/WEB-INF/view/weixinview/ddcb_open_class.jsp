@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page
+	import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@ page import="org.springframework.web.context.WebApplicationContext"%>
 <%@ page import="com.ddcb.dao.IBannerDao"%>
 <%@ page import="com.ddcb.dao.ICourseDao"%>
@@ -11,7 +12,7 @@
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IBannerDao bannerDao = (IBannerDao)wac.getBean("bannerDao");
-List<CourseModel> list = courseDao.getOpenCourseByCondition(1,8, "最新", "全部领域", "全部行业", "全部职能", "全部等级");
+List<CourseModel> list = courseDao.getOpenCourseByCondition(1,8, "最新", "全部", "全部", "全部", "全部", "");
 List<BannerModel> bannerList = bannerDao.getAllBanner();
 String code = (String)session.getAttribute("url_code");
 Map<String, String> result = new HashMap<>();
@@ -19,203 +20,286 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 %>
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>点豆大讲堂</title>
-		<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
-		<link href="/css/weixincss/mui.picker.min.css" rel="stylesheet" />
-		<link href="/css/weixincss/mui.poppicker.css" rel="stylesheet" />
-		<link href="/css/weixincss/loading.css" rel="stylesheet" />
-		<style>
-			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
-				color: #66d6a6 !important;
-		    	border-bottom: 2px solid #66d6a6;
-		    	background: 0 0;
-			}
-			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item {
-				color: black !important;
-			}
-			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item a{
-				color: black;
-			}
-			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active a{
-				color: #66d6a6 !important;
-			}
-		</style>
-	</head>
-	<body>
-		<header class="mui-bar mui-bar-nav" style="background-color: #66d6a6;">
-			<h1 class="mui-title" style="color:white;">点豆公开课</h1>
-			<a id="searchButton" href="#searchInput" style="color:white;font-size: 25px;font-weight:600;" class="mui-icon mui-icon-search mui-pull-right"></a>
-		</header>
-		<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:5px;">
-			<div class="mui-scroll">
-				<div id="slider" class="mui-slider" style="width:100%;max-height: 150px;">
-					<div class="mui-slider-group mui-slider-loop">
-						<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-						<div course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(3).getCourse_id() %>" class="mui-slider-item mui-slider-item-duplicate">
-							<a href="#">
-								<img src="/files/bannerimgs/banner4.jpg">
-							</a>
-						</div>
-						<!-- 第一张 -->
-						<div course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(0).getCourse_id() %>" class="mui-slider-item">
-							<a href="#">
-								<img src="/files/bannerimgs/banner1.jpg">
-							</a>
-						</div>
-						<!-- 第二张 -->
-						<div course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(1).getCourse_id() %>" class="mui-slider-item">
-							<a href="#">
-								<img src="/files/bannerimgs/banner2.jpg">
-							</a>
-						</div>
-						<!-- 第三张 -->
-						<div course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(2).getCourse_id() %>" class="mui-slider-item">
-							<a href="#">
-								<img src="/files/bannerimgs/banner3.jpg">
-							</a>
-						</div>
-						<!-- 第四张 -->
-						<div course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(3).getCourse_id() %>" class="mui-slider-item">
-							<a href="#">
-								<img src="/files/bannerimgs/banner4.jpg">
-							</a>
-						</div>
-						<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-						<div course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(0).getCourse_id() %>" class="mui-slider-item mui-slider-item-duplicate">
-							<a href="#">
-								<img src="/files/bannerimgs/banner1.jpg">
-							</a>
-						</div>
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>点豆大讲堂</title>
+<link href="/css/weixincss/mui.min.css" rel="stylesheet" />
+<link href="/css/weixincss/mui.picker.min.css" rel="stylesheet" />
+<link href="/css/weixincss/mui.poppicker.css" rel="stylesheet" />
+<link href="/css/weixincss/loading.css" rel="stylesheet" />
+<style>
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active
+	{
+	color: #66d6a6 !important;
+	border-bottom: 2px solid #66d6a6;
+	background: 0 0;
+}
+
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item
+	{
+	color: black !important;
+}
+
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item a
+	{
+	color: black;
+}
+
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active a
+	{
+	color: #66d6a6 !important;
+}
+
+/* screening */
+div.screening {
+	width: 100%;
+	overflow: hidden;
+	background: #fff;
+	position: fixed;
+	z-index: 4;
+}
+
+div.screening>ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	border-bottom: solid 1px #d3d3d3;
+	overflow: hidden;
+}
+
+div.screening>ul>li {
+	float: left;
+	width: 24%;
+	text-align: center;
+	line-height: 44px;
+	border-left: solid 1px #d3d3d3;
+	background: url("/img/weixinimg/on_1.png") no-repeat 85% center;
+}
+/* grade */
+.search-eject {
+	position: fixed;
+	top: 49px;
+	width: 100%;
+	height: 170px;
+	z-index: 11;
+	-webkit-transition-duration: 0.4s;
+}
+
+.search-eject>ul {
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+	height: 170px;
+	width: 100%;
+	-webkit-transition-duration: 0.4s;
+}
+
+.search-eject>ul>li {
+	height: 44px;
+	line-height: 44px;
+	font-size: 16px;
+	padding-left: 1rem;
+	border-bottom: solid 1px #eee;
+}
+
+.grade-w-roll {
+	top: 220px;
+}
+
+.grade-w-roll::after {
+	position: fixed;
+	content: "";
+	width: 100%;
+	height: 100%;
+	display: block;
+	background: rgba(0, 0, 0, 0.2);
+	top: 49px;
+}
+/*Sort-eject*/
+.search-search {
+	background: #fff;
+	position: absolute;
+	z-index: 39;
+	left: 0;
+	list-style-type: none;
+	height: 170px;
+	width: 100%;
+}
+
+.search-search>li {
+	border-bottom: solid 1px #eee;
+	padding: 0;
+}
+
+.search-height {
+	height: 170px;
+	width: 100%;
+}
+
+/* demo-content */
+.demo-content {
+	padding-top: 3rem;
+}
+</style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav" style="background-color: #66d6a6;z-index:999999999;">
+		<h1 class="mui-title" style="color: white;">点豆公开课</h1>
+		<a id="searchButton" href="#searchInput"
+			style="color: white; font-size: 25px; font-weight: 600;"
+			class="mui-icon mui-icon-search mui-pull-right"></a>
+	</header>
+	<div class="mui-content">
+		<div id="content_top" style="margin-top: 5px;">
+			<div id="slider" class="mui-slider"
+				style="width: 100%; max-height: 130px; height: 130px; z-index: 100;background-color:white;">
+				<div class="mui-slider-group mui-slider-loop">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div
+						course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(3).getCourse_id() %>"
+						class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#"> <img
+							src="http://www.diandou.me/files/bannerimgs/banner4.jpg">
+						</a>
 					</div>
-					<div class="mui-slider-indicator">
-						<div class="mui-indicator mui-active"></div>
-						<div class="mui-indicator"></div>
-						<div class="mui-indicator"></div>
-						<div class="mui-indicator"></div>
+					<!-- 第一张 -->
+					<div
+						course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(0).getCourse_id() %>"
+						class="mui-slider-item">
+						<a href="#"> <img
+							src="http://www.diandou.me/files/bannerimgs/banner1.jpg">
+						</a>
+					</div>
+					<!-- 第二张 -->
+					<div
+						course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(1).getCourse_id() %>"
+						class="mui-slider-item">
+						<a href="#"> <img
+							src="http://www.diandou.me/files/bannerimgs/banner2.jpg">
+						</a>
+					</div>
+					<!-- 第三张 -->
+					<div
+						course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(2).getCourse_id() %>"
+						class="mui-slider-item">
+						<a href="#"> <img
+							src="http://www.diandou.me/files/bannerimgs/banner3.jpg">
+						</a>
+					</div>
+					<!-- 第四张 -->
+					<div
+						course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(3).getCourse_id() %>"
+						class="mui-slider-item">
+						<a href="#"> <img
+							src="http://www.diandou.me/files/bannerimgs/banner4.jpg">
+						</a>
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div
+						course_path="/playDDCBOpenClass?course_id=<%=bannerList.get(0).getCourse_id() %>"
+						class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#"> <img
+							src="http://www.diandou.me/files/bannerimgs/banner1.jpg">
+						</a>
 					</div>
 				</div>
-				
-				<div class="mui-card" style="margin:10px 0px;border:none;border-radius:0px;">
-					<div class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background-color: white;height:40px;margin-top:5px;margin-left: 5px;">
-						<div class="mui-scroll" style="background-color: white;height:40px;">
-							<div class="mui-control-item mui-active" style="padding:8px 0px;">
-								<a href="#latestOrHotest"><div id="latestOrHotestTips" style="width:80px;max-width:80px;" class='mui-ellipsis'>最新</div></a>
-							</div>
-							<div class="mui-control-item" style="padding:8px 0px;">
-								<a href="#selectField"><div id="selectFieldTips" style="width:80px;max-width:80px;" class='mui-ellipsis'>全部领域</div></a>
-							</div>
-							<div class="mui-control-item" style="padding:8px 0px;">
-								<a href="#selectIndustry"><div id="selectIndustryTips" style="width:80px;max-width:80px;" class='mui-ellipsis'>全部行业</div></a>
-							</div>
-							<div class="mui-control-item" style="padding:8px 0px;">
-								<a href="#selectCompetency"><div id="selectCompetencyTips" style="width:80px;max-width:80px;" class='mui-ellipsis'>全部职能</div></a>
-							</div>
-							<div class="mui-control-item" style="padding:8px 0px;margin-right:10px;">
-								<a href="#selectGrade"><div id="selectGradeTips" style="width:80px;max-width:80px;" class='mui-ellipsis'>全部等级</div></a>
-							</div>
-						</div>
-					</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
 				</div>
-				
-				<ul class="mui-table-view">
-					<li class="mui-table-view-cell mui-collapse">
-						<a class="mui-navigate-right" href="#">表单</a>
-						<div class="mui-collapse-content">
-							<form class="mui-input-group">
-								<div class="mui-input-row">
-									<label>Input</label>
-									<input type="text" placeholder="普通输入框">
-								</div>
-								<div class="mui-input-row">
-									<label>Input</label>
-									<input type="text" class="mui-input-clear" placeholder="带清除按钮的输入框">
-								</div>
-		
-								<div class="mui-input-row">
-									<label>Input</label>
-									<input type="text" class="mui-input-speech mui-input-clear" placeholder="语音输入">
-								</div>
-								<div class="mui-button-row">
-									<button class="mui-btn mui-btn-primary" type="button" onclick="return false;">确认</button>&nbsp;&nbsp;
-									<button class="mui-btn mui-btn-primary" type="button" onclick="return false;">取消</button>
-								</div>
-							</form>
-						</div>
-					</li>
-					<li class="mui-table-view-cell mui-collapse">
-						<a class="mui-navigate-right" href="#">图片轮播</a>
-						<div class="mui-collapse-content">
-							<div id="slider" class="mui-slider">
-								<div class="mui-slider-group mui-slider-loop">
-									<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-									<div class="mui-slider-item mui-slider-item-duplicate">
-										<a href="#">
-											<img src="../images/yuantiao.jpg">
-										</a>
-									</div>
-									<!-- 第一张 -->
-									<div class="mui-slider-item">
-										<a href="#">
-											<img src="../images/shuijiao.jpg">
-										</a>
-									</div>
-									<!-- 第二张 -->
-									<div class="mui-slider-item">
-										<a href="#">
-											<img src="../images/muwu.jpg">
-										</a>
-									</div>
-									<!-- 第三张 -->
-									<div class="mui-slider-item">
-										<a href="#">
-											<img src="../images/cbd.jpg">
-										</a>
-									</div>
-									<!-- 第四张 -->
-									<div class="mui-slider-item">
-										<a href="#">
-											<img src="../images/yuantiao.jpg">
-										</a>
-									</div>
-									<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-									<div class="mui-slider-item mui-slider-item-duplicate">
-										<a href="#">
-											<img src="../images/shuijiao.jpg">
-										</a>
-									</div>
-								</div>
-								<div class="mui-slider-indicator">
-									<div class="mui-indicator mui-active"></div>
-									<div class="mui-indicator"></div>
-									<div class="mui-indicator"></div>
-									<div class="mui-indicator"></div>
-								</div>
-							</div>
-						</div>
-					</li>
-					<li class="mui-table-view-cell mui-collapse">
-						<a class="mui-navigate-right" href="#">文字排版</a>
-						<div class="mui-collapse-content">
-							<h1>h1. Heading</h1>
-							<h2>h2. Heading</h2>
-							<h3>h3. Heading</h3>
-							<h4>h4. Heading</h4>
-							<h5>h5. Heading</h5>
-							<h6>h6. Heading</h6>
-							<p>
-								p. 目前最接近原生App效果的框架。
-							</p>
-						</div>
-					</li>
+			</div>
+			<div class="screening" style="z-index:199;">
+				<ul>
+					<li class="industry" style="font-size:10px;">行业</li>
+					<li class="competency" style="font-size:10px;">职能</li>
+					<li class="latestOrHotest" style="font-size:10px;">最新</li>
+					<li class="courseGrade" style="font-size:10px;">等级</li>
 				</ul>
-				
+			</div>
+			<div id="industry" class="industry search-eject search-height">
+				<div class="mui-scroll-wrapper" style="height: 170px;">
+					<div class="mui-scroll">
+						<ul class="mui-table-view">
+							<li style="background:#eee;" class="mui-table-view-cell"  onclick="clickIndustry(this)">全部</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">社交</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">游戏</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">电商</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">教育</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">金融</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">医疗</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">旅游</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">餐饮</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">交通</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">智能硬件</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">可穿戴</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">招聘</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">工具</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">O2O</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">汽车</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">房地产</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">企业服务</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">IT服务</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">大数据</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">传媒</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">娱乐</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">安全</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">能源</li>
+							<li class="mui-table-view-cell" onclick="clickIndustry(this)">其它</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="competency" class="competency search-eject search-height">
+				<div class="mui-scroll-wrapper" style="height: 170px;">
+					<div class="mui-scroll">
+						<ul class="mui-table-view">
+							<li style="background:#eee;" class="mui-table-view-cell" onclick="clickCompetency(this)">全部</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">技术</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">产品</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">运营</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">市场</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">招聘</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">管理</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">投融资</li>
+							<li class="mui-table-view-cell" onclick="clickCompetency(this)">战略</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="latestOrHotest" class="latestOrHotest search-eject search-height">
+				<div class="mui-scroll-wrapper" style="height: 170px;">
+					<div class="mui-scroll">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell" style="background:#eee;" onclick="clickLatestOrHotest(this)">最新</li>
+							<li class="mui-table-view-cell" onclick="clickLatestOrHotest(this)">最热</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="courseGrade" class="courseGrade search-eject search-height">
+				<div class="mui-scroll-wrapper" style="height: 170px;">
+					<div class="mui-scroll">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell" style="background:#eee;" onclick="clickCourseGrade(this)">全部</li>
+							<li class="mui-table-view-cell" onclick="clickCourseGrade(this)">初级</li>
+							<li class="mui-table-view-cell" onclick="clickCourseGrade(this)">中级</li>
+							<li class="mui-table-view-cell" onclick="clickCourseGrade(this)">高级</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 				<%if(list == null || list.isEmpty()) {%>
-				<div style="margin-top:50px;text-align:center;">暂时没有数据，请稍后重试！</div>
+				<div style="margin-top:50%;text-align:center;">暂时没有数据，请稍后重试！</div>
 				<%} else {%>
-				<div style="margin-top:10px;">
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="margin-top:180px;">
+					<div class="mui-scroll">
 					<ul id="data_list" class="mui-table-view">
 						<%for(CourseModel cm : list) { %>
 						<li class="mui-table-view-cell mui-media" course_path='/playDDCBOpenClass?course_id=<%=cm.getId() %>'>
@@ -223,141 +307,75 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 							<div class="mui-media-body">
 								<h4 style="font-size:15px;"><%=cm.getName() %></h4>
 								<h6 style="margin-top:5px;color:#2ab888;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-contact"></span><%=cm.getTeacher() %></h6>
-								<p style="margin-top:5px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getPeople_count() %>人学习</p>
+								<p style="margin-top:5px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getPeople_count() %>人学习</p>
 							</div>
 						</li>
 						<%} %>
 					</ul>
+					</div>
 				</div>
 				<%} %>
+
+	<div id="loadingToast" class="weui_loading_toast"
+		style="display: none;">
+		<div class="weui_mask_transparent"></div>
+		<div class="weui_toast">
+			<div class="weui_loading">
+				<div class="weui_loading_leaf weui_loading_leaf_0"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_1"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_2"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_3"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_4"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_5"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_6"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_7"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_8"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_9"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_10"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_11"></div>
+			</div>
+			<p style="color: white;" class="weui_toast_content">数据加载中</p>
+		</div>
+	</div>
+	<div id="searchInput"
+		class="mui-popover mui-popover-action mui-popover-bottom">
+		<div class="mui-poppicker-header">
+			<button onclick="searchKeyCancel()"
+				class="mui-btn mui-poppicker-btn-cancel">取消</button>
+			<button onclick="searchKeyContent()"
+				class="mui-btn mui-poppicker-btn-ok">确定</button>
+			<div class="mui-poppicker-clear"></div>
+		</div>
+		<div class="mui-poppicker-body"
+			style="height: 100px; background-color: white;">
+			<div class="mui-input-row mui-search" style="margin: 30px 10px;">
+				<input id="search_key" type="search" class="mui-input-clear"
+					style="background-color: white;" placeholder="点击输入关键词">
 			</div>
 		</div>
-		<div id="loadingToast" class="weui_loading_toast" style="display:none;">
-	        <div class="weui_mask_transparent"></div>
-	        <div class="weui_toast">
-	            <div class="weui_loading">
-	                <div class="weui_loading_leaf weui_loading_leaf_0"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_1"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_2"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_3"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_4"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_5"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_6"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_7"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_8"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_9"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_10"></div>
-	                <div class="weui_loading_leaf weui_loading_leaf_11"></div>
-	            </div>
-	            <p style="color:white;" class="weui_toast_content">数据加载中</p>
-	        </div>
-        </div>
-        <div id="searchInput" class="mui-popover mui-popover-action mui-popover-bottom">
-			<div class="mui-poppicker-header">
-				<button onclick="searchCancel()" class="mui-btn mui-poppicker-btn-cancel">取消</button>
-				<button onclick="searchContent()" class="mui-btn mui-btn-blue mui-poppicker-btn-ok">确定</button>
-				<div class="mui-poppicker-clear"></div>
-			</div>
-			<div class="mui-poppicker-body" style="height:100px;background-color:white;">
-				<div class="mui-input-row mui-search" style="margin:30px 10px;">
-					<input id="search_key" type="search" class="mui-input-clear" style="background-color:white;" placeholder="点击输入关键词">
-				</div>
-			</div>
-		</div>
-		<div id="latestOrHotest" class="mui-popover" style="height:300px;z-index:9999;">
-			<div class="mui-scroll-wrapper">
-				<div class="mui-scroll">
-					<ul class="mui-table-view">
-						<li class="mui-table-view-cell">最新</li>
-						<li class="mui-table-view-cell">最热</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div id="selectField" class="mui-popover" style="height:300px;z-index:9999;">
-			<div class="mui-scroll-wrapper">
-				<div class="mui-scroll">
-					<ul class="mui-table-view">
-						<li class="mui-table-view-cell">全部领域</li>
-						<li class="mui-table-view-cell">互联网</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div id="selectIndustry" class="mui-popover" style="height:300px;z-index:9999;">
-			<div class="mui-scroll-wrapper">
-				<div class="mui-scroll">
-					<ul class="mui-table-view">
-						<li class="mui-table-view-cell">全部行业</li>
-						<li class="mui-table-view-cell">社交</li>
-						<li class="mui-table-view-cell">游戏</li>
-						<li class="mui-table-view-cell">电商</li>
-						<li class="mui-table-view-cell">教育</li>
-						<li class="mui-table-view-cell">金融</li>
-						<li class="mui-table-view-cell">医疗</li>
-						<li class="mui-table-view-cell">旅游</li>
-						<li class="mui-table-view-cell">餐饮</li>
-						<li class="mui-table-view-cell">交通</li>
-						<li class="mui-table-view-cell">智能硬件</li>
-						<li class="mui-table-view-cell">可穿戴</li>
-						<li class="mui-table-view-cell">招聘</li>
-						<li class="mui-table-view-cell">工具</li>
-						<li class="mui-table-view-cell">O2O</li>
-						<li class="mui-table-view-cell">汽车</li>
-						<li class="mui-table-view-cell">房地产</li>
-						<li class="mui-table-view-cell">企业服务</li>
-						<li class="mui-table-view-cell">IT服务</li>
-						<li class="mui-table-view-cell">大数据</li>
-						<li class="mui-table-view-cell">传媒</li>
-						<li class="mui-table-view-cell">娱乐</li>
-						<li class="mui-table-view-cell">安全</li>
-						<li class="mui-table-view-cell">能源</li>
-						<li class="mui-table-view-cell">其它</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div id="selectCompetency" class="mui-popover" style="height:300px;z-index:9999;">
-			<div class="mui-scroll-wrapper">
-				<div class="mui-scroll">
-					<ul class="mui-table-view">
-						<li class="mui-table-view-cell">全部职能</li>
-						<li class="mui-table-view-cell">技术</li>
-						<li class="mui-table-view-cell">产品</li>
-						<li class="mui-table-view-cell">运营</li>
-						<li class="mui-table-view-cell">市场</li>
-						<li class="mui-table-view-cell">招聘</li>
-						<li class="mui-table-view-cell">管理</li>
-						<li class="mui-table-view-cell">投融资</li>
-						<li class="mui-table-view-cell">战略</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div id="selectGrade" class="mui-popover" style="height:300px;z-index:9999;">
-			<div class="mui-scroll-wrapper">
-				<div class="mui-scroll">
-					<ul class="mui-table-view">
-						<li class="mui-table-view-cell">全部等级</li>
-						<li class="mui-table-view-cell">初级</li>
-						<li class="mui-table-view-cell">中级</li>
-						<li class="mui-table-view-cell">高级</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</body>
-	<script type="text/javascript" src="/js/weixinjs/mui.min.js" ></script>
-	<script src="/js/weixinjs/mui.picker.min.js"></script>
-	<script src="/js/weixinjs/mui.poppicker.min.js"></script>
-	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-	<script type="text/javascript" charset="utf-8">
+	</div>
+</body>
+<script type="text/javascript" src="/js/weixinjs/mui.min.js"></script>
+<script src="/js/weixinjs/mui.picker.min.js"></script>
+<script src="/js/weixinjs/mui.poppicker.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" charset="utf-8">
+			var latestOrHotest = "最新";
+			var selectField = "全部";
+			var selectIndustry = "全部";
+			var selectCompetency = "全部";
+			var selectGrade = "全部";
+			var selectKey = "";
 			function searchKeyCancel() {
 				mui('#searchInput').popover('toggle');
 			}
 			function searchKeyContent() {
 				mui('#searchInput').popover('toggle');
-				alert(document.getElementById("search_key").value);
+				var key = document.getElementById("search_key").value;
+				if(key != null || key != "") {
+					selectKey = key;
+				}
+				searchCourseByCondition();
 			}
 			mui.init({
 				swipeBack:true,
@@ -370,6 +388,10 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 				}
 			});
 			mui('.mui-scroll-wrapper').scroll();
+			mui('.mui-slider .mui-slider-group .mui-slider-item img').each(function(){
+				var width = document.body.clientWidth + "px;";
+				this.setAttribute("style", "width:"+width+";height:130px;");
+			});
 			var slider = mui("#slider");
 			slider.slider({
 				interval: 2000
@@ -388,16 +410,11 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 				}
 				return isEmpty;
 			}
-			var latestOrHotest = "最新";
-			var selectField = "全部领域";
-			var selectIndustry = "全部行业";
-			var selectCompetency = "全部职能";
-			var selectGrade = "全部等级";
 			var page = 1;
 			var count = 8;
-			var ajaxData = {page:1, countPerPage:8, latestOrHotest:latestOrHotest, selectField:selectField, selectIndustry:selectIndustry, selectCompetency:selectCompetency, selectGrade:selectGrade};
 			function pullupRefresh() {
-				ajaxData.page = ajaxData.page + 1;
+				page++;
+				var ajaxData = {page:page, countPerPage:8, latestOrHotest:latestOrHotest, selectField:selectField, selectIndustry:selectIndustry, selectCompetency:selectCompetency, selectGrade:selectGrade, selectKey:selectKey};
 				mui.ajax({
             		url: "/course/getOpenCourseByCondition",
             		type: "POST",
@@ -410,7 +427,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
+	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].people_count+"人学习</p></div>";
 	    						rootNode.appendChild(liNode);
 	    						liNode.addEventListener('tap',function(){
 	    					        window.location.href=this.getAttribute('course_path'); 
@@ -436,7 +453,7 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 				mui.ajax({
             		url: '/course/getOpenCourseByCondition',
             		type: "POST",
-            		data: {page:"1", countPerPage:"8", latestOrHotest:latestOrHotest, selectField:selectField, selectIndustry:selectIndustry, selectCompetency:selectCompetency, selectGrade:selectGrade},
+            		data: {page:"1", countPerPage:"8", latestOrHotest:latestOrHotest, selectField:selectField, selectIndustry:selectIndustry, selectCompetency:selectCompetency, selectGrade:selectGrade, selectKey:selectKey},
             		success: function(data) {
             			if (!checkJsonIsEmpty(data)) {
             				var i = 0;
@@ -446,13 +463,13 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:10px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6></div>";
+	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].people_count+"人学习</p></div>";
 	    						rootNode.appendChild(liNode);
 	    						liNode.addEventListener('tap',function(){
 	    					        window.location.href=this.getAttribute('course_path'); 
 	    					    });
             				}
-            				ajaxData.page = 1;
+            				page = 1;
     					} else {
     						alert("您搜索的数据为空，请稍后重试！");
     					}
@@ -464,58 +481,114 @@ result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb
             		}
             	});
 			}
-			
-			mui('#latestOrHotest li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("latestOrHotestTips").innerHTML = this.innerHTML;
-					mui('#latestOrHotest').popover('toggle');
-					if(latestOrHotest != this.innerHTML) {
-						latestOrHotest = this.innerHTML;
-						searchCourseByCondition();
+			mui('.industry')[0].addEventListener('tap',function(){
+				mui('.grade-w-roll').each(function(){
+					var currentClass = this.getAttribute("class");
+					if(currentClass.indexOf("industry") == -1) {
+						this.setAttribute("class", currentClass.replace("grade-w-roll", ""));
 					}
-			    });
+				});
+				var currentClass = mui('#industry')[0].getAttribute("class");
+				if(currentClass.indexOf("grade-w-roll") != -1) {
+					mui('#industry')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				} else {
+					mui('#industry')[0].setAttribute("class", currentClass + " grade-w-roll");
+				}
 			});
-			mui('#selectField li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectFieldTips").innerHTML = this.innerHTML;
-					mui('#selectField').popover('toggle');
-					if(selectField != this.innerHTML) {
-						selectField = this.innerHTML;
-						searchCourseByCondition();
+			mui('.competency')[0].addEventListener('tap',function(){
+				mui('.grade-w-roll').each(function(){
+					var currentClass = this.getAttribute("class");
+					if(currentClass.indexOf("competency") == -1) {
+						this.setAttribute("class", currentClass.replace("grade-w-roll", ""));
 					}
-			    });
+				});
+				var currentClass = mui('#competency')[0].getAttribute("class");
+				if(currentClass.indexOf("grade-w-roll") != -1) {
+					mui('#competency')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				} else {
+					mui('#competency')[0].setAttribute("class", currentClass + " grade-w-roll");
+				}
 			});
-			mui('#selectIndustry li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectIndustryTips").innerHTML = this.innerHTML;
-					mui('#selectIndustry').popover('toggle');
-					if(selectIndustry != this.innerHTML) {
-						selectIndustry = this.innerHTML;
-						searchCourseByCondition();
+			mui('.latestOrHotest')[0].addEventListener('tap',function(){
+				mui('.grade-w-roll').each(function(){
+					var currentClass = this.getAttribute("class");
+					if(currentClass.indexOf("latestOrHotest") == -1) {
+						this.setAttribute("class", currentClass.replace("grade-w-roll", ""));
 					}
-			    });
+				});
+				var currentClass = mui('#latestOrHotest')[0].getAttribute("class");
+				if(currentClass.indexOf("grade-w-roll") != -1) {
+					mui('#latestOrHotest')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				} else {
+					mui('#latestOrHotest')[0].setAttribute("class", currentClass + " grade-w-roll");
+				}
 			});
-			mui('#selectCompetency li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectCompetencyTips").innerHTML = this.innerHTML;
-					mui('#selectCompetency').popover('toggle');
-					if(selectCompetency != this.innerHTML) {
-						selectCompetency = this.innerHTML;
-						searchCourseByCondition();
+			mui('.courseGrade')[0].addEventListener('tap',function(){
+				mui('.grade-w-roll').each(function(){
+					var currentClass = this.getAttribute("class");
+					if(currentClass.indexOf("courseGrade") == -1) {
+						this.setAttribute("class", currentClass.replace("grade-w-roll", ""));
 					}
-			    });
+				});
+				var currentClass = mui('#courseGrade')[0].getAttribute("class");
+				if(currentClass.indexOf("grade-w-roll") != -1) {
+					mui('#courseGrade')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				} else {
+					mui('#courseGrade')[0].setAttribute("class", currentClass + " grade-w-roll");
+				}
 			});
-			mui('#selectGrade li').each(function(){
-				this.addEventListener('tap',function(){
-					document.getElementById("selectGradeTips").innerHTML = this.innerHTML; 
-					mui('#selectGrade').popover('toggle');
-					if(selectGrade != this.innerHTML) {
-						selectGrade = this.innerHTML;
-						searchCourseByCondition();
+			function clickLatestOrHotest(ele) {
+				mui('#latestOrHotest li').each(function(){
+					if(this != ele && this.getAttribute("style") != null || this.getAttribute("style") != "") {
+						this.setAttribute("style", "");
 					}
-			    });
-			});
-			
+				});
+				ele.setAttribute("style", "background:#eee;");
+				mui(".latestOrHotest")[0].innerHTML = ele.innerHTML;
+				var currentClass = mui('#latestOrHotest')[0].getAttribute("class");
+				mui('#latestOrHotest')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				latestOrHotest = ele.innerHTML;
+				searchCourseByCondition();				
+			}
+			function clickCourseGrade(ele) {
+				mui('#courseGrade li').each(function(){
+					if(this != ele && this.getAttribute("style") != null || this.getAttribute("style") != "") {
+						this.setAttribute("style", "");
+					}
+				});
+				ele.setAttribute("style", "background:#eee;");
+				mui(".courseGrade")[0].innerHTML = ele.innerHTML;
+				var currentClass = mui('#courseGrade')[0].getAttribute("class");
+				mui('#courseGrade')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				//selectGrade = ele.innerHTML;
+				searchCourseByCondition();
+			}
+			function clickCompetency(ele) {
+				mui('#competency li').each(function(){
+					if(this != ele && this.getAttribute("style") != null || this.getAttribute("style") != "") {
+						this.setAttribute("style", "");
+					}
+				});
+				ele.setAttribute("style", "background:#eee;");
+				mui(".competency")[0].innerHTML = ele.innerHTML;
+				var currentClass = mui('#competency')[0].getAttribute("class");
+				mui('#competency')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				selectCompetency = ele.innerHTML;
+				searchCourseByCondition();
+			}
+			function clickIndustry(ele) {
+				mui('#industry li').each(function(){
+					if(this != ele && this.getAttribute("style") != null || this.getAttribute("style") != "") {
+						this.setAttribute("style", "");
+					}
+				});
+				ele.setAttribute("style", "background:#eee;");
+				mui(".industry")[0].innerHTML = ele.innerHTML;
+				var currentClass = mui('#industry')[0].getAttribute("class");
+				mui('#industry')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
+				selectIndustry = ele.innerHTML;
+				searchCourseByCondition();
+			}
 			var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 			var lineLink = window.location.href;
 			var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
