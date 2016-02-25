@@ -40,17 +40,48 @@ String courseLength = cm.getCourse_length();
 		<link rel="stylesheet" href="/css/weixincss/newplay.css">
 		<link rel="stylesheet" href="/css/weixincss/android.css">
 		<link rel="stylesheet" href="/css/weixincss/mui.min.css">
+		<style>
+		 video::-webkit-media-controls-enclosure {
+            display: none !important;
+        }
+			video::-webkit-media-controls {
+			  display:none !important;
+			}
+			video::-webkit-media-controls-fullscreen-button {
+
+   display: none;
+
+}
+
+video::-webkit-media-controls-play-button {}
+
+video::-webkit-media-controls-play-button {}
+
+video::-webkit-media-controls-timeline {}
+
+video::-webkit-media-controls-current-time-display{}
+
+video::-webkit-media-controls-time-remaining-display {}
+
+video::-webkit-media-controls-time-remaining-display {}
+
+video::-webkit-media-controls-mute-button {}
+
+video::-webkit-media-controls-toggle-closed-captions-button {}
+
+video::-webkit-media-controls-volume-slider {}
+		</style>
 	</head>
 
 	<body style="padding-bottom: 10px; background-color: #f1f1f1;">
 		<div style="position: relative;">
 			<div id="video_div" class="video" style="display:none;background:#1cbcd6;">
-				<video id="video" controls preload="none" width="640" height="264" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
+				<video id="video" controls="" preload="none" width="640" height="264" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
 					<source id="video_src" src="<%=list.get(0).getVideosrc() %>" type='video/mp4'>
 				</video>
 			</div>
-			<div id="playClassTimeTips" style="width:100%;height:150px;line-height:150px;text-align:center;background:#1cbcd6;">
-				
+			<div id="playClassTimeTips" style="width:100%;height:150px;text-align:center;background:#1cbcd6;">
+				<p style='color:white;padding-top:50px;'>正在加载数据......</p>
 			</div>
 		</div>
 
@@ -96,43 +127,102 @@ String courseLength = cm.getCourse_length();
 				</div>
 			</div>
 		</div>
+		<div style="z-index:9999999999999999;position:fixed;top:0;left:0;width:100%;height:264px;">
+		</div>
 	</body>
 	<script src="/js/weixinjs/jquery.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
+	Date.prototype.pattern=function(fmt) {           
+	    var o = {           
+	    "M+" : this.getMonth()+1, //月份           
+	    "d+" : this.getDate(), //日           
+	    "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时           
+	    "H+" : this.getHours(), //小时           
+	    "m+" : this.getMinutes(), //分           
+	    "s+" : this.getSeconds(), //秒           
+	    "q+" : Math.floor((this.getMonth()+3)/3), //季度           
+	    "S" : this.getMilliseconds() //毫秒           
+	    };           
+	    var week = {           
+	    "0" : "/u65e5",           
+	    "1" : "/u4e00",           
+	    "2" : "/u4e8c",           
+	    "3" : "/u4e09",           
+	    "4" : "/u56db",           
+	    "5" : "/u4e94",           
+	    "6" : "/u516d"          
+	    };           
+	    if(/(y+)/.test(fmt)){           
+	        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));           
+	    }           
+	    if(/(E+)/.test(fmt)){           
+	        fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "/u661f/u671f" : "/u5468") : "")+week[this.getDay()+""]);           
+	    }           
+	    for(var k in o){           
+	        if(new RegExp("("+ k +")").test(fmt)){           
+	            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));           
+	        }           
+	    }           
+	    return fmt;           
+	} 
 	document.addEventListener("WeixinJSBridgeReady", function () {
 		document.getElementById("video").play();
-		var courseDate = new Date("<%=courseDate%>").getTime() / 1000;
+		var courseDate = new Date("<%=courseDate.substring(0, 19)%>").getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
 		if(courseDate>currentDate) {
 			//document.getElementById("video").style.display = "none";
 			//document.getElementById("playClassTimeTips").style.display = "";
 			document.getElementById("video").pause();
-			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;'>课程直播时间：<%=courseDateReadable%></p>";
+			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播时间：<%=courseDateReadable%></p><p id='time_counter' style='color:white;'></p>";
+			var timer = setInterval(function(){
+				var cDate = new Date();
+				$('#time_counter').html(cDate.pattern("yyyy-MM-dd hh:mm:ss"));
+				if(cDate.getTime() / 1000 >= courseDate) {
+					clearInterval(timer);
+					document.getElementById("playClassTimeTips").style.display = "none";
+					document.getElementById("video_div").style.display = "";
+					document.getElementById("video").currentTime = 0;
+					document.getElementById("video").play();
+					document.getElementById("video").addEventListener('ended', function(){
+						document.getElementById("video").pause();
+						document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+						document.getElementById("playClassTimeTips").style.display = "";
+						document.getElementById("video_div").style.display = "none";
+					}, false);
+				}
+			},1000);
 		} else {
 			if(courseDate + courseLength < currentDate) {
 				document.getElementById("video").pause();
-				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;'>课程直播已经结束，感谢您的关注！</p>";
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
 			} else {
-				document.getElementById("playClassTimeTips").style.display = "none";
-				document.getElementById("video_div").style.display = "";
 				var hasSetTime = false;
 				document.getElementById("video").addEventListener("timeupdate", function(){
 					if(!hasSetTime && document.getElementById("video").duration > 1) {
-						document.getElementById("video").pause();
-						document.getElementById("video").currentTime = 30;
-						document.getElementById("video").play();
 						hasSetTime = true;
-					}
-				});
-				/* var timer = setInterval(function(){
-					alert(document.getElementById("video").readyState);
-					if(document.getElementById("video").readyState>0) {
-						clearInterval(timer);
+						document.getElementById("video").pause();
+						document.getElementById("video").currentTime = currentDate - courseDate;
+						if(currentDate - courseDate >= document.getElementById("video").duration) {
+							document.getElementById("video").pause();
+							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+							document.getElementById("playClassTimeTips").style.display = "";
+							document.getElementById("video_div").style.display = "none";
+						} else {
+							document.getElementById("playClassTimeTips").style.display = "none";
+							document.getElementById("video_div").style.display = "";
+							document.getElementById("video").play();
+						}
 						
 					}
-				},500); */
+				});
+				document.getElementById("video").addEventListener('ended', function(){
+					document.getElementById("video").pause();
+					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+					document.getElementById("playClassTimeTips").style.display = "";
+					document.getElementById("video_div").style.display = "none";
+				}, false);
 			}
 		}
 	});

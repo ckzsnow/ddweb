@@ -14,6 +14,7 @@ WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplication
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IUserCourseDao userCourseDao = (IUserCourseDao)wac.getBean("userCourseDao");
 String userId = (String)session.getAttribute("openid");
+userId="os3bVs6Qiq2Bo1dbu36Tu9WkDEa8";
 List<LiveCourseModel> list = courseDao.getAllLiveCourse(1, 8, userId);
 String code = (String)session.getAttribute("url_code");
 Map<String, String> result = new HashMap<>();
