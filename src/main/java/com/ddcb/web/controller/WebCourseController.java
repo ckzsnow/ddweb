@@ -211,6 +211,13 @@ public class WebCourseController {
 		}
 		return retMap;
 	}
+	
+	@RequestMapping("/course/getBannerCourse")
+	@ResponseBody
+	public List<CourseModel> getBannerCourse() {
+		List<CourseModel> list = bannerDao.getAllBannerCourse();
+		return list;
+	}
 
 	private void saveFile(MultipartFile file, String path, String fileName, String uniqueName, int width) {
 		try {

@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import com.ddcb.dao.IBannerDao;
 import com.ddcb.mapper.BannerMapper;
+import com.ddcb.mapper.CourseMapper;
 import com.ddcb.model.BannerModel;
+import com.ddcb.model.CourseModel;
 
 @Repository("bannerDao")
 public class BannerDaoImpl implements IBannerDao {
@@ -45,6 +47,19 @@ public class BannerDaoImpl implements IBannerDao {
 			logger.error(ex.toString());
 		}
 		return affectedRows != 0;
+	}
+
+	@Override
+	public List<CourseModel> getAllBannerCourse() {
+		List<CourseModel> list = null;
+		try {
+			String sql = "select c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c INNER JOIN banner as a on c.id=a.course_id";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
+		} catch (Exception e) {
+			logger.error("exception : {}", e.toString());
+		}
+		return list;
 	}
 	
 }

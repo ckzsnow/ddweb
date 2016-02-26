@@ -51,6 +51,113 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 				left: 0;
 				background-color: rgba(0, 0, 0, .4);
 			}
+			.weui_dialog {
+  position: fixed;
+  z-index: 13;
+  width: 85%;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  background-color: #FAFAFC;
+  text-align: center;
+  border-radius: 3px;
+}
+.weui_dialog_confirm .weui_dialog .weui_dialog_hd {
+  padding: 1.2em 20px .5em;
+}
+.weui_dialog_confirm .weui_dialog .weui_dialog_bd {
+  text-align: left;
+}
+.weui_dialog_hd {
+  padding: 1.2em 0 .5em;
+}
+.weui_dialog_title {
+  font-weight: 400;
+  font-size: 17px;
+}
+.weui_dialog_bd {
+  padding: 0 20px;
+  font-size: 15px;
+  color: #888;
+}
+.weui_dialog_ft {
+  position: relative;
+  line-height: 42px;
+  margin-top: 20px;
+  font-size: 17px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.weui_dialog_ft a {
+  display: block;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  color: #3CC51F;
+  text-decoration: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+.weui_dialog_ft a:active {
+  background-color: #EEEEEE;
+}
+.weui_dialog_ft:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  border-top: 1px solid #D5D5D6;
+  color: #D5D5D6;
+  -webkit-transform-origin: 0 0;
+          transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+          transform: scaleY(0.5);
+}
+.weui_dialog_confirm .weui_dialog_ft a {
+  position: relative;
+}
+.weui_dialog_confirm .weui_dialog_ft a:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  border-left: 1px solid #D5D5D6;
+  color: #D5D5D6;
+  -webkit-transform-origin: 0 0;
+          transform-origin: 0 0;
+  -webkit-transform: scaleX(0.5);
+          transform: scaleX(0.5);
+}
+.weui_dialog_confirm .weui_dialog_ft a:first-child:after {
+  display: none;
+}
+.weui_btn_dialog.default {
+  color: #353535;
+}
+.weui_btn_dialog.primary {
+  color: #0BB20C;
+}
+@media screen and (min-width: 1024px) {
+  .weui_dialog {
+    width: 35%;
+  }
+}
+.weui_mask {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
 		</style>
 	</head>
 
@@ -143,6 +250,17 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 				</div>
 			</div>
 		</div>
+		<div class="weui_dialog_confirm" id="comfirm_dialog" style="display: none;">
+	        <div class="weui_mask"></div>
+	        <div class="weui_dialog">
+	            <div class="weui_dialog_hd"><strong class="weui_dialog_title">点豆大讲堂</strong></div>
+	            <div class="weui_dialog_bd" id="comfirm_dialog_tips"></div>
+	            <div class="weui_dialog_ft">
+	                <a onclick="dialogClickCancel()" class="weui_btn_dialog default">取消</a>
+	                <a onclick="dialogClickAccept()" class="weui_btn_dialog primary">确定</a>
+	            </div>
+	        </div>
+	    </div>
 	</body>
 	<script src="/js/weixinjs/mui.min.js"></script>
 	<script src="/js/weixinjs/jquery.js"></script>
@@ -151,6 +269,15 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	/* document.addEventListener("WeixinJSBridgeReady", function () {
 		document.getElementById('video').play();
 	}); */
+	function dialogClickCancel(){
+		document.getElementById("comfirm_dialog").style.display = "none";
+		document.getElementById("comfirm_dialog_tips").innerHTML = "";
+	}
+	function dialogClickAccept(){
+		document.getElementById("comfirm_dialog").style.display = "none";
+		document.getElementById("comfirm_dialog_tips").innerHTML = "";
+		window.location.href="/weixin/getDDCBBuyVip";
+	}
 	mui.init();
 	mui.createConfirmDialog = function(info, cancelCallBack, acceptCallBack) {
 		var template = "<div style='width:80%;margin:50% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:20px;margin-left:20px;'>提示信息</div><hr/><div style='margin-top:20px;margin-left:20px;margin-bottom:20px;margin-right:20px;height:60px;'>{{info}}</div><div style='text-align:right;margin-bottom:20px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;'>取消</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;'>点击购买</a></div></div>";
@@ -204,7 +331,7 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	});
 	$("#course_list li").click(function() {
 	   if($(this).attr('data_src') == "") {
-		   var confirmDialog = mui.createConfirmDialog('您不是VIP会员，只能观看课时1的视频！观看更多视频，请购买VIP会员！',
+		   /* var confirmDialog = mui.createConfirmDialog('您不是VIP会员，只能观看课时1的视频！观看更多视频，请购买VIP会员！',
 				function() {
 					//confirmDialog.close();
 				},
@@ -214,6 +341,9 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 				}
 			);
 			confirmDialog.show();
+		   return; */
+		   document.getElementById("comfirm_dialog_tips").innerHTML = "您不是VIP会员，只能观看课时1的视频！观看更多视频，请购买VIP会员！";
+		   document.getElementById("comfirm_dialog").style.display = "";
 		   return;
 	   }
 	   $("#video_src").attr('src', $(this).attr('data_src'));

@@ -67,7 +67,7 @@ public class CourseDaoImpl implements ICourseDao {
 		List<CourseModel> list = null;
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc limit ?,?";
+			String sql = "select COUNT(a.course_id) as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -128,7 +128,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.create_time desc";
+			String sql = "select c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.create_time desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {

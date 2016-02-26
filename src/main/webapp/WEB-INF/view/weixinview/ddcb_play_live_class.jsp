@@ -75,8 +75,8 @@ video::-webkit-media-controls-volume-slider {}
 
 	<body style="padding-bottom: 10px; background-color: #f1f1f1;">
 		<div style="position: relative;">
-			<div id="video_div" class="video" style="display:none;background:#1cbcd6;">
-				<video id="video" controls="" preload="none" width="640" height="264" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
+			<div id="video_div" style="display:none;background:#1cbcd6;">
+				<video id="video" preload="none" width="640" height="264" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
 					<source id="video_src" src="<%=list.get(0).getVideosrc() %>" type='video/mp4'>
 				</video>
 			</div>
@@ -167,7 +167,6 @@ video::-webkit-media-controls-volume-slider {}
 	    return fmt;           
 	} 
 	document.addEventListener("WeixinJSBridgeReady", function () {
-		document.getElementById("video").play();
 		var courseDate = new Date("<%=courseDate.substring(0, 19)%>").getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
@@ -223,6 +222,7 @@ video::-webkit-media-controls-volume-slider {}
 					document.getElementById("playClassTimeTips").style.display = "";
 					document.getElementById("video_div").style.display = "none";
 				}, false);
+				document.getElementById("video").play();
 			}
 		}
 	});
