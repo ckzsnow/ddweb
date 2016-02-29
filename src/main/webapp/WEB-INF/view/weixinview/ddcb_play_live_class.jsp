@@ -3,8 +3,10 @@
 <%@ page import="org.springframework.web.context.WebApplicationContext"%>
 <%@ page import="com.ddcb.dao.ICourseDetailDao"%>
 <%@ page import="com.ddcb.dao.ICourseDao"%>
+<%@ page import="com.ddcb.dao.IUserCourseDao"%>
 <%@ page import="com.ddcb.dao.IWeixinUserDao"%>
 <%@ page import="com.ddcb.model.CourseModel"%>
+<%@ page import="com.ddcb.model.UserCourseModel"%>
 <%@ page import="com.ddcb.model.CourseDetailModel"%>
 <%@ page import="com.ddcb.model.WeixinUserModel"%>
 <%@ page import="com.ddcb.utils.WeixinTools"%>
@@ -14,6 +16,7 @@
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDao");
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
+IUserCourseDao userCourseDao = (IUserCourseDao)wac.getBean("userCourseDao");
 List<CourseDetailModel> list = null;
 long id = Long.valueOf((String)request.getParameter("course_id"));
 list = courseDetailDao.getCourseDetailByCourseId(id);
@@ -24,6 +27,7 @@ String userId = (String)session.getAttribute("openid");
 String courseDate = cm.getCourse_date().toString();
 String courseDateReadable = cm.getCourse_date_readable();
 String courseLength = cm.getCourse_length();
+UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, id);
 %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -75,11 +79,13 @@ video::-webkit-media-controls-volume-slider {}
 
 	<body style="padding-bottom: 10px; background-color: #f1f1f1;">
 		<div style="position: relative;">
+			<%if(ucm != null && ucm.getPay_status() != null && ucm.getPay_status() == 1){%>
 			<div id="video_div" style="display:none;background:#1cbcd6;">
 				<video id="video" preload="none" width="640" height="264" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
 					<source id="video_src" src="<%=list.get(0).getVideosrc() %>" type='video/mp4'>
 				</video>
 			</div>
+			<%}%>
 			<div id="playClassTimeTips" style="width:100%;height:150px;text-align:center;background:#1cbcd6;">
 				<p style='color:white;padding-top:50px;'>正在加载数据......</p>
 			</div>
@@ -166,6 +172,7 @@ video::-webkit-media-controls-volume-slider {}
 	    }           
 	    return fmt;           
 	} 
+	<%if(ucm != null && ucm.getPay_status() != null && ucm.getPay_status() == 1){%>
 	document.addEventListener("WeixinJSBridgeReady", function () {
 		var courseDate = new Date("<%=courseDate.substring(0, 19)%>").getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
@@ -235,5 +242,19 @@ video::-webkit-media-controls-volume-slider {}
 		error: function(status, error) {
 		}
 	});
+	<%} else {%>
+		var courseDate = new Date("<%=courseDate.substring(0, 19)%>").getTime() / 1000;
+		var currentDate = new Date().getTime() / 1000;
+		var courseLength = parseInt("<%=courseLength%>") * 60;
+		if(courseDate>currentDate) {
+			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播时间：<%=courseDateReadable%></p><p style='color:white;'>您还没有购买当前课程，无法观看！</p>";
+		} else {
+			if(courseDate + courseLength < currentDate) {
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+			} else {
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播中......</p><p style='color:white;'>您还没有购买当前课程，无法观看！</p>";
+			}
+		}
+	<%}%>
 	</script>
 </html>

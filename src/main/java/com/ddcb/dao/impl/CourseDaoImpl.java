@@ -155,7 +155,7 @@ public class CourseDaoImpl implements ICourseDao {
 		List<LiveCourseModel> list = null;
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where c.course_type=1 order by c.course_date desc limit ?,?";
+			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where NOW() < (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date desc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{userId, userId, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
 		} catch (Exception e) {
@@ -170,7 +170,7 @@ public class CourseDaoImpl implements ICourseDao {
 		List<LiveCourseModel> list = null;
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where c.course_type=1 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
+			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where NOW() < (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{userId, userId, field, industry, competency, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
 		} catch (Exception e) {
@@ -246,6 +246,35 @@ public class CourseDaoImpl implements ICourseDao {
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());
 			logger.debug("sql : {}", sql);
+		}
+		return list;
+	}
+
+	@Override
+	public List<LiveCourseModel> getAllFinishedLiveCourse(int page, int count, String userId) {
+		List<LiveCourseModel> list = null;
+		int beginIndex = page == 1? 0:(page - 1) * count;
+		try {
+			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where NOW() >= (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date desc limit ?,?";
+			list = jdbcTemplate.query(sql, new Object[]{userId, userId, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
+							new LiveCourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+	
+	@Override
+	public List<LiveCourseModel> getAllFinishedLiveCourseByCondition(int page, int count, String field, String industry,
+			String competency, String userId) {
+		List<LiveCourseModel> list = null;
+		int beginIndex = page == 1? 0:(page - 1) * count;
+		try {
+			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where NOW() >= (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
+			list = jdbcTemplate.query(sql, new Object[]{userId, userId, field, industry, competency, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
+							new LiveCourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
 		}
 		return list;
 	}

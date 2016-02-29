@@ -99,9 +99,21 @@ public class WeixinCourseController {
 		return courseList;
 	}
 	
-	@RequestMapping("/course/getAllLiveCourseByPage")
+	@RequestMapping("/course/getAllFinishedLiveCourseByPage")
 	@ResponseBody
-	public List<LiveCourseModel> getAllLiveCourseByPage(HttpSession httpSession, HttpServletRequest request) {
+	public List<LiveCourseModel> getAllFinishedLiveCourseByPage(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
+		String page = request.getParameter("page");
+		String count = request.getParameter("count");
+		int page_ = Integer.valueOf(page);
+		int count_ = Integer.valueOf(count);
+		List<LiveCourseModel> courseList = courseDao.getAllFinishedLiveCourse(page_, count_, userId);
+		return courseList;
+	}
+	
+	@RequestMapping("/course/getAllGoingLiveCourseByPage")
+	@ResponseBody
+	public List<LiveCourseModel> getAllGoingLiveCourseByPage(HttpSession httpSession, HttpServletRequest request) {
 		String userId = (String)httpSession.getAttribute("openid");
 		String page = request.getParameter("page");
 		String count = request.getParameter("count");

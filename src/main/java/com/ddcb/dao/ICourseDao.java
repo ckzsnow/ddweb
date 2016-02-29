@@ -22,7 +22,11 @@ public interface ICourseDao {
 		
 	public List<LiveCourseModel> getAllLiveCourse(int page, int count, String userId);
 	
+	public List<LiveCourseModel> getAllFinishedLiveCourse(int page, int count, String userId);
+	
 	public List<LiveCourseModel> getAllLiveCourseByCondition(int page, int count, String field, String industry, String competency, String userId);
+	
+	public List<LiveCourseModel> getAllFinishedLiveCourseByCondition(int page, int count, String field, String industry, String competency, String userId);
 	
 	public List<CourseModel> getAllUserPayedCourseRecentCourse();
 	
