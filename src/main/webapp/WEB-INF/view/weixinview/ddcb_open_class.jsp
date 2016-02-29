@@ -652,5 +652,10 @@ div.screening>ul>li {
 					});
 				}, 500);
 			});
+			/* setTimeout(function() {
+				mui('#pullrefresh').scroll().y = -180;
+				mui('#pullrefresh').scroll().lastY = -180;
+				mui('#pullrefresh').scroll().scrollTo(0, -180, 1000);
+			}, 1000); */
 		</script>
 </html>
