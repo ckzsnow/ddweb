@@ -86,6 +86,9 @@
 		line-height: 40px;
 		color: #777;
 	}
+	body {
+		background-color: #efeff4 !important;
+	}
 </style>
 </head>
 <body>
@@ -264,7 +267,7 @@
 												<div style="float: right;">
 													<button class="buy_class" course_price="<%=cm.getPrice()%>"
 														course_id="<%=cm.getId()%>"
-														style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;">购买课程</button>
+														style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;" disabled>购买课程</button>
 												</div>
 												<%
 													}
@@ -510,7 +513,7 @@
 							    						if(data[i].pay_status != null && data[i].pay_status=="1") {
 							    							btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经购买</button></div>";
 							    						} else {
-							    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+							    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>购买课程</button></div>";
 							    						}
 														if(data[i].hasCollection == "1") {
 															btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
@@ -522,7 +525,8 @@
 														liNode.appendChild(btnDiv);
 							    						rootNode.appendChild(liNode);
 							    						browserDiv.addEventListener('tap',function(){
-							    							document.getElementById("courseBrowser").setAttribute("course_id", this.getAttribute("course_id"));
+							    							var courseId = this.getAttribute('course_id');
+						            						window.location.href="/playDDCBLiveClass?course_id=" + courseId;
 							    					    });
 						            				}
 						            				if(i<7) {
@@ -588,7 +592,8 @@
 														liNode.appendChild(btnDiv);
 							    						rootNode.appendChild(liNode);
 							    						browserDiv.addEventListener('tap',function(){
-							    							document.getElementById("courseBrowser").setAttribute("course_id", this.getAttribute("course_id"));
+							    							var courseId = this.getAttribute('course_id');
+						            						window.location.href="/playDDCBLiveClass?course_id=" + courseId;
 							    					    });
 						            				}
 						            				if(i<7) {

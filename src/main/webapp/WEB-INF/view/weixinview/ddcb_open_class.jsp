@@ -450,6 +450,7 @@ div.screening>ul>li {
 			}
 			function searchCourseByCondition() {
 				document.getElementById("loadingToast").style.display = "";
+				mui('#pullrefresh').pullRefresh().refresh(true);
 				mui.ajax({
             		url: '/course/getOpenCourseByCondition',
             		type: "POST",
@@ -470,6 +471,7 @@ div.screening>ul>li {
 	    					    });
             				}
             				page = 1;
+            				mui('#pullrefresh').scroll().scrollTo(0,0,100);
     					} else {
     						alert("您搜索的数据为空，请稍后重试！");
     					}

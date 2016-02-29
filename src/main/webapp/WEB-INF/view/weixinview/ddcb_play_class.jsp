@@ -342,9 +342,16 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 			);
 			confirmDialog.show();
 		   return; */
-		   document.getElementById("comfirm_dialog_tips").innerHTML = "您不是VIP会员，只能观看课时1的视频！观看更多视频，请购买VIP会员！";
-		   document.getElementById("comfirm_dialog").style.display = "";
-		   return;
+		   /* document.getElementById("comfirm_dialog_tips").innerHTML = "您不是VIP会员，只能观看课时1的视频！观看更多视频，请购买VIP会员！";
+		   document.getElementById("comfirm_dialog").style.display = ""; */
+		   var btnArray = ['购买', '取消'];
+			mui.confirm('您不是VIP会员，只能观看课时1的视频！观看更多视频，请购买VIP会员！', '点都大讲堂', btnArray, function(e) {
+				if (e.index == 0) {
+					window.location.href="/weixin/getDDCBBuyVip";
+				} else {
+					return;
+				}
+			})
 	   }
 	   $("#video_src").attr('src', $(this).attr('data_src'));
 	   $("#course_list li").each(function(){
