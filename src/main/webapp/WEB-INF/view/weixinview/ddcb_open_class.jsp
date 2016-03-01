@@ -401,6 +401,11 @@ div.screening>ul>li {
 			        window.location.href=this.getAttribute('course_path'); 
 			    });  
 			});
+			mui('.mui-slider-item').each(function(){
+				this.addEventListener('tap',function(){
+			        window.location.href=this.getAttribute('course_path'); 
+			    });  
+			});
 			function checkJsonIsEmpty(json) {
 				var isEmpty = true;
 				if (json == null) return true;
