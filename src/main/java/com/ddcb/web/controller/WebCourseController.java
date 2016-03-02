@@ -186,7 +186,7 @@ public class WebCourseController {
 				String courseId = request.getParameter("courseId" + index);
 				try {
 					long courseId_ = Long.valueOf(courseId);
-					FileUtils.copyInputStreamToFile(file.getInputStream(), new File(imgPath, imgFileNameTmp));					
+					FileUtils.copyInputStreamToFile(file.getInputStream(), new File(imgPath, imgFileName));					
 					bannerDao.updateBanner("banner" + String.valueOf(index), imgFileName, courseId_);
 				} catch (IOException e) {
 					logger.debug(e.toString());
