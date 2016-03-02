@@ -279,4 +279,11 @@ public class WebCourseController {
 			startTime = time;
 		}
 	}
+	
+	@RequestMapping("/course/updateCourseStudyPeopleCount")
+	@ResponseBody
+	public List<CourseModel> updateCourseStudyPeopleCount() {
+		//courseDao.updateCourseStudyPeopleCount();
+		return null;
+	}
 }

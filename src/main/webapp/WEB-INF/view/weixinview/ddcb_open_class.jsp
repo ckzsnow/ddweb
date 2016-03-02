@@ -307,7 +307,7 @@ div.screening>ul>li {
 							<div class="mui-media-body">
 								<h4 style="font-size:15px;"><%=cm.getName() %></h4>
 								<h6 style="margin-top:5px;color:#2ab888;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-contact"></span><%=cm.getTeacher() %></h6>
-								<p style="margin-top:5px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getPeople_count() %>人学习</p>
+								<p style="margin-top:5px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getStudy_people_count() %>人学习</p>
 							</div>
 						</li>
 						<%} %>
@@ -427,7 +427,7 @@ div.screening>ul>li {
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].people_count+"人学习</p></div>";
+	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习</p></div>";
 	    						rootNode.appendChild(liNode);
 	    						liNode.addEventListener('tap',function(){
 	    					        window.location.href=this.getAttribute('course_path'); 
@@ -464,7 +464,7 @@ div.screening>ul>li {
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].people_count+"人学习</p></div>";
+	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习</p></div>";
 	    						rootNode.appendChild(liNode);
 	    						liNode.addEventListener('tap',function(){
 	    					        window.location.href=this.getAttribute('course_path'); 

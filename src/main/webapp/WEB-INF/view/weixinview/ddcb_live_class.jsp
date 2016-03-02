@@ -9,6 +9,8 @@
 <%@ page import="com.ddcb.model.UserCollectionModel"%>
 <%@ page import="com.ddcb.model.UserCourseModel"%>
 <%@ page import="com.ddcb.utils.WeixinTools"%>
+<%@ page import="com.ddcb.model.WeixinUserModel"%>
+<%@ page import="com.ddcb.dao.IWeixinUserDao"%>
 <%@ page import="java.util.*"%>
 <%
 	WebApplicationContext wac = WebApplicationContextUtils
@@ -23,6 +25,11 @@
 	Map<String, String> result = new HashMap<>();
 	result = WeixinTools.getSign(
 			"http://www.diandou.me/weixin/weixinLogin?view=ddcb_live_class&code=" + code + "&state=123");
+	IWeixinUserDao weixinUserDao = (IWeixinUserDao)wac.getBean("weixinUserDao");
+	WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);
+	long currentTime = System.currentTimeMillis();
+	int userIsVip = 0;
+	if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()>=currentTime) userIsVip = 1;
 %>
 <!DOCTYPE html>
 <html>
@@ -408,6 +415,9 @@
 					var ele = event.target;
 					var courseId = ele.getAttribute("course_id");
 					var coursePrice = ele.getAttribute("course_price");
+					var fee = parseInt(coursePrice);
+					var isVip = <%=userIsVip%> == 1 ? true : false;
+					if(isVip) fee = (fee*0.8).toFixed(2);
 					mui.ajax({
 	            		url: '/userLiveClassWeixinPay',
 	            		type: "POST",

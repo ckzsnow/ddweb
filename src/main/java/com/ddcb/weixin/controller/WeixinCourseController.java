@@ -418,6 +418,7 @@ public class WeixinCourseController {
 				usrm.setCreate_time(new Timestamp(System.currentTimeMillis()));
 				usrm.setUpdate_time(new Timestamp(System.currentTimeMillis()));
 				userStudyRecordDao.addUserStudyRecord(usrm);
+				courseDao.updateCourseStudyPeopleCount(courseId_);
 			}
 		} catch(Exception ex) {
 			logger.error(ex.toString());

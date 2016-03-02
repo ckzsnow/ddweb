@@ -174,7 +174,13 @@ video::-webkit-media-controls-volume-slider {}
 	} 
 	<%if(ucm != null && ucm.getPay_status() != null && ucm.getPay_status() == 1){%>
 	document.addEventListener("WeixinJSBridgeReady", function () {
-		var courseDate = new Date("<%=courseDate.substring(0, 19)%>").getTime() / 1000;
+		var year = <%=courseDate.substring(0, 4)%>;
+		var month = <%=courseDate.substring(5, 7)%>;
+		var day = <%=courseDate.substring(8, 10)%>;
+		var hour = <%=courseDate.substring(11, 13)%>;
+		var minute = <%=courseDate.substring(14, 16)%>;
+		var seconds = <%=courseDate.substring(17, 19)%>;
+		var courseDate = new Date(year, month-1, day, hour, minute, seconds).getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
 		if(courseDate>currentDate) {
@@ -243,7 +249,13 @@ video::-webkit-media-controls-volume-slider {}
 		}
 	});
 	<%} else {%>
-		var courseDate = new Date("<%=courseDate.substring(0, 19)%>").getTime() / 1000;
+		var year = <%=courseDate.substring(0, 4)%>;
+		var month = <%=courseDate.substring(5, 7)%>;
+		var day = <%=courseDate.substring(8, 10)%>;
+		var hour = <%=courseDate.substring(11, 13)%>;
+		var minute = <%=courseDate.substring(14, 16)%>;
+		var seconds = <%=courseDate.substring(17, 19)%>;
+		var courseDate = new Date(year, month-1, day, hour, minute, seconds).getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
 		if(courseDate>currentDate) {

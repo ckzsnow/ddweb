@@ -1,7 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page import="org.springframework.web.context.WebApplicationContext"%>
 <%@ page import="com.ddcb.utils.WeixinTools"%>
 <%@ page import="java.util.*"%>
 <%
+WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 Map<String, String> result = new HashMap<>();
 result = WeixinTools.getSign("http://www.diandou.me/weixin/getDDCBBuyVip");
 String course_id = (String)session.getAttribute("course_id");

@@ -8,6 +8,10 @@ import com.ddcb.model.SelectCourseModel;
 
 public interface ICourseDao {
 
+	public void updateCourseStudyPeopleCount();
+	
+	public void updateCourseStudyPeopleCount(Long courseId);
+	
 	public CourseModel getCourseByCourseId(long id);
 	
 	public long addCourse(CourseModel courseModel);
