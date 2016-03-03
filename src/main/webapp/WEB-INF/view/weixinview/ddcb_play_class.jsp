@@ -164,7 +164,7 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	<body style="padding-bottom: 10px; background-color: #f1f1f1;">
 		<div style="position: relative;">
 			<div class="video" style="background:#1cbcd6;">
-				<video id="video" controls preload="none" width="640" height="264" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
+				<video id="video" controls preload="none" height="100%" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
 					<source id="video_src" src="<%=list.get(0).getVideosrc() %>" type='video/mp4'>
 				</video>
 			</div>
@@ -266,6 +266,7 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	<script src="/js/weixinjs/jquery.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
+	document.getElementById('video').setAttribute("width", document.body.clientWidth);
 	/* document.addEventListener("WeixinJSBridgeReady", function () {
 		document.getElementById('video').play();
 	}); */

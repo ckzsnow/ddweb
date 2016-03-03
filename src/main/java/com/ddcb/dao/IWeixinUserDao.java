@@ -10,6 +10,8 @@ public interface IWeixinUserDao {
 	
 	public boolean addWeixinUser(WeixinUserModel weixinUserModel);
 	
-	public boolean updateWeixinUser(String userId, String tradeNo, int pay_status, Timestamp expirationTime);
+	public boolean updateWeixinUserBeforePay(String userId, String tradeNo, Integer userType);
+	
+	public boolean updateWeixinUserAfterPay(String userId, String tradeNo, Integer userType, Timestamp expirationTime);
 			
 }

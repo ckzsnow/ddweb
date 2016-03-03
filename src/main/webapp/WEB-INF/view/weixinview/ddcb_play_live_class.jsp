@@ -81,7 +81,7 @@ video::-webkit-media-controls-volume-slider {}
 		<div style="position: relative;">
 			<%if(ucm != null && ucm.getPay_status() != null && ucm.getPay_status() == 1){%>
 			<div id="video_div" style="display:none;background:#1cbcd6;">
-				<video id="video" webkit-playsinline preload="none" width="640" height="264" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
+				<video id="video" webkit-playsinline preload="none" height="100%" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
 					<source id="video_src" src="<%=list.get(0).getVideosrc() %>" type='video/mp4'>
 				</video>
 			</div>
@@ -139,6 +139,7 @@ video::-webkit-media-controls-volume-slider {}
 	<script src="/js/weixinjs/jquery.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
+	document.getElementById('video').setAttribute("width", document.body.clientWidth);
 	Date.prototype.pattern=function(fmt) {           
 	    var o = {           
 	    "M+" : this.getMonth()+1, //月份           

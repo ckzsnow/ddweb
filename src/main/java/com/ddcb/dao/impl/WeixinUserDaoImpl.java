@@ -46,13 +46,25 @@ public class WeixinUserDaoImpl implements IWeixinUserDao {
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean updateWeixinUser(String userId, String tradeNo, int pay_status, Timestamp expirationTime) {
+	public boolean updateWeixinUserBeforePay(String userId, String tradeNo, Integer userType) {
+		String sql = "update weixin_user set trade_no=?, user_type=? where user_id=?";
+		int affectedRows = 0;
+		try {
+			affectedRows = jdbcTemplate.update(sql, tradeNo, userType, userId);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return affectedRows != 0;
+	}
+
+	@Override
+	public boolean updateWeixinUserAfterPay(String userId, String tradeNo, Integer userType, Timestamp expirationTime) {
 		String sql = "update weixin_user set trade_no=?, pay_status=?, expiration_time=? where user_id=?";
 		int affectedRows = 0;
 		try {
-			affectedRows = jdbcTemplate.update(sql, tradeNo, pay_status, expirationTime, userId);
+			affectedRows = jdbcTemplate.update(sql, tradeNo, 1, expirationTime, userId);
 		} catch(Exception ex) {
 			logger.error(ex.toString());
 		}

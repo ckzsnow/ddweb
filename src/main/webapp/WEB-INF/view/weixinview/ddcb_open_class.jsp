@@ -307,7 +307,7 @@ div.screening>ul>li {
 							<div class="mui-media-body">
 								<h4 style="font-size:15px;"><%=cm.getName() %></h4>
 								<h6 style="margin-top:5px;color:#2ab888;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-contact"></span><%=cm.getTeacher() %></h6>
-								<p style="margin-top:5px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getStudy_people_count() %>人学习</p>
+								<p style="margin-top:5px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getStudy_people_count() %>人学习&nbsp;&nbsp;<span class='collection_course' style='color:#2ab888;float:right;margin-right:5px;'>我要收藏</span></p>
 							</div>
 						</li>
 						<%} %>
@@ -335,6 +335,13 @@ div.screening>ul>li {
 				<div class="weui_loading_leaf weui_loading_leaf_11"></div>
 			</div>
 			<p style="color: white;" class="weui_toast_content">数据加载中</p>
+		</div>
+	</div>
+	<div id="collection_toast" style="display: none;">
+		<div class="weui_mask_transparent"></div>
+		<div class="weui_toast">
+			<i class="weui_icon_toast"></i>
+			<p class="weui_toast_content">已完成</p>
 		</div>
 	</div>
 	<div id="searchInput"
@@ -399,6 +406,12 @@ div.screening>ul>li {
 			mui('#data_list li').each(function(){
 				this.addEventListener('tap',function(){
 			        window.location.href=this.getAttribute('course_path'); 
+			    });  
+			});
+			mui('.collection_course').each(function(){
+				this.addEventListener('tap',function(event){
+					event.stopPropagation();
+			        
 			    });  
 			});
 			mui('.mui-slider-item').each(function(){

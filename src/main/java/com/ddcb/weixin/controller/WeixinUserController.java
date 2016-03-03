@@ -356,7 +356,7 @@ public class WeixinUserController {
 				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
 			}
 		} else {
-			if(weixinUserDao.updateWeixinUser(openId, tpWxPay.getOrderId(), 0, null)) {
+			if(weixinUserDao.updateWeixinUserBeforePay(openId, tpWxPay.getOrderId(), Integer.valueOf(userType))) {
 				return finalPK;
 			} else {
 				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
@@ -405,23 +405,28 @@ public class WeixinUserController {
 			resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
 			+ "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
 			Date date=new Date();
+			WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(wpr.getOpenid());
+			if(wum.getPay_status() == 1 && wum.getExpiration_time() != null &&
+					wum.getExpiration_time().getTime() >= date.getTime()) {
+				date = new Date(wum.getExpiration_time().getTime());
+			}
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(date);
 			if(("1").equals(user_vip_type)) {
 				calendar.add(Calendar.MONTH, 1);
 				calendar.getTime().getTime();
 				Timestamp tm = new Timestamp(calendar.getTime().getTime());
-				weixinUserDao.updateWeixinUser(wpr.getOpenid(), wpr.getOutTradeNo(), 1, tm);
+				weixinUserDao.updateWeixinUserAfterPay(wpr.getOpenid(), wpr.getOutTradeNo(), Integer.valueOf(user_vip_type), tm);
 			} else if(("2").equals(user_vip_type)) {
 				calendar.add(Calendar.MONTH, 3);
 				calendar.getTime().getTime();
 				Timestamp tm = new Timestamp(calendar.getTime().getTime());
-				weixinUserDao.updateWeixinUser(wpr.getOpenid(), wpr.getOutTradeNo(), 1, tm);
+				weixinUserDao.updateWeixinUserAfterPay(wpr.getOpenid(), wpr.getOutTradeNo(), Integer.valueOf(user_vip_type), tm);
 			} else if(("3").equals(user_vip_type)) {
 				calendar.add(Calendar.MONTH, 12);
 				calendar.getTime().getTime();
 				Timestamp tm = new Timestamp(calendar.getTime().getTime());
-				weixinUserDao.updateWeixinUser(wpr.getOpenid(), wpr.getOutTradeNo(), 1, tm);
+				weixinUserDao.updateWeixinUserAfterPay(wpr.getOpenid(), wpr.getOutTradeNo(), Integer.valueOf(user_vip_type), tm);
 			}
 		}else{
 			resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"

@@ -21,11 +21,23 @@ IUserStudyRecordDao userStudyRecordDao = (IUserStudyRecordDao)wac.getBean("userS
 Map<String, String> result = new HashMap<>();
 String code = (String)session.getAttribute("url_code");
 result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb_user_center&code="+code+"&state=123");
-String userId = (String)session.getAttribute("openid");
+String userId = "os3bVs6Qiq2Bo1dbu36Tu9WkDEa8";//(String)session.getAttribute("openid");
 String nickname = (String)session.getAttribute("nickname");
 String headimgurl = (String)session.getAttribute("headimgurl");
 WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);
-String userStatus = wum == null || wum.getPay_status() == 0 ? "" : wum.getExpiration_time().toString().substring(0, 10);
+Date currentDate = new Date();
+int userStatus = 0;//非会员
+String vipExpirationTime = wum == null || wum.getExpiration_time() == null ? "" : wum.getExpiration_time().toString().substring(0, 10);
+if(wum !=null && wum.getPay_status() != 0) {
+	long expirationTime = wum.getExpiration_time().getTime();
+	long currentTime = currentDate.getTime();
+	if(currentTime >= expirationTime) {
+		userStatus = 1;//会员已经超期
+	} else {
+		userStatus = 2;//会员且没有超期
+	}
+}
+
 List<CourseModel> buyCourseList = userCourseDao.getUserBuyClass(userId);
 List<LiveCourseModel> collectionOpenCourseList = userCollectionDao.getUserCollectionOpenCourse(userId);
 List<LiveCourseModel> collectionLiveCourseList = userCollectionDao.getUserCollectionLiveCourse(userId);
@@ -214,26 +226,28 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 	        <div class="mygrowup">            
 	            <div class="avatar">
 	                <div class="avatarimg center-block">
-	                    <a href="/perinfo/160454" uid="160454">
-	                        <img id="person_img" src="<%=headimgurl %>" alt="个人头像"/>
-	                    </a>
+						<img id="person_img" src="<%=headimgurl %>" alt="个人头像"/>
 	                </div>
 	            </div>
 	            <p class="nickname text-center" id="nickname">
 	            	<span style='color:white;font-size:15px;font-weight:300;'><%=nickname %></span>
-	            	<%if(userStatus.isEmpty()) { %>
+	            	<%if(userStatus == 0) { %>
 	            		<span style='font-size:10px;background-color:#888888;color:white;padding:1px 6px;margin-left:5px;line-height:20px;height:20px;border-radius:5px;'>非VIP会员</span>
-	            	<%} else { %>
+	            	<%} else if(userStatus == 1){ %>
+	            		<span style='font-size:10px;background-color: #888888;color:white;padding:1px 6px;margin-left:5px;line-height:20px;height:20px;border-radius:5px;'>VIP会员</span>
+	            	<%} else {%>
 	            		<span style='font-size:10px;background-color: #f0ad4e;color:white;padding:1px 6px;margin-left:5px;line-height:20px;height:20px;border-radius:5px;'>VIP会员</span>
 	            	<%} %>
 	            <p>
 	            <h2 class="experience text-center"></h2>
 	            <ul>
 	                <li style="width:100%;margin:5px 0px;">
-	                	<%if(userStatus.isEmpty()) { %>
+	                	<%if(userStatus == 0) { %>
 		            		<p style="text-align:center;color:white;padding-bottom:0px;" id="vip_exp">您目前还不是VIP会员</p>
-		            	<%} else { %>
-		            		<p style="text-align:center;color:white;padding-bottom:0px;" id="vip_exp">VIP会员到期时间:<%=userStatus %></p>
+		            	<%} else if(userStatus == 1){ %>
+		            		<p style="text-align:center;color:white;padding-bottom:0px;" id="vip_exp">您的VIP会员已经超期，请续费！</p>
+		            	<%} else {%>
+		            		<p style="text-align:center;color:white;padding-bottom:0px;" id="vip_exp">VIP会员到期时间:<%=vipExpirationTime %></p>
 		            	<%} %>
 	                </li>
 	                
@@ -470,7 +484,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 		</div>
 		<div id="vip_center" class="mui-page">
 			<div class="mui-navbar-inner mui-bar mui-bar-nav" style="background-color: #66d6a6;">
-				<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+				<button type="button" id="back_btn"  class="mui-left mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
 					<span class="mui-icon mui-icon-left-nav" style="color:white;"></span>
 				</button>
 				<h1 class="mui-center mui-title" style="color:white;">VIP中心</h1>
@@ -484,12 +498,12 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 								<div><p style="text-align:center;color:white;margin-bottom:0px;">&yen;45.00</p></div>
 								<div><p style="margin-right:5px;color:white;float:right;font-size:10px;border: 1px;">点击购买</p></div>
 							</div>
-							<div user_type="1" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_pur.png');float:left;">
+							<div user_type="2" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_pur.png');float:left;">
 								<div><p style="color:white;margin-left:2px;margin-bottom:0px;font-weight: bold;">季会员</p></div>
 								<div><p style="text-align:center;color:white;margin-bottom:0px;">&yen;120.00</p></div>
 								<div><p style="margin-right:5px;color:white;float:right;font-size:10px;">点击购买</p></div>
 							</div>
-							<div user_type="1" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_yellow.png');float:left;">
+							<div user_type="3" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_yellow.png');float:left;">
 								<div><p style="color:white;margin-left:2px;margin-bottom:0px;font-weight: bold;">年会员</p></div>
 								<div><p style="text-align:center;color:white;margin-bottom:0px;">&yen;365.00</p></div>
 								<div><p style="margin-right:5px;color:white;float:right;font-size:10px;">点击购买</p></div>
@@ -539,6 +553,10 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
     <script src="/js/weixinjs/mui.view.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script>
+    var userStatus = <%=userStatus%>;
+    var userType = "";
+    var userTypePrice = "0.01";
+    var hasClickVip = false;
     mui.init();
     $("#myTab li a").click(function() {
 	    $(this).parent().addClass("active");
@@ -689,45 +707,108 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
     	});
     	$('.buy_vip').each(function(){
     		$(this).click(function(event) {
-    			document.getElementById("loadingToast").style.display = "";
-    			$.ajax({
-            		url: '/userVIPWeixinPay',
-            		type: "POST",
-            		data: {user_type:$(this).attr('user_type'), fee:"0.01"},
-            		success: function(data) {
-            			document.getElementById("loadingToast").style.display = "none";
-            			var jsonData = JSON.parse("{"+data+"}");
-            			if(jsonData.ddcb_error_msg != null) {
-            				alert(jsonData.ddcb_error_msg);
-            			} else {
-            				wx.chooseWXPay({
-            		            timestamp: jsonData.timeStamp,
-            		            nonceStr: jsonData.nonceStr,
-            		            package: jsonData.package,
-            		            signType: jsonData.signType,
-            		            paySign: jsonData.paySign,
-            		            success: function (res) {
-            		            	if(res.errMsg != null && res.errMsg == "chooseWXPay:ok") {
-            		            		alert("支付成功!");
-            		            		window.location.href="/weixin/getDDCBUserCenter";
-            		            	} else {
-            		            		alert("支付失败！");
-            		            	}																            
-            		            },
-            		            fail:function(res) {
-            		            	alert(JSON.stringify(res));
-            		            }
-            		        });
-            			}
-            		},
-            		error: function(status, error) {
-            			document.getElementById("loadingToast").style.display = "none";
-            			alert("支付失败！");
-            		}
-            	});
+    			if(hasClickVip) return;
+    			hasClickVip = true;
+    			userType = $(this).attr('user_type')
+    			if(userStatus == 2) {
+    				var confirmDialog = mui.createConfirmDialog("您当前VIP会员还没有到期，您确定要续费嘛？", "确定",
+    						function() {
+    							confirmDialog.close();
+    							hasClickVip = false;
+    						},
+    						function() {
+    							confirmDialog.close();
+    							document.getElementById("loadingToast").style.display = "";
+    			    			$.ajax({
+    			            		url: '/userVIPWeixinPay',
+    			            		type: "POST",
+    			            		data: {user_type:userType, fee:userTypePrice},
+    			            		success: function(data) {
+    			            			document.getElementById("loadingToast").style.display = "none";
+    			            			var jsonData = JSON.parse("{"+data+"}");
+    			            			if(jsonData.ddcb_error_msg != null) {
+    			            				alert(jsonData.ddcb_error_msg);
+    			            				hasClickVip = false;
+    			            			} else {
+    			            				wx.chooseWXPay({
+    			            		            timestamp: jsonData.timeStamp,
+    			            		            nonceStr: jsonData.nonceStr,
+    			            		            package: jsonData.package,
+    			            		            signType: jsonData.signType,
+    			            		            paySign: jsonData.paySign,
+    			            		            success: function (res) {
+    			            		            	if(res.errMsg != null && res.errMsg == "chooseWXPay:ok") {
+    			            		            		alert("支付成功!");
+    			            		            		window.location.href="/weixin/getDDCBUserCenter";
+    			            		            	} else {
+    			            		            		alert("支付失败！");
+    			            		            	}
+    			            		            	hasClickVip = false;
+    			            		            },
+    			            		            fail:function(res) {
+    			            		            	alert(JSON.stringify(res));
+    			            		            	hasClickVip = false;
+    			            		            }
+    			            		        });
+    			            			}
+    			            		},
+    			            		error: function(status, error) {
+    			            			document.getElementById("loadingToast").style.display = "none";
+    			            			alert("支付失败！");
+    			            			hasClickVip = false;
+    			            		}
+    			            	});
+    						}
+    					);
+    					confirmDialog.show();
+    			} else {
+    				document.getElementById("loadingToast").style.display = "";
+        			$.ajax({
+                		url: '/userVIPWeixinPay',
+                		type: "POST",
+                		data: {user_type:$(this).attr('user_type'), fee:"0.01"},
+                		success: function(data) {
+                			document.getElementById("loadingToast").style.display = "none";
+                			var jsonData = JSON.parse("{"+data+"}");
+                			if(jsonData.ddcb_error_msg != null) {
+                				alert(jsonData.ddcb_error_msg);
+                				hasClickVip = false;
+                			} else {
+                				wx.chooseWXPay({
+                		            timestamp: jsonData.timeStamp,
+                		            nonceStr: jsonData.nonceStr,
+                		            package: jsonData.package,
+                		            signType: jsonData.signType,
+                		            paySign: jsonData.paySign,
+                		            success: function (res) {
+                		            	if(res.errMsg != null && res.errMsg == "chooseWXPay:ok") {
+                		            		alert("支付成功!");
+                		            		window.location.href="/weixin/getDDCBUserCenter";
+                		            	} else {
+                		            		alert("支付失败！");
+                		            	}
+                		            	hasClickVip = false;
+                		            },
+                		            fail:function(res) {
+                		            	alert(JSON.stringify(res));
+                		            	hasClickVip = false;
+                		            }
+                		        });
+                			}
+                		},
+                		error: function(status, error) {
+                			document.getElementById("loadingToast").style.display = "none";
+                			alert("支付失败！");
+                			hasClickVip = false;
+                		}
+                	});
+    			}
     		});
     	});
     });
+    mui('#back_btn')[0].addEventListener('tap',function(){
+		window.location.href="/weixin/getDDCBUserCenter"; 
+	});
     mui('#buy_live_class_data_list li').each(function(){
 		this.addEventListener('tap',function(){
 	        window.location.href=this.getAttribute('course_path'); 
