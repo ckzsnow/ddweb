@@ -353,14 +353,15 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 					return;
 				}
 			})
+	   } else {
+		   $("#video_src").attr('src', $(this).attr('data_src'));
+		   $("#course_list li").each(function(){
+			   $(this).attr('style', 'font-size:15px;');
+		   });
+		   $(this).attr('style', 'font-size:15px;color:#22cc99;');
+		   document.getElementById('video').load();
+		   document.getElementById('video').play();  
 	   }
-	   $("#video_src").attr('src', $(this).attr('data_src'));
-	   $("#course_list li").each(function(){
-		   $(this).attr('style', 'font-size:15px;');
-	   });
-	   $(this).attr('style', 'font-size:15px;color:#22cc99;');
-	   document.getElementById('video').load();
-	   document.getElementById('video').play();
 	});
 	$.ajax({
 		url: "/course/addStudyRecord",

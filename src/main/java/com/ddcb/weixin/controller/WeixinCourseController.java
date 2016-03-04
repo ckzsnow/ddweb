@@ -471,6 +471,7 @@ public class WeixinCourseController {
 	@RequestMapping("/course/getOpenCourseByCondition")
 	@ResponseBody
 	public List<CourseModel> getOpenCourseByCondition(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
 		String field = request.getParameter("selectField");
 		String industry = request.getParameter("selectIndustry");
 		String competency = request.getParameter("selectCompetency");
@@ -481,7 +482,29 @@ public class WeixinCourseController {
 		String count = request.getParameter("countPerPage");
 		int page_ = Integer.valueOf(page);
 		int count_ = Integer.valueOf(count);
-		List<CourseModel> courseList = courseDao.getOpenCourseByCondition(page_, count_, type, field, industry, competency, grade, key);
+		List<CourseModel> courseList = courseDao.getOpenCourseByCondition(userId, page_, count_, type, field, industry, competency, grade, key);
 		return courseList;
+	}
+	
+	@RequestMapping("/course/uploadUserShare")
+	@ResponseBody
+	public List<CourseModel> uploadUserShare(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
+		String courseId = request.getParameter("courseId");
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			UserForwardModel ufm = userForwardDao.getUserForwardByUserIdAndCourseId(userId, courseId_);
+			if(ufm == null) {
+				ufm = new UserForwardModel();
+				ufm.setCourse_id(courseId_);
+				ufm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+				ufm.setScreenshot("1");
+				ufm.setUser_id(userId);
+				userForwardDao.addUserForward(ufm);
+			}
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return null;
 	}
 }

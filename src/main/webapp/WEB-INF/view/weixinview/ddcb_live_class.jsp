@@ -104,6 +104,7 @@
 		<h1 class="mui-title" style="color: white;">点豆直播课</h1>
 	</header>
 	<div class="mui-content">
+		<input id="image_select" type="file" capture="camera" accept="image/*" hidefocus='true' style="position: absolute;float:right;width:0px;height:0px;opacity: 0;">
 		<div id="tabtip" class="container" style="background-color: white;">
 			<ul id="myTab" class="nav nav-tabs row mantoutab"
 				style="padding-left: 0px; padding-right: 0px;">
@@ -163,6 +164,7 @@
 													</p>
 												</div>
 												<%
+												if(cm.getPrice() != null && !cm.getPrice().isEmpty() && !("0").equals(cm.getPrice())){
 													if (cm.getPay_status() != null && cm.getPay_status() == 1) {
 												%>
 												<div style="float: right;">
@@ -180,8 +182,23 @@
 												</div>
 												<%
 													}
+												} else {
 												%>
+													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
+													<div style="float: right;">
+														<button onclick="uploadShareImage('<%=cm.getId()%>', this)" course_id="<%=cm.getId()%>"
+															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;">上传分享</button>
+													</div>
+													<%} else { %>
+													<div style="float: right;">
+														<button course_id="<%=cm.getId()%>"
+															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;"
+															disabled>已经分享</button>
+													</div>
+													<%} %>
+												
 												<%
+												}
 													if (("1").equals(cm.getHasCollection())) {
 												%>
 												<div style="float: right; margin-right: 5px;">
@@ -261,6 +278,7 @@
 													</p>
 												</div>
 												<%
+												if(cm.getPrice() != null && !cm.getPrice().isEmpty() && !("0").equals(cm.getPrice())){
 													if (cm.getPay_status() != null && cm.getPay_status() == 1) {
 												%>
 												<div style="float: right;">
@@ -274,12 +292,27 @@
 												<div style="float: right;">
 													<button class="buy_class" course_price="<%=cm.getPrice()%>"
 														course_id="<%=cm.getId()%>"
-														style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;" disabled>购买课程</button>
+														style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;">购买课程</button>
 												</div>
 												<%
 													}
+												} else {
 												%>
+													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
+													<div style="float: right;">
+														<button onclick="uploadShareImage('<%=cm.getId()%>', this)" course_id="<%=cm.getId()%>"
+															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;" disabled>上传分享</button>
+													</div>
+													<%} else { %>
+													<div style="float: right;">
+														<button course_id="<%=cm.getId()%>"
+															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;"
+															disabled>已经分享</button>
+													</div>
+													<%} %>
+												
 												<%
+												}
 													if (("1").equals(cm.getHasCollection())) {
 												%>
 												<div style="float: right; margin-right: 5px;">
@@ -381,6 +414,33 @@
 					'chooseWXPay'
 				]
 			});
+		    var currentImageSelectEle;
+		    function uploadShareImage(courseId, ele) {
+		    	currentImageSelectEle = ele;
+		    	document.getElementById('image_select').click();		    	
+		    }
+		    document.getElementById("image_select").onchange = function(event) {
+		    	currentImageSelectEle.setAttribute("disabled", true);
+		    	currentImageSelectEle.innerHTML = "已经分享";
+		    	document.getElementById("loadingToastTips").innerHTML = "正在上传数据";
+				document.getElementById("loadingToast").style.display = "";
+				mui.ajax({
+            		url: "/course/uploadUserShare",
+            		type: "POST",
+            		data: {courseId:currentImageSelectEle.getAttribute("course_id")},
+            		success: function(data) {
+            			document.getElementById("loadingToast").style.display = "none";
+        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+        				document.getElementById("collection_toast").style.display = "";
+        				setTimeout(function(){document.getElementById("collection_toast").style.display = "none";}, 1500);
+            		},
+            		error: function(status, error) {
+            			document.getElementById("loadingToast").style.display = "none";
+        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+            			alert("服务器暂时无法处理您的请求，请稍后重试！");
+            		}
+            	});
+		    }
 			function collectionClick(courseId, ele) {
 				this.event.stopPropagation();
 				document.getElementById("loadingToastTips").innerHTML = "正在处理请求";
@@ -520,10 +580,18 @@
 							    						btnDiv.setAttribute('style', 'margin-top:5px');
 							    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div>";
 							    						btnDiv.innerHTML = "<div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
-							    						if(data[i].pay_status != null && data[i].pay_status=="1") {
-							    							btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经购买</button></div>";
+							    						if(data[i].price != null && data[i].price != "" && data[i].price != "0") {
+							    							if(data[i].pay_status != null && data[i].pay_status=="1") {
+								    							btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经购买</button></div>";
+								    						} else {
+								    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>购买课程</button></div>";
+								    						}
 							    						} else {
-							    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>购买课程</button></div>";
+							    							if(data[i].screenshot == null || data[i].screenshot == "") {
+							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>上传分享</button></div>";
+							    							} else {
+							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经分享</button></div>";
+							    							}
 							    						}
 														if(data[i].hasCollection == "1") {
 															btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";
@@ -587,10 +655,18 @@
 							    						btnDiv.setAttribute('style', 'margin-top:5px');
 							    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div>";
 							    						btnDiv.innerHTML = "<div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
-							    						if(data[i].pay_status != null && data[i].pay_status=="1") {
-							    							btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经购买</button></div>";
+							    						if(data[i].price != null && data[i].price != "" && data[i].price != "0") {
+							    							if(data[i].pay_status != null && data[i].pay_status=="1") {
+								    							btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经购买</button></div>";
+								    						} else {
+								    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+								    						}
 							    						} else {
-							    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
+							    							if(data[i].screenshot == null || data[i].screenshot == "") {
+							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>上传分享</button></div>";
+							    							} else {
+							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经分享</button></div>";
+							    							}
 							    						}
 														if(data[i].hasCollection == "1") {
 															btnDiv.innerHTML += "<div style='float:right;margin-right:5px;'><button onclick='collectionClick(\"" + data[i].id +"\")' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经收藏</button></div>";

@@ -12,7 +12,9 @@
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IBannerDao bannerDao = (IBannerDao)wac.getBean("bannerDao");
-List<CourseModel> list = courseDao.getOpenCourseByCondition(1,8, "最新", "全部", "全部", "全部", "全部", "");
+String userId = (String) session.getAttribute("openid");
+//userId="os3bVs6Qiq2Bo1dbu36Tu9WkDEa8";
+List<CourseModel> list = courseDao.getOpenCourseByCondition(userId, 1,8, "最新", "全部", "全部", "全部", "全部", "");
 List<BannerModel> bannerList = bannerDao.getAllBanner();
 String code = (String)session.getAttribute("url_code");
 Map<String, String> result = new HashMap<>();
@@ -345,7 +347,11 @@ div.screening>ul>li {
 							<div class="mui-media-body">
 								<h4 style="font-size:15px;margin-top:0px;margin-bottom:0px;"><%=cm.getName() %></h4>
 								<h6 style="margin-top:0px;margin-bottom:0px;height:39px;line-height:39px;color:#2ab888;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-contact"></span><%=cm.getTeacher() %></h6>
-								<p style="margin-bottom:0px;margin-top:0px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getStudy_people_count() %>人学习&nbsp;&nbsp;</span><span has_collection="0" style="font-size:16px;float:right;" class="mui-icon mui-icon-star collection_course"></span></p>
+								<%if(cm.getHasCollection() == null || cm.getHasCollection() == 0) { %>
+									<p style="margin-bottom:0px;margin-top:0px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getStudy_people_count() %>人学习&nbsp;&nbsp;</span><span course_id="<%=cm.getId() %>" has_collection="0" style="font-size:21px;float:right;" class="mui-icon mui-icon-star collection_course"></span></p>								
+								<%} else {%>
+									<p style="margin-bottom:0px;margin-top:0px;font-size:12px;" class='mui-ellipsis'><span style="font-size:16px;" class="mui-icon mui-icon-compose"></span><span><%=cm.getCourse_length()%>分钟&nbsp;&nbsp;<%=cm.getStudy_people_count() %>人学习&nbsp;&nbsp;</span><span course_id="<%=cm.getId() %>" has_collection="1" style="font-size:21px;float:right;" class="mui-icon mui-icon-starhalf collection_course"></span></p>
+								<%} %>		
 							</div>
 						</li>
 						<%} %>
@@ -379,7 +385,7 @@ div.screening>ul>li {
 		<div class="weui_mask_transparent"></div>
 		<div class="weui_toast">
 			<i class="weui_icon_toast"></i>
-			<p class="weui_toast_content">已完成收藏</p>
+			<p class="weui_toast_content" style="color:white;">已完成收藏</p>
 		</div>
 	</div>
 	<div id="searchInput"
@@ -454,14 +460,30 @@ div.screening>ul>li {
 			        if(has_collection == "0") {
 			        	document.getElementById("loadingToastTips").innerHTML="处理请求中";
 			        	document.getElementById("loadingToast").style.display = "";
-			        	document.getElementById("loadingToastTips").innerHTML="数据加载中";
-			        	document.getElementById("loadingToast").style.display = "none";
-			        	document.getElementById("collection_toast").style.display = "";
-			        	setTimeout(function(){
-			        		document.getElementById("collection_toast").style.display = "none";
-			        		ele.setAttribute("has_collection", "1");
-				        	ele.setAttribute("class", "mui-icon mui-icon-starhalf collection_course");
-			        	}, 1500);
+			        	mui.ajax({
+		            		url: "/course/userCollectionCourse",
+		            		type: "POST",
+		            		data: {course_id:ele.getAttribute("course_id")},
+		            		success: function(data) {
+		            			document.getElementById("loadingToast").style.display = "none";
+		        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+		            			if(data.error_code != "0") {
+		            				alert(data.error_msg);
+		            			} else {
+		            				document.getElementById("collection_toast").style.display = "";
+		            				setTimeout(function(){
+		            					document.getElementById("collection_toast").style.display = "none";
+		            					ele.setAttribute("has_collection", "1");
+						        		ele.setAttribute("class", "mui-icon mui-icon-starhalf collection_course");
+						        	}, 1500);
+		            			}
+		            		},
+		            		error: function(status, error) {
+		            			document.getElementById("loadingToast").style.display = "none";
+		        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+		            			alert("服务器暂时无法处理您的请求，请稍后重试！");
+		            		}
+		            	});
 			        }
 			    });  
 			});
@@ -496,10 +518,47 @@ div.screening>ul>li {
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习</p></div>";
+	    						if(data[i].hasCollection == null || data[i].hasCollection == 0) {
+	    							liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='margin-top:0px;margin-bottom:0px;height:39px;line-height:39px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-bottom:0px;margin-top:0px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span><span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习&nbsp;&nbsp;</span><span course_id='"+data[i].id+"' has_collection='0' style='font-size:21px;float:right;' class='mui-icon mui-icon-star collection_course'></span></p></div>";
+	    						} else {
+	    							liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='margin-top:0px;margin-bottom:0px;height:39px;line-height:39px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-bottom:0px;margin-top:0px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span><span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习&nbsp;&nbsp;</span><span course_id='"+data[i].id+"' has_collection='1' style='font-size:21px;float:right;' class='mui-icon mui-icon-starhalf collection_course'></span></p></div>";
+	    						}	    						
 	    						rootNode.appendChild(liNode);
 	    						liNode.addEventListener('tap',function(){
 	    					        window.location.href=this.getAttribute('course_path'); 
+	    					    });
+	    						liNode.childNodes[1].childNodes[2].childNodes[2].addEventListener('tap',function(){
+	    							var ele = this;
+	    							event.stopPropagation();
+	    					        var has_collection = this.getAttribute("has_collection");
+	    					        if(has_collection == "0") {
+	    					        	document.getElementById("loadingToastTips").innerHTML="处理请求中";
+	    					        	document.getElementById("loadingToast").style.display = "";
+	    					        	mui.ajax({
+	    				            		url: "/course/userCollectionCourse",
+	    				            		type: "POST",
+	    				            		data: {course_id:ele.getAttribute("course_id")},
+	    				            		success: function(data) {
+	    				            			document.getElementById("loadingToast").style.display = "none";
+	    				        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+	    				            			if(data.error_code != "0") {
+	    				            				alert(data.error_msg);
+	    				            			} else {
+	    				            				document.getElementById("collection_toast").style.display = "";
+	    				            				setTimeout(function(){
+	    				            					document.getElementById("collection_toast").style.display = "none";
+	    				            					ele.setAttribute("has_collection", "1");
+	    	    						        		ele.setAttribute("class", "mui-icon mui-icon-starhalf collection_course");
+	    	    						        	}, 1500);
+	    				            			}
+	    				            		},
+	    				            		error: function(status, error) {
+	    				            			document.getElementById("loadingToast").style.display = "none";
+	    				        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+	    				            			alert("服务器暂时无法处理您的请求，请稍后重试！");
+	    				            		}
+	    				            	});
+	    					        }
 	    					    });
             				}
             				if(i<7) {
@@ -533,10 +592,47 @@ div.screening>ul>li {
 	    						var liNode = document.createElement('li');
 	    						liNode.setAttribute('class', 'mui-table-view-cell mui-media');
 	    						liNode.setAttribute('course_path', '/playDDCBOpenClass?course_id='+data[i].id);
-	    						liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;'>"+data[i].name+"</h4><h6 style='margin-top:5px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-top:5px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习</p></div>";
+	    						if(data[i].hasCollection == null || data[i].hasCollection == 0) {
+	    							liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='margin-top:0px;margin-bottom:0px;height:39px;line-height:39px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-bottom:0px;margin-top:0px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span><span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习&nbsp;&nbsp;</span><span course_id='"+data[i].id+"' has_collection='0' style='font-size:21px;float:right;' class='mui-icon mui-icon-star collection_course'></span></p></div>";
+	    						} else {
+	    							liNode.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:70px;width:100px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:15px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='margin-top:0px;margin-bottom:0px;height:39px;line-height:39px;color:#2ab888;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><p style='margin-bottom:0px;margin-top:0px;font-size:12px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span><span>"+data[i].course_length+"分钟&nbsp;&nbsp;"+data[i].study_people_count+"人学习&nbsp;&nbsp;</span><span course_id='"+data[i].id+"' has_collection='1' style='font-size:21px;float:right;' class='mui-icon mui-icon-starhalf collection_course'></span></p></div>";
+	    						}	 	    						
 	    						rootNode.appendChild(liNode);
 	    						liNode.addEventListener('tap',function(){
 	    					        window.location.href=this.getAttribute('course_path'); 
+	    					    });
+	    						liNode.childNodes[1].childNodes[2].childNodes[2].addEventListener('tap',function(){
+	    							var ele = this;
+	    							event.stopPropagation();
+	    					        var has_collection = this.getAttribute("has_collection");
+	    					        if(has_collection == "0") {
+	    					        	document.getElementById("loadingToastTips").innerHTML="处理请求中";
+	    					        	document.getElementById("loadingToast").style.display = "";
+	    					        	mui.ajax({
+	    				            		url: "/course/userCollectionCourse",
+	    				            		type: "POST",
+	    				            		data: {course_id:ele.getAttribute("course_id")},
+	    				            		success: function(data) {
+	    				            			document.getElementById("loadingToast").style.display = "none";
+	    				        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+	    				            			if(data.error_code != "0") {
+	    				            				alert(data.error_msg);
+	    				            			} else {
+	    				            				document.getElementById("collection_toast").style.display = "";
+	    				            				setTimeout(function(){
+	    				            					document.getElementById("collection_toast").style.display = "none";
+	    				            					ele.setAttribute("has_collection", "1");
+	    	    						        		ele.setAttribute("class", "mui-icon mui-icon-starhalf collection_course");
+	    	    						        	}, 1500);
+	    				            			}
+	    				            		},
+	    				            		error: function(status, error) {
+	    				            			document.getElementById("loadingToast").style.display = "none";
+	    				        				document.getElementById("loadingToastTips").innerHTML = "数据加载中";
+	    				            			alert("服务器暂时无法处理您的请求，请稍后重试！");
+	    				            		}
+	    				            	});
+	    					        }
 	    					    });
             				}
             				page = 1;

@@ -5,9 +5,11 @@
 <%@ page import="com.ddcb.dao.ICourseDao"%>
 <%@ page import="com.ddcb.dao.IUserCourseDao"%>
 <%@ page import="com.ddcb.dao.IWeixinUserDao"%>
+<%@ page import="com.ddcb.dao.IUserForwardDao"%>
 <%@ page import="com.ddcb.model.CourseModel"%>
 <%@ page import="com.ddcb.model.UserCourseModel"%>
 <%@ page import="com.ddcb.model.CourseDetailModel"%>
+<%@ page import="com.ddcb.model.UserForwardModel"%>
 <%@ page import="com.ddcb.model.WeixinUserModel"%>
 <%@ page import="com.ddcb.utils.WeixinTools"%>
 <%@ page import="java.sql.Timestamp"%>
@@ -17,6 +19,7 @@ WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplication
 ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDao");
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IUserCourseDao userCourseDao = (IUserCourseDao)wac.getBean("userCourseDao");
+IUserForwardDao userForwardDao = (IUserForwardDao)wac.getBean("userForwardDao");
 List<CourseDetailModel> list = null;
 long id = Long.valueOf((String)request.getParameter("course_id"));
 list = courseDetailDao.getCourseDetailByCourseId(id);
@@ -28,6 +31,19 @@ String courseDate = cm.getCourse_date().toString();
 String courseDateReadable = cm.getCourse_date_readable();
 String courseLength = cm.getCourse_length();
 UserCourseModel ucm = userCourseDao.getUserCourseByUserIdAndCourseId(userId, id);
+UserForwardModel ufm =  userForwardDao.getUserForwardByUserIdAndCourseId(userId, id);
+String userStatus = "";
+if(cm.getPrice() == null || cm.getPrice().isEmpty() || ("0").equals(cm.getPrice())) {
+	if(ufm == null || ufm.getScreenshot() == null || !("1").equals(ufm.getScreenshot()))
+		userStatus = "1";//不收费课程，用户未分享
+	else
+		userStatus = "2";//不收费课程，用户已分享
+} else {
+	if(ucm != null && ucm.getPay_status() != null && ucm.getPay_status() == 1)
+		userStatus = "3";//收费课程，用户已购买
+	else
+		userStatus = "4";//收费课程，用户未购买
+}
 %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -79,7 +95,7 @@ video::-webkit-media-controls-volume-slider {}
 
 	<body style="padding-bottom: 10px; background-color: #f1f1f1;">
 		<div style="position: relative;">
-			<%if(ucm != null && ucm.getPay_status() != null && ucm.getPay_status() == 1){%>
+			<%if(("2").equals(userStatus) || ("3").equals(userStatus)){%>
 			<div id="video_div" style="display:none;background:#1cbcd6;">
 				<video id="video" webkit-playsinline preload="none" height="100%" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
 					<source id="video_src" src="<%=list.get(0).getVideosrc() %>" type='video/mp4'>
@@ -139,7 +155,6 @@ video::-webkit-media-controls-volume-slider {}
 	<script src="/js/weixinjs/jquery.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
-	document.getElementById('video').setAttribute("width", document.body.clientWidth);
 	Date.prototype.pattern=function(fmt) {           
 	    var o = {           
 	    "M+" : this.getMonth()+1, //月份           
@@ -173,7 +188,8 @@ video::-webkit-media-controls-volume-slider {}
 	    }           
 	    return fmt;           
 	} 
-	<%if(ucm != null && ucm.getPay_status() != null && ucm.getPay_status() == 1){%>
+	<%if(("2").equals(userStatus) || ("3").equals(userStatus)){%>
+	document.getElementById('video').setAttribute("width", document.body.clientWidth);
 	document.addEventListener("WeixinJSBridgeReady", function () {
 		var year = <%=courseDate.substring(0, 4)%>;
 		var month = <%=courseDate.substring(5, 7)%>;
@@ -200,7 +216,7 @@ video::-webkit-media-controls-volume-slider {}
 					document.getElementById("video").play();
 					document.getElementById("video").addEventListener('ended', function(){
 						document.getElementById("video").pause();
-						document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+						document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
 						document.getElementById("playClassTimeTips").style.display = "";
 						document.getElementById("video_div").style.display = "none";
 					}, false);
@@ -209,7 +225,7 @@ video::-webkit-media-controls-volume-slider {}
 		} else {
 			if(courseDate + courseLength < currentDate) {
 				document.getElementById("video").pause();
-				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
 			} else {
 				var hasSetTime = false;
 				document.getElementById("video").addEventListener("timeupdate", function(){
@@ -232,7 +248,7 @@ video::-webkit-media-controls-volume-slider {}
 				});
 				document.getElementById("video").addEventListener('ended', function(){
 					document.getElementById("video").pause();
-					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
 					document.getElementById("playClassTimeTips").style.display = "";
 					document.getElementById("video_div").style.display = "none";
 				}, false);
@@ -260,12 +276,20 @@ video::-webkit-media-controls-volume-slider {}
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
 		if(courseDate>currentDate) {
+			<%if(("3").equals(userStatus)){%>
 			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播时间：<%=courseDateReadable%></p><p style='color:white;'>您还没有购买当前课程，无法观看！</p>";
+			<%} else {%>
+			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播时间：<%=courseDateReadable%></p><p style='color:white;'>您还没有在朋友圈分享当前课程，无法观看！</p>";
+			<%}%>
 		} else {
 			if(courseDate + courseLength < currentDate) {
-				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
 			} else {
+				<%if(("3").equals(userStatus)){%>
 				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播中......</p><p style='color:white;'>您还没有购买当前课程，无法观看！</p>";
+				<%} else {%>
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播中......</p><p style='color:white;'>您还没有在朋友圈分享当前课程，无法观看！</p>";
+				<%}%>		
 			}
 		}
 	<%}%>

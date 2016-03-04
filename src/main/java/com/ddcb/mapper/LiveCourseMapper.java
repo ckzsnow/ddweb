@@ -14,7 +14,7 @@ public class LiveCourseMapper implements RowMapper<LiveCourseModel> {
 				rs.getString("teacher"), rs.getString("image"), rs.getTimestamp("course_date"), rs.getString("course_date_readable"), 
 				rs.getString("course_time"), rs.getString("course_length"), rs.getTimestamp("create_time"), rs.getInt("course_type"),
 				rs.getString("course_field"), rs.getString("course_industry"), rs.getString("course_competency"), rs.getString("price"),
-				rs.getString("has_collection"), rs.getInt("pay_status"));
+				rs.getString("has_collection"), rs.getInt("pay_status"), rs.getString("screenshot"));
 		return u;
 	}
 }

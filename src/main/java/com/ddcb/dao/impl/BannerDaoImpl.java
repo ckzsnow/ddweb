@@ -53,7 +53,7 @@ public class BannerDaoImpl implements IBannerDao {
 	public List<CourseModel> getAllBannerCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c INNER JOIN banner as a on c.id=a.course_id";
+			String sql = "select c.id as has_collection, c.study_people_count, c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c INNER JOIN banner as a on c.id=a.course_id";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {

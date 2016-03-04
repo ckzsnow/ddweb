@@ -21,6 +21,7 @@ public class CourseModel {
 	private String price;
 	private Integer people_count;
 	private Integer study_people_count;
+	private Integer hasCollection;
 	
 	private Integer select_status;
 	private Integer pay_status;
@@ -32,7 +33,7 @@ public class CourseModel {
 			Timestamp course_date, String course_date_readable, String course_time, 
 			String course_length, Timestamp create_time, Integer courseType,
 			String courseField, String courseIndustry, String courseCompetency, 
-			String price, Integer people_count, Integer study_people_count) {
+			String price, Integer people_count, Integer study_people_count, Integer hasCollection) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -51,6 +52,15 @@ public class CourseModel {
 		this.price = price;
 		this.people_count = people_count;
 		this.study_people_count = study_people_count;
+		this.hasCollection = hasCollection;
+	}
+
+	public Integer getHasCollection() {
+		return hasCollection;
+	}
+
+	public void setHasCollection(Integer hasCollection) {
+		this.hasCollection = hasCollection;
 	}
 
 	public Long getId() {
@@ -220,7 +230,8 @@ public class CourseModel {
 				+ course_date_readable + ", course_time=" + course_time + ", course_length=" + course_length
 				+ ", create_time=" + create_time + ", courseType=" + courseType + ", courseField=" + courseField
 				+ ", courseIndustry=" + courseIndustry + ", courseCompetency=" + courseCompetency + ", price=" + price
-				+ ", people_count=" + people_count + ", study_people_count=" + study_people_count + ", select_status="
-				+ select_status + ", pay_status=" + pay_status + ", forward_status=" + forward_status + "]";
+				+ ", people_count=" + people_count + ", study_people_count=" + study_people_count + ", hasCollection="
+				+ hasCollection + ", select_status=" + select_status + ", pay_status=" + pay_status
+				+ ", forward_status=" + forward_status + "]";
 	}
 }
