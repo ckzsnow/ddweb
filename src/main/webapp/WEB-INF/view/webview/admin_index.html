@@ -288,6 +288,18 @@
 														</div>
 													</div>
 												</div> -->
+												<div class="form-group">
+													<label for="teacher_name" class="control-label col-lg-4">课程学习人数</label>
+													<div class="col-lg-8">
+														<input type="text" id="course_study_count" placeholder="默认为0，后台自动生成" class="form-control">
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="teacher_name" class="control-label col-lg-4">对应直播课程ID</label>
+													<div class="col-lg-8">
+														<input type="text" id="live_class_id" placeholder="默认-1，如果没有，请保持默认值" class="form-control">
+													</div>
+												</div>
 											</form>
 										</div>
 									</div>
@@ -523,6 +535,10 @@
 				var video_img = $('#video_img').val();
 				var video_src = $('#video_src').val();
 				var course_price = $('#course_price').val();
+				var course_study_count = $('#course_study_count').val();
+				var live_class_id = $('#live_class_id').val();
+				if(course_study_count == "") course_study_count = 0;
+				if(live_class_id == "") course_study_count = -1;
 				if(name == null || name == "" ||
 					teacher == null || teacher == "" ||
 					teacher_name == null || teacher_name == "" ||
@@ -578,7 +594,9 @@
 							course_field:course_field,
 							course_industry:course_industry,
 							course_competency:course_competency,
-							course_price:course_price
+							course_price:course_price,
+							course_study_count:course_study_count,
+							live_class_id:live_class_id
 						};
 						return data;
 				} else {
@@ -634,6 +652,8 @@
 							$('#video_img').val("");
 							$('#video_src').val("");
 							$('#course_length').val("");
+							$('#course_study_count').val("");
+							$('#live_class_id').val("");
 							$('#course_menu>div input').each(function(){
 								$(this).val("");
 							});

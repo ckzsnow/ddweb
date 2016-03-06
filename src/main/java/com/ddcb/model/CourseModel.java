@@ -22,6 +22,7 @@ public class CourseModel {
 	private Integer people_count;
 	private Integer study_people_count;
 	private Integer hasCollection;
+	private Long parentId;
 	
 	private Integer select_status;
 	private Integer pay_status;
@@ -33,7 +34,8 @@ public class CourseModel {
 			Timestamp course_date, String course_date_readable, String course_time, 
 			String course_length, Timestamp create_time, Integer courseType,
 			String courseField, String courseIndustry, String courseCompetency, 
-			String price, Integer people_count, Integer study_people_count, Integer hasCollection) {
+			String price, Integer people_count, Integer study_people_count, Integer hasCollection,
+			Long parentId) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -53,6 +55,7 @@ public class CourseModel {
 		this.people_count = people_count;
 		this.study_people_count = study_people_count;
 		this.hasCollection = hasCollection;
+		this.parentId = parentId;
 	}
 
 	public Integer getHasCollection() {
@@ -223,6 +226,14 @@ public class CourseModel {
 		this.study_people_count = study_people_count;
 	}
 
+	public Long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
 	@Override
 	public String toString() {
 		return "CourseModel [id=" + id + ", name=" + name + ", course_abstract=" + course_abstract + ", teacher="
@@ -231,7 +242,7 @@ public class CourseModel {
 				+ ", create_time=" + create_time + ", courseType=" + courseType + ", courseField=" + courseField
 				+ ", courseIndustry=" + courseIndustry + ", courseCompetency=" + courseCompetency + ", price=" + price
 				+ ", people_count=" + people_count + ", study_people_count=" + study_people_count + ", hasCollection="
-				+ hasCollection + ", select_status=" + select_status + ", pay_status=" + pay_status
-				+ ", forward_status=" + forward_status + "]";
+				+ hasCollection + ", parentId=" + parentId + ", select_status=" + select_status + ", pay_status="
+				+ pay_status + ", forward_status=" + forward_status + "]";
 	}
 }

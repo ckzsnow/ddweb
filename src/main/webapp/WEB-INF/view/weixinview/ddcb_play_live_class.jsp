@@ -24,6 +24,8 @@ List<CourseDetailModel> list = null;
 long id = Long.valueOf((String)request.getParameter("course_id"));
 list = courseDetailDao.getCourseDetailByCourseId(id);
 CourseModel cm = courseDao.getCourseByCourseId(id);
+CourseModel parentCm = courseDao.getCourseByCourseId(cm.getParentId());
+String parentCourseExist = parentCm != null && parentCm.getId() != 0? "exist" : "notExist";
 /* Map<String, String> result = new HashMap<>();
 result = WeixinTools.getSign("http://www.diandou.me/playDDCBOpenClass?course_id=" + id); */
 String userId = (String)session.getAttribute("openid");
@@ -283,7 +285,21 @@ video::-webkit-media-controls-volume-slider {}
 			<%}%>
 		} else {
 			if(courseDate + courseLength < currentDate) {
-				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
+				<%if(("exist").equals(parentCourseExist)) {%>
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+				var countDown = 5;
+				var timer = setInterval(function(){
+					if(countDown == 0) {
+						clearInterval(timer);
+						window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+					} else {
+						document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程,"+countDown+"秒后自动跳转。";
+					}
+					countDown--;
+				}, 1000);
+				<%} else {%>
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+				<%}%>		
 			} else {
 				<%if(("3").equals(userStatus)){%>
 				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播中......</p><p style='color:white;'>您还没有购买当前课程，无法观看！</p>";

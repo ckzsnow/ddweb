@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -85,6 +86,26 @@ public class WebCourseController {
 		cm.setCourseIndustry(params.get("course_industry")[0]);
 		cm.setCourseCompetency(params.get("course_competency")[0]);
 		cm.setPrice(params.get("course_price")[0]);
+		String courseStudyCount = params.get("course_study_count")[0];
+		String liveClassId = params.get("live_class_id")[0];
+		Integer courseStudyCount_ = 0;
+		Long liveClassClassId_ = 0L;
+		try {
+			courseStudyCount_ = Integer.valueOf(courseStudyCount);
+			liveClassClassId_ = Long.valueOf(liveClassId);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		if(courseStudyCount_ == 0) {
+			int max = 1500;
+		    int min = 300;
+		    Random random = new Random();
+		    int x = random.nextInt(max)%(max-min+1) + min;
+		    cm.setStudy_people_count(x);
+		} else {
+			cm.setStudy_people_count(courseStudyCount_);
+		}
+		cm.setParentId(liveClassClassId_);
 		if (files.length != 0) {
 			for (MultipartFile file : files) {
 				String imgFileUnique = getUniqueIdentifier();
