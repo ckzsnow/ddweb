@@ -39,7 +39,7 @@ public class CourseDaoImpl implements ICourseDao {
 	
 	@Override
 	public CourseModel getCourseByCourseId(long id) {
-		String sql = "select c.parent_id, c.id as has_collection, c.study_people_count, COUNT(c.id) as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.id = ?";
+		String sql = "select c.course_grade, c.parent_id, c.id as has_collection, c.study_people_count, COUNT(c.id) as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.id = ?";
 		CourseModel courseModel = null;
 		try {
 			courseModel = jdbcTemplate.queryForObject(sql,
@@ -54,7 +54,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllOpenCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.parent_id, c.id as has_collection, c.study_people_count, COUNT(a.course_id) as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc";
+			String sql = "select c.course_grade, c.parent_id, c.id as has_collection, c.study_people_count, COUNT(a.course_id) as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -68,7 +68,7 @@ public class CourseDaoImpl implements ICourseDao {
 		List<CourseModel> list = null;
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select c.parent_id, c.id as has_collection, c.study_people_count, COUNT(a.course_id) as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc limit ?,?";
+			String sql = "select c.course_grade, c.parent_id, c.id as has_collection, c.study_people_count, COUNT(a.course_id) as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 order by c.create_time desc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -82,7 +82,7 @@ public class CourseDaoImpl implements ICourseDao {
 		List<CourseModel> list = null;
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select c.parent_id, c.study_people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
+			String sql = "select c.course_grade, c.parent_id, c.study_people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=0 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{field, industry, competency, beginIndex, count}, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -98,7 +98,7 @@ public class CourseDaoImpl implements ICourseDao {
 			jdbcTemplate.update(new PreparedStatementCreator() {
 				public PreparedStatement createPreparedStatement(
 						Connection connection) throws SQLException {
-					String sql = "insert into course(name, course_abstract, teacher, image, course_time, course_date, course_length, create_time, course_type, course_field, course_industry, course_competency, price) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					String sql = "insert into course(name, course_abstract, teacher, image, course_time, course_date, course_length, create_time, course_type, course_field, course_industry, course_competency, price, course_grade) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 					PreparedStatement ps = connection.prepareStatement(sql,
 							Statement.RETURN_GENERATED_KEYS);
 					ps.setString(1, courseModel.getName());
@@ -114,6 +114,7 @@ public class CourseDaoImpl implements ICourseDao {
 					ps.setString(11, courseModel.getCourseIndustry());
 					ps.setString(12, courseModel.getCourseCompetency());
 					ps.setString(13, courseModel.getPrice());
+					ps.setString(14, courseModel.getCourseGrade());
 					return ps;
 				}
 			}, keyHolder);
@@ -129,7 +130,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.parent_id, c.id as has_collection, c.study_people_count, c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.create_time desc";
+			String sql = "select c.course_grade, c.parent_id, c.id as has_collection, c.study_people_count, c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.create_time desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -142,7 +143,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getAllUserPayedCourseRecentCourse() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
+			String sql = "select c.course_grade, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {
@@ -156,7 +157,7 @@ public class CourseDaoImpl implements ICourseDao {
 		List<LiveCourseModel> list = null;
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select uf.screenshot, !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id LEFT JOIN user_forward as uf on uf.user_id=? and uf.course_id=c.id where NOW() < (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date desc limit ?,?";
+			String sql = "select uf.screenshot, !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id LEFT JOIN user_forward as uf on uf.user_id=? and uf.course_id=c.id where NOW() < (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date asc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{userId, userId, userId, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
 		} catch (Exception e) {
@@ -210,7 +211,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<CourseModel> getOpenCourseByCondition(String openId, int page, int count, String type, String field, String industry,
 			String competeny, String grade, String key) {
 		List<CourseModel> list = null;
-		String sql = "select c.parent_id, a.id as has_collection, c.study_people_count, 0 as people_count,  c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c LEFT JOIN user_collection as a on a.course_id=c.id and a.user_id =? ";
+		String sql = "select c.course_grade, c.parent_id, a.id as has_collection, c.study_people_count, 0 as people_count,  c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c LEFT JOIN user_collection as a on a.course_id=c.id and a.user_id =? ";
 		StringBuilder whereSql = new StringBuilder();
 		List<Object> args = new ArrayList<>();
 		args.add(openId);
@@ -273,7 +274,7 @@ public class CourseDaoImpl implements ICourseDao {
 		List<LiveCourseModel> list = null;
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
-			String sql = "select !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id where NOW() >= (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
+			String sql = "select uf.screenshot, !ISNULL(b.user_id) as has_collection, a.pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id LEFT JOIN user_forward as uf on uf.user_id=? and uf.course_id=c.id where NOW() >= (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 and c.course_field=? and c.course_industry=? and c.course_competency=? order by c.course_date desc limit ?,?";
 			list = jdbcTemplate.query(sql, new Object[]{userId, userId, field, industry, competency, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
 		} catch (Exception e) {
@@ -286,7 +287,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public void updateCourseStudyPeopleCount() {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.study_people_count, c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.create_time desc";
+			String sql = "select c.course_grade, c.study_people_count, c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c order by c.create_time desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {

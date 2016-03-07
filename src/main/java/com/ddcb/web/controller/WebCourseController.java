@@ -86,6 +86,7 @@ public class WebCourseController {
 		cm.setCourseIndustry(params.get("course_industry")[0]);
 		cm.setCourseCompetency(params.get("course_competency")[0]);
 		cm.setPrice(params.get("course_price")[0]);
+		cm.setCourseGrade(params.get("course_grade")[0]);
 		String courseStudyCount = params.get("course_study_count")[0];
 		String liveClassId = params.get("live_class_id")[0];
 		Integer courseStudyCount_ = 0;

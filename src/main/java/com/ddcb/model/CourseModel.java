@@ -18,6 +18,7 @@ public class CourseModel {
 	private String courseField;
 	private String courseIndustry;
 	private String courseCompetency;
+	private String courseGrade;
 	private String price;
 	private Integer people_count;
 	private Integer study_people_count;
@@ -35,7 +36,7 @@ public class CourseModel {
 			String course_length, Timestamp create_time, Integer courseType,
 			String courseField, String courseIndustry, String courseCompetency, 
 			String price, Integer people_count, Integer study_people_count, Integer hasCollection,
-			Long parentId) {
+			Long parentId, String courseGrade) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -56,6 +57,7 @@ public class CourseModel {
 		this.study_people_count = study_people_count;
 		this.hasCollection = hasCollection;
 		this.parentId = parentId;
+		this.courseGrade = courseGrade;
 	}
 
 	public Integer getHasCollection() {
@@ -234,15 +236,24 @@ public class CourseModel {
 		this.parentId = parentId;
 	}
 
+	public String getCourseGrade() {
+		return courseGrade;
+	}
+
+	public void setCourseGrade(String courseGrade) {
+		this.courseGrade = courseGrade;
+	}
+
 	@Override
 	public String toString() {
 		return "CourseModel [id=" + id + ", name=" + name + ", course_abstract=" + course_abstract + ", teacher="
 				+ teacher + ", image=" + image + ", course_date=" + course_date + ", course_date_readable="
 				+ course_date_readable + ", course_time=" + course_time + ", course_length=" + course_length
 				+ ", create_time=" + create_time + ", courseType=" + courseType + ", courseField=" + courseField
-				+ ", courseIndustry=" + courseIndustry + ", courseCompetency=" + courseCompetency + ", price=" + price
-				+ ", people_count=" + people_count + ", study_people_count=" + study_people_count + ", hasCollection="
-				+ hasCollection + ", parentId=" + parentId + ", select_status=" + select_status + ", pay_status="
-				+ pay_status + ", forward_status=" + forward_status + "]";
+				+ ", courseIndustry=" + courseIndustry + ", courseCompetency=" + courseCompetency + ", courseGrade="
+				+ courseGrade + ", price=" + price + ", people_count=" + people_count + ", study_people_count="
+				+ study_people_count + ", hasCollection=" + hasCollection + ", parentId=" + parentId
+				+ ", select_status=" + select_status + ", pay_status=" + pay_status + ", forward_status="
+				+ forward_status + "]";
 	}
 }

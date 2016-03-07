@@ -21,7 +21,7 @@ IUserStudyRecordDao userStudyRecordDao = (IUserStudyRecordDao)wac.getBean("userS
 Map<String, String> result = new HashMap<>();
 String code = (String)session.getAttribute("url_code");
 result = WeixinTools.getSign("http://www.diandou.me/weixin/weixinLogin?view=ddcb_user_center&code="+code+"&state=123");
-String userId = "os3bVs6Qiq2Bo1dbu36Tu9WkDEa8";//(String)session.getAttribute("openid");
+String userId = (String)session.getAttribute("openid");
 String nickname = (String)session.getAttribute("nickname");
 String headimgurl = (String)session.getAttribute("headimgurl");
 WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);

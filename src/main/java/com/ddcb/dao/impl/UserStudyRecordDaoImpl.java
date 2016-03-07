@@ -68,8 +68,8 @@ public class UserStudyRecordDaoImpl implements IUserStudyRecordDao {
 	public List<LiveCourseModel> getUserStudyRecord(String userId) {
 		List<LiveCourseModel> list = null;
 		try {
-			String sql = "select !ISNULL(b.user_id) as has_collection, !ISNULL(b.user_id) as pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c inner JOIN user_study_record as b on c.id=b.course_id and b.user_id=? order by b.update_time desc";
-			list = jdbcTemplate.query(sql, new Object[]{userId}, new RowMapperResultSetExtractor<LiveCourseModel>(
+			String sql = "select uf.screenshot, !ISNULL(b.user_id) as has_collection, !ISNULL(b.user_id) as pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c inner JOIN user_study_record as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_forward as uf on uf.user_id=? and uf.course_id=c.id order by b.update_time desc";
+			list = jdbcTemplate.query(sql, new Object[]{userId, userId}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());

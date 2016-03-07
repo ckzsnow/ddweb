@@ -727,7 +727,7 @@ div.screening>ul>li {
 				mui(".courseGrade")[0].innerHTML = ele.innerHTML;
 				var currentClass = mui('#courseGrade')[0].getAttribute("class");
 				mui('#courseGrade')[0].setAttribute("class", currentClass.replace("grade-w-roll", ""));
-				//selectGrade = ele.innerHTML;
+				selectGrade = ele.innerHTML;
 				searchCourseByCondition();
 			}
 			function clickCompetency(ele) {

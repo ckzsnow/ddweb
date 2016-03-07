@@ -278,6 +278,16 @@
 							                          </select>
 							                        </div>
 							                      </div>
+							                      <div class="form-group">
+							                        <label class="control-label col-lg-4">课程等级</label>
+							                        <div class="col-lg-8">
+							                          <select id="course_grade" class="form-control">
+							                            <option value='0'>初级</option>
+							                            <option value='1'>中级</option>
+							                            <option value='1'>高级</option>
+							                          </select>
+							                        </div>
+							                      </div>
 												<!-- <div class="form-group">
 													<label class="control-label col-lg-4">开课时间</label>
 													<div class="col-lg-8">
@@ -532,6 +542,7 @@
 				course_field = $('#course_field option:selected').text();
 				course_industry = $('#course_industry option:selected').text();
 				course_competency = $('#course_competency option:selected').text();
+				course_grade = $('#course_grade option:selected').text();
 				var video_img = $('#video_img').val();
 				var video_src = $('#video_src').val();
 				var course_price = $('#course_price').val();
@@ -594,6 +605,7 @@
 							course_field:course_field,
 							course_industry:course_industry,
 							course_competency:course_competency,
+							course_grade:course_grade,
 							course_price:course_price,
 							course_study_count:course_study_count,
 							live_class_id:live_class_id

@@ -63,7 +63,7 @@ if(cm.getPrice() == null || cm.getPrice().isEmpty() || ("0").equals(cm.getPrice(
 		<link rel="stylesheet" href="/css/weixincss/android.css">
 		<link rel="stylesheet" href="/css/weixincss/mui.min.css">
 		<style>
-		 video::-webkit-media-controls-enclosure {
+		 /* video::-webkit-media-controls-enclosure {
             display: none !important;
         }
 			video::-webkit-media-controls {
@@ -91,7 +91,7 @@ video::-webkit-media-controls-mute-button {}
 
 video::-webkit-media-controls-toggle-closed-captions-button {}
 
-video::-webkit-media-controls-volume-slider {}
+video::-webkit-media-controls-volume-slider {} */
 		</style>
 	</head>
 
@@ -99,7 +99,7 @@ video::-webkit-media-controls-volume-slider {}
 		<div style="position: relative;">
 			<%if(("2").equals(userStatus) || ("3").equals(userStatus)){%>
 			<div id="video_div" style="display:none;background:#1cbcd6;">
-				<video id="video" webkit-playsinline preload="none" height="100%" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
+				<video id="video" controls preload="none" height="100%" poster="/files/imgs/<%=list.get(0).getVideo_image() %>" data-setup="{}">
 					<source id="video_src" src="<%=list.get(0).getVideosrc() %>" type='video/mp4'>
 				</video>
 			</div>
@@ -151,12 +151,13 @@ video::-webkit-media-controls-volume-slider {}
 				</div>
 			</div>
 		</div>
-		<div style="z-index:9999999999999999;position:fixed;top:0;left:0;width:100%;height:264px;">
-		</div>
 	</body>
 	<script src="/js/weixinjs/jquery.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
+	var playVideoEvent = 1;
+	var pauseVideoEvent = 1;
+	var seekingVideoEvent = 1;
 	Date.prototype.pattern=function(fmt) {           
 	    var o = {           
 	    "M+" : this.getMonth()+1, //月份           
@@ -202,10 +203,82 @@ video::-webkit-media-controls-volume-slider {}
 		var courseDate = new Date(year, month-1, day, hour, minute, seconds).getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
+		document.getElementById("video").addEventListener('play', function(){
+			if(playVideoEvent > 2) {
+				currentDate = new Date().getTime() / 1000;
+				document.getElementById("video").pause();
+				document.getElementById("video").currentTime = currentDate - courseDate;
+				if(currentDate - courseDate >= document.getElementById("video").duration) {
+					//document.getElementById("video").pause();
+					<%if(("exist").equals(parentCourseExist)) {%>
+					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+					var countDown = 5;
+					var timer = setInterval(function(){
+						if(countDown == 0) {
+							clearInterval(timer);
+							window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+						} else {
+							document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程,"+countDown+"秒后自动跳转。";
+						}
+						countDown--;
+					}, 1000);
+					<%} else {%>
+					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+					<%}%>		
+					document.getElementById("playClassTimeTips").style.display = "";
+					document.getElementById("video_div").style.display = "none";
+				} else {
+					document.getElementById("playClassTimeTips").style.display = "none";
+					document.getElementById("video_div").style.display = "";
+					document.getElementById("video").play();
+					playVideoEvent = 2;
+				}
+			} else {
+				playVideoEvent++;
+			}
+		});
+		document.getElementById("video").addEventListener('seeking', function(){
+			if(seekingVideoEvent == 1) {
+				seekingVideoEvent++;
+				return;
+			}
+			seekingVideoEvent++;
+			if(seekingVideoEvent == 4) {
+				currentDate = new Date().getTime() / 1000;
+				document.getElementById("video").pause();
+				document.getElementById("video").currentTime = currentDate - courseDate;
+				if(currentDate - courseDate >= document.getElementById("video").duration) {
+					//document.getElementById("video").pause();
+					<%if(("exist").equals(parentCourseExist)) {%>
+					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+					var countDown = 5;
+					var timer = setInterval(function(){
+						if(countDown == 0) {
+							clearInterval(timer);
+							window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+						} else {
+							document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程,"+countDown+"秒后自动跳转。";
+						}
+						countDown--;
+					}, 1000);
+					<%} else {%>
+					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+					<%}%>		
+					document.getElementById("playClassTimeTips").style.display = "";
+					document.getElementById("video_div").style.display = "none";
+				} else {
+					document.getElementById("playClassTimeTips").style.display = "none";
+					document.getElementById("video_div").style.display = "";
+					document.getElementById("video").play();
+					seekingVideoEvent = 2;
+					playVideoEvent = 2;
+				}
+			}
+		});
 		if(courseDate>currentDate) {
 			//document.getElementById("video").style.display = "none";
 			//document.getElementById("playClassTimeTips").style.display = "";
-			document.getElementById("video").pause();
+			//document.getElementById("video").pause();
 			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播时间：<%=courseDateReadable%></p><p id='time_counter' style='color:white;'></p>";
 			var timer = setInterval(function(){
 				var cDate = new Date();
@@ -217,17 +290,55 @@ video::-webkit-media-controls-volume-slider {}
 					document.getElementById("video").currentTime = 0;
 					document.getElementById("video").play();
 					document.getElementById("video").addEventListener('ended', function(){
-						document.getElementById("video").pause();
-						document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
-						document.getElementById("playClassTimeTips").style.display = "";
-						document.getElementById("video_div").style.display = "none";
+						currentDate = new Date().getTime() / 1000;
+						document.getElementById("video").currentTime = currentDate - courseDate;
+						if(currentDate - courseDate >= document.getElementById("video").duration) {
+							//document.getElementById("video").pause();
+							<%if(("exist").equals(parentCourseExist)) {%>
+							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+							var countDown = 5;
+							var timer = setInterval(function(){
+								if(countDown == 0) {
+									clearInterval(timer);
+									window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+								} else {
+									document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程,"+countDown+"秒后自动跳转。";
+								}
+								countDown--;
+							}, 1000);
+							<%} else {%>
+							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+							<%}%>		
+							document.getElementById("playClassTimeTips").style.display = "";
+							document.getElementById("video_div").style.display = "none";
+						} else {
+							document.getElementById("playClassTimeTips").style.display = "none";
+							document.getElementById("video_div").style.display = "";
+							document.getElementById("video").play();
+							seekingVideoEvent = 2;
+							playVideoEvent = 2;
+						}
 					}, false);
 				}
 			},1000);
 		} else {
 			if(courseDate + courseLength < currentDate) {
 				document.getElementById("video").pause();
-				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
+				<%if(("exist").equals(parentCourseExist)) {%>
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+				var countDown = 5;
+				var timer = setInterval(function(){
+					if(countDown == 0) {
+						clearInterval(timer);
+						window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+					} else {
+						document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程,"+countDown+"秒后自动跳转。";
+					}
+					countDown--;
+				}, 1000);
+				<%} else {%>
+				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+				<%}%>		
 			} else {
 				var hasSetTime = false;
 				document.getElementById("video").addEventListener("timeupdate", function(){
@@ -236,8 +347,22 @@ video::-webkit-media-controls-volume-slider {}
 						document.getElementById("video").pause();
 						document.getElementById("video").currentTime = currentDate - courseDate;
 						if(currentDate - courseDate >= document.getElementById("video").duration) {
-							document.getElementById("video").pause();
-							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p>";
+							//document.getElementById("video").pause();
+							<%if(("exist").equals(parentCourseExist)) {%>
+							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+							var countDown = 5;
+							var timer = setInterval(function(){
+								if(countDown == 0) {
+									clearInterval(timer);
+									window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+								} else {
+									document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程,"+countDown+"秒后自动跳转。";
+								}
+								countDown--;
+							}, 1000);
+							<%} else {%>
+							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+							<%}%>		
 							document.getElementById("playClassTimeTips").style.display = "";
 							document.getElementById("video_div").style.display = "none";
 						} else {
@@ -245,14 +370,37 @@ video::-webkit-media-controls-volume-slider {}
 							document.getElementById("video_div").style.display = "";
 							document.getElementById("video").play();
 						}
-						
 					}
 				});
 				document.getElementById("video").addEventListener('ended', function(){
-					document.getElementById("video").pause();
-					document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>已经结束的直播课程可以在公开课中查看！</p>";
-					document.getElementById("playClassTimeTips").style.display = "";
-					document.getElementById("video_div").style.display = "none";
+					currentDate = new Date().getTime() / 1000;
+					document.getElementById("video").currentTime = currentDate - courseDate;
+					if(currentDate - courseDate >= document.getElementById("video").duration) {
+						//document.getElementById("video").pause();
+						<%if(("exist").equals(parentCourseExist)) {%>
+						document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+						var countDown = 5;
+						var timer = setInterval(function(){
+							if(countDown == 0) {
+								clearInterval(timer);
+								window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+							} else {
+								document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程,"+countDown+"秒后自动跳转。";
+							}
+							countDown--;
+						}, 1000);
+						<%} else {%>
+						document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+						<%}%>		
+						document.getElementById("playClassTimeTips").style.display = "";
+						document.getElementById("video_div").style.display = "none";
+					} else {
+						document.getElementById("playClassTimeTips").style.display = "none";
+						document.getElementById("video_div").style.display = "";
+						document.getElementById("video").play();
+						seekingVideoEvent = 2;
+						playVideoEvent = 2;
+					}
 				}, false);
 				document.getElementById("video").play();
 			}
