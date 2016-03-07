@@ -96,6 +96,15 @@
 	body {
 		background-color: #efeff4 !important;
 	}
+	.dialog {
+				position: fixed;
+				z-index: 998;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background-color: rgba(0, 0, 0, .4);
+			}
 </style>
 </head>
 <body>
@@ -187,13 +196,13 @@
 													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
 													<div style="float: right;">
 														<button onclick="uploadShareImage('<%=cm.getId()%>', this)" course_id="<%=cm.getId()%>"
-															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;">上传分享</button>
+															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;">我要报名</button>
 													</div>
 													<%} else { %>
 													<div style="float: right;">
 														<button course_id="<%=cm.getId()%>"
 															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;"
-															disabled>已经分享</button>
+															disabled>已经报名</button>
 													</div>
 													<%} %>
 												
@@ -301,13 +310,13 @@
 													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
 													<div style="float: right;">
 														<button onclick="uploadShareImage('<%=cm.getId()%>', this)" course_id="<%=cm.getId()%>"
-															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;" disabled>上传分享</button>
+															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;" disabled>我要报名</button>
 													</div>
 													<%} else { %>
 													<div style="float: right;">
 														<button course_id="<%=cm.getId()%>"
 															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;"
-															disabled>已经分享</button>
+															disabled>已经报名</button>
 													</div>
 													<%} %>
 												
@@ -383,6 +392,45 @@
 <script src="/js/weixinjs/mui.pullToRefresh.material.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" charset="utf-8">
+mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack) {
+	var template = "<div style='width:80%;margin:50% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:10px;margin-left:20px;font-size:15px;'>提示信息</div><hr style='margin-top:10px;margin-bottom:10px;'/><div style='margin-left:20px;margin-right:20px;height:40px;font-size:15px;'>{{info}}</div><div style='text-align:right;margin-bottom:10px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;font-size:15px;'>取消</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;font-size:15px;'>{{btnInfo}}</a></div></div>";
+	var element = document.createElement('div');
+	element.classList.add('dialog');
+	element.innerHTML = template.replace('{{info}}', info);
+	element.innerHTML = element.innerHTML.replace('{{btnInfo}}', btnInfo);
+	element.addEventListener('touchmove', mui.preventDefault);
+	var mask = [element];
+	mask._show = false;
+	mask.show = function() {
+		mask._show = true;
+		element.setAttribute('style', 'opacity:1');
+		document.body.appendChild(element);
+		document.getElementById('createConfirmDialog_cancel').addEventListener('tap', function() {
+			if (cancelCallBack) cancelCallBack();
+			mask.close();
+		});
+		document.getElementById('createConfirmDialog_accept').addEventListener('tap', function() {
+			if (acceptCallBack) acceptCallBack();
+			mask.close();
+		});
+		return mask;
+	};
+	mask._remove = function() {
+		if (mask._show) {
+			mask._show = false;
+			element.setAttribute('style', 'opacity:0');
+			mui.later(function() {
+				var body = document.body;
+				element.parentNode === body && body.removeChild(element);
+			}, 350);
+		}
+		return mask;
+	};
+	mask.close = function() {
+		mask._remove();
+	};
+	return mask;
+};
 			var currentTabIsGoing = true;
 			mui.init({
 				swipeBack:true,
@@ -417,11 +465,20 @@
 		    var currentImageSelectEle;
 		    function uploadShareImage(courseId, ele) {
 		    	currentImageSelectEle = ele;
-		    	document.getElementById('image_select').click();		    	
+		    	 var confirmDialog = mui.createConfirmDialog('报名条件：将该讲座分享至朋友圈并截图上传。',"上传分享截图",
+	    					function() {
+	    						confirmDialog.close();
+	    					},
+	    					function() {
+	    						confirmDialog.close();
+	    						document.getElementById('image_select').click();	
+	    					}
+	    				);
+	    				confirmDialog.show();	    	
 		    }
 		    document.getElementById("image_select").onchange = function(event) {
 		    	currentImageSelectEle.setAttribute("disabled", true);
-		    	currentImageSelectEle.innerHTML = "已经分享";
+		    	currentImageSelectEle.innerHTML = "已经报名";
 		    	document.getElementById("loadingToastTips").innerHTML = "正在上传数据";
 				document.getElementById("loadingToast").style.display = "";
 				mui.ajax({
@@ -588,9 +645,9 @@
 								    						}
 							    						} else {
 							    							if(data[i].screenshot == null || data[i].screenshot == "") {
-							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>上传分享</button></div>";
+							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>我要报名</button></div>";
 							    							} else {
-							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经分享</button></div>";
+							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经报名</button></div>";
 							    							}
 							    						}
 														if(data[i].hasCollection == "1") {
@@ -663,9 +720,9 @@
 								    						}
 							    						} else {
 							    							if(data[i].screenshot == null || data[i].screenshot == "") {
-							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>上传分享</button></div>";
+							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>我要报名</button></div>";
 							    							} else {
-							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经分享</button></div>";
+							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经报名</button></div>";
 							    							}
 							    						}
 														if(data[i].hasCollection == "1") {

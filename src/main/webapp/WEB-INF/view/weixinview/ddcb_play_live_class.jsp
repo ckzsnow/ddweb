@@ -151,8 +151,10 @@ video::-webkit-media-controls-volume-slider {} */
 				</div>
 			</div>
 		</div>
+		<div id="countdown" style="display:none;width:100%;"></div>
 	</body>
 	<script src="/js/weixinjs/jquery.js"></script>
+	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
 	var playVideoEvent = 1;
@@ -280,7 +282,56 @@ video::-webkit-media-controls-volume-slider {} */
 			//document.getElementById("playClassTimeTips").style.display = "";
 			//document.getElementById("video").pause();
 			document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播时间：<%=courseDateReadable%></p><p id='time_counter' style='color:white;'></p>";
-			var timer = setInterval(function(){
+			var ts = new Date(year, month-1, day, hour, minute, seconds);
+			$('#countdown').countdown({
+				timestamp	: ts,
+				callback	: function(days, hours, minutes, seconds){	
+					var message = "倒计时：";
+					message += days + " 天" + ", ";
+					message += hours + " 小时" + ", ";
+					message += minutes + " 分钟" + ", ";
+					message += seconds + " 秒" + " <br />";
+					//message += "欢迎您收看点豆成兵直播课！";
+					$('#time_counter').html(message);
+					if(days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
+						document.getElementById("playClassTimeTips").style.display = "none";
+						document.getElementById("video_div").style.display = "";
+						document.getElementById("video").currentTime = 0;
+						document.getElementById("video").play();
+						document.getElementById("video").addEventListener('ended', function() {
+							currentDate = new Date().getTime() / 1000;
+							document.getElementById("video").currentTime = currentDate - courseDate;
+							if (currentDate - courseDate >= document.getElementById("video").duration) {
+								//document.getElementById("video").pause();
+								<%if(("exist").equals(parentCourseExist)) {%>
+								document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>公开课已发布该直播课程</p>";
+								var countDown = 5;
+								var timer = setInterval(function() {
+									if (countDown == 0) {
+										clearInterval(timer);
+										window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
+									} else {
+										document.getElementById("redirect_open_class").innerHTML = "公开课已发布该直播课程," + countDown + "秒后自动跳转。";
+									}
+									countDown--;
+								}, 1000);
+								<%} else {%>
+								document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>公开课正在发布该直播课程，<br/>稍后可在公开课中观看。</p>";
+								<%}%>
+								document.getElementById("playClassTimeTips").style.display = "";
+								document.getElementById("video_div").style.display = "none";
+							} else {
+								document.getElementById("playClassTimeTips").style.display = "none";
+								document.getElementById("video_div").style.display = "";
+								document.getElementById("video").play();
+								seekingVideoEvent = 2;
+								playVideoEvent = 2;
+							}
+						}, false);
+					}
+				}
+			});	
+			<%-- var timer = setInterval(function(){
 				var cDate = new Date();
 				$('#time_counter').html(cDate.pattern("yyyy-MM-dd hh:mm:ss"));
 				if(cDate.getTime() / 1000 >= courseDate) {
@@ -320,7 +371,7 @@ video::-webkit-media-controls-volume-slider {} */
 						}
 					}, false);
 				}
-			},1000);
+			},1000); --%>
 		} else {
 			if(courseDate + courseLength < currentDate) {
 				document.getElementById("video").pause();

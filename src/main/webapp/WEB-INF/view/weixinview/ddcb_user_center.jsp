@@ -243,7 +243,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 	            <ul>
 	                <li style="width:100%;margin:5px 0px;">
 	                	<%if(userStatus == 0) { %>
-		            		<p style="text-align:center;color:white;padding-bottom:0px;" id="vip_exp">您目前还不是VIP会员</p>
+		            		<p style="text-align:center;color:white;padding-bottom:0px;" id="vip_exp">您目前还不是VIP会员,请在下方VIP中心购买</p>
 		            	<%} else if(userStatus == 1){ %>
 		            		<p style="text-align:center;color:white;padding-bottom:0px;" id="vip_exp">您的VIP会员已经超期，请续费！</p>
 		            	<%} else {%>
@@ -571,7 +571,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 	    }
 	});
     mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack) {
-		var template = "<div style='width:80%;margin:50% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:20px;margin-left:20px;'>提示信息</div><hr/><div style='margin-top:20px;margin-left:20px;margin-bottom:20px;margin-right:20px;height:60px;'>{{info}}</div><div style='text-align:right;margin-bottom:20px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;'>取消</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;'>{{btnInfo}}</a></div></div>";
+		var template = "<div style='width:80%;margin:50% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:10px;margin-left:20px;font-size:15px;'>提示信息</div><hr style='margin-top:10px;margin-bottom:10px;'/><div style='margin-left:20px;margin-right:20px;height:40px;font-size:15px;'>{{info}}</div><div style='text-align:right;margin-bottom:10px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;font-size:15px;'>取消</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;font-size:15px;'>{{btnInfo}}</a></div></div>";
 		var element = document.createElement('div');
 		element.classList.add('dialog');
 		element.innerHTML = template.replace('{{info}}', info);
