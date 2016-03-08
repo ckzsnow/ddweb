@@ -27,8 +27,8 @@ CourseModel cm = courseDao.getCourseByCourseId(id);
 System.out.println(cm.toString());
 CourseModel parentCm = courseDao.getCourseByCourseId(cm.getParentId());
 String parentCourseExist = parentCm != null && parentCm.getId() != 0? "exist" : "notExist";
-/* Map<String, String> result = new HashMap<>();
-result = WeixinTools.getSign("http://www.diandou.me/playDDCBOpenClass?course_id=" + id); */
+Map<String, String> result = new HashMap<>();
+result = WeixinTools.getSign("http://www.diandou.me/playDDCBLiveClass?course_id=" + id);
 String userId = (String)session.getAttribute("openid");
 String courseDate = cm.getCourse_date().toString();
 String courseDateReadable = cm.getCourse_date_readable();
@@ -509,5 +509,68 @@ video::-webkit-media-controls-volume-slider {} */
 			}
 		}
 	<%}%>
+	wx.config({
+		appId: 'wxbd6aef840715f99d',
+		timestamp: <%=result.get("timestamp")%>,
+		nonceStr: '<%=result.get("nonceStr")%>',
+		signature: '<%=result.get("signature")%>',
+		jsApiList: [
+			'onMenuShareQQ',
+			'onMenuShareTimeline',
+			'onMenuShareAppMessage',
+			'chooseWXPay'
+		]
+	});
+	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
+	var lineLink = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbd6aef840715f99d&redirect_uri=http%3A%2F%2Fwww.diandou.me%2Fweixin%2FweixinLogin%3Fview%3Dddcb_live_class&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
+	var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
+	var shareTitle = "点豆大讲堂";
+	var shareCircleTitle = "直播-<%=cm.getName()%>-<%=cm.getTeacher()%>-[点豆大讲堂]";
+	<%if (list != null && !list.isEmpty()) {%>
+		imgUrl = "http://www.diandou.me/files/imgs/<%=cm.getImage()%>";
+		descContent = "主讲人：<%=cm.getTeacher()%>";
+		shareTitle = "直播-<%=cm.getName()%>-[点豆大讲堂]";
+	<%}%>
+wx.ready(function() {
+setTimeout(function() {
+	wx.onMenuShareTimeline({
+		title : shareCircleTitle, // 分享标题
+		link : lineLink, // 分享链接
+		imgUrl : imgUrl, // 分享图标
+		success : function() {
+			// 用户确认分享后执行的回调函数
+		},
+		cancel : function() {
+			// 用户取消分享后执行的回调函数
+		}
+	});
+	wx.onMenuShareAppMessage({
+		title : shareTitle, // 分享标题
+		desc : descContent, // 分享描述
+		link : lineLink, // 分享链接
+		imgUrl : imgUrl, // 分享图标
+		type : '', // 分享类型,music、video或link，不填默认为link
+		dataUrl : '', // 如果type是music或video，则要提供数据链接，默认为空
+		success : function() {
+			// 用户确认分享后执行的回调函数
+		},
+		cancel : function() {
+			// 用户取消分享后执行的回调函数
+		}
+	});
+	wx.onMenuShareQQ({
+		title : shareTitle, // 分享标题
+		desc : descContent, // 分享描述
+		link : lineLink, // 分享链接
+		imgUrl : imgUrl, // 分享图标
+		success : function() {
+			// 用户确认分享后执行的回调函数
+		},
+		cancel : function() {
+			// 用户取消分享后执行的回调函数
+		}
+	});
+}, 500);
+});
 	</script>
 </html>
