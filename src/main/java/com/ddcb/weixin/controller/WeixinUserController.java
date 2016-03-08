@@ -329,7 +329,14 @@ public class WeixinUserController {
 			return "\"ddcb_error_msg\":\"无法获取到您的openId，请关闭所有页面，从公众号菜单重新进入！\"";
 		}
 		WeixinPayUtils.setNotifyurl("http://www.diandou.me/weixinVIPPayResult");
-		String fee = request.getParameter("fee");
+		String fee = "";
+		if(("1").equals(userType)) {
+			fee = "45.00";
+		} else if(("2").equals(userType)) {
+			fee = "120.00";
+		} else {
+			fee = "365.00";
+		}
 		logger.debug("userChooseWeixinPay openid : {}", openId);
 		logger.debug("userChooseWeixinPay fee : {}", fee);
 		WxPayDto tpWxPay = new WxPayDto();

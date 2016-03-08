@@ -538,7 +538,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 					mui.ajax({
 	            		url: '/userLiveClassWeixinPay',
 	            		type: "POST",
-	            		data: {fee:"0.01",course_id:courseId},
+	            		data: {fee:coursePrice,course_id:courseId},
 	            		success: function(data) {
 	            			document.getElementById("loadingToast").style.display = "none";
 	            			var jsonData = JSON.parse("{"+data+"}");

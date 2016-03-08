@@ -168,7 +168,7 @@ public class UserCourseDaoImpl implements IUserCourseDao {
 	public List<CourseModel> getUserBuyClass(String userId) {
 		List<CourseModel> list = null;
 		try {
-			String sql = "select c.course_grade,c.parent_id, 0 as has_collection, c.study_people_count, 0 as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c INNER JOIN user_course as a on a.course_id=c.id and a.user_id=? and a.pay_status=1 order by c.course_date desc";
+			String sql = "select c.course_grade,c.parent_id, 0 as has_collection, c.study_people_count, 0 as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c INNER JOIN user_course as a on a.course_id=c.id and a.user_id=? and a.pay_status=1 order by c.course_date asc";
 			list = jdbcTemplate.query(sql, new Object[]{userId}, new RowMapperResultSetExtractor<CourseModel>(
 							new CourseMapper()));
 		} catch (Exception e) {

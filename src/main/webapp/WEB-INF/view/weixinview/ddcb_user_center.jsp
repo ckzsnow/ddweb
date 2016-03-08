@@ -261,7 +261,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 					<a href="#course_collection" class="mui-navigate-right" style="font-size:15px;"><span class="mui-icon mui-icon-star"></span>课程收藏</a>
 				</li>
 				<li class="mui-table-view-cell">
-					<a href="#buy_live_class" class="mui-navigate-right" style="font-size:15px;"><span class="mui-icon mui-icon-mic"></span>已购买直播课程</a>
+					<a href="#buy_live_class" class="mui-navigate-right" style="font-size:15px;"><span class="mui-icon mui-icon-mic"></span>已购买直播讲座</a>
 				</li>
 			</ul>
 			<ul class="mui-table-view mui-table-view-chevron" style="margin-top:10px;">
@@ -458,13 +458,13 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 				<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
 					<span class="mui-icon mui-icon-left-nav" style="color:white;"></span>
 				</button>
-				<h1 class="mui-center mui-title" style="color:white;">已购买直播课程</h1>
+				<h1 class="mui-center mui-title" style="color:white;">已购买直播讲座</h1>
 			</div>
 			<div class="mui-page-content">
 				<div class="mui-scroll-wrapper">
 					<div class="mui-scroll">					
 						<%if(buyCourseList == null || buyCourseList.size() == 0) { %>
-							<div style="margin-top:50%;text-align:center;">您还没有购买过直播课程！</div>
+							<div style="margin-top:50%;text-align:center;">您还没有购买过直播讲座！</div>
 						<%} else { %>
 							<ul id="buy_live_class_data_list" class="mui-table-view">
 								<%for(CourseModel cm : buyCourseList) { %>
@@ -493,17 +493,17 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 				<div class="mui-scroll-wrapper">
 					<div class="mui-scroll">
 						<div style="margin-top:10px;height:65px;">
-							<div user_type="1" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_blue.png');float:left;">
+							<div user_type="1" price="45.00" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_blue.png');float:left;">
 								<div><p style="color:white;margin-left:2px;margin-bottom:0px;font-weight: bold;">月会员</p></div>
 								<div><p style="text-align:center;color:white;margin-bottom:0px;">&yen;45.00</p></div>
 								<div><p style="margin-right:5px;color:white;float:right;font-size:10px;border: 1px;">点击购买</p></div>
 							</div>
-							<div user_type="2" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_pur.png');float:left;">
+							<div user_type="2" price="120.00" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_pur.png');float:left;">
 								<div><p style="color:white;margin-left:2px;margin-bottom:0px;font-weight: bold;">季会员</p></div>
 								<div><p style="text-align:center;color:white;margin-bottom:0px;">&yen;120.00</p></div>
 								<div><p style="margin-right:5px;color:white;float:right;font-size:10px;">点击购买</p></div>
 							</div>
-							<div user_type="3" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_yellow.png');float:left;">
+							<div user_type="3" price="365.00" class="buy_vip" style="border-radius:3px;margin:5px 5px;width:30%;height:60px;background-image: url('/img/weixinimg/vip_yellow.png');float:left;">
 								<div><p style="color:white;margin-left:2px;margin-bottom:0px;font-weight: bold;">年会员</p></div>
 								<div><p style="text-align:center;color:white;margin-bottom:0px;">&yen;365.00</p></div>
 								<div><p style="margin-right:5px;color:white;float:right;font-size:10px;">点击购买</p></div>
@@ -650,11 +650,11 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
     			var courseHasEnd = this.getAttribute('course_has_end');
     			var coursePath = this.getAttribute('course_path');
     			if(courseHasEnd == "1") {
-    				alert("当前直播课程已经结束， 感谢您的关注！");
+    				alert("当前直播讲座已经结束， 感谢您的关注！");
     			} else if(coursePath != "") {
     				window.location.href=this.getAttribute('course_path');
     			} else {
-    				 var confirmDialog = mui.createConfirmDialog('您还没有购买当前直播课程，无法观看！',"点击购买",
+    				 var confirmDialog = mui.createConfirmDialog('您还没有购买当前直播讲座，无法观看！',"点击购买",
     					function() {
     						confirmDialog.close();
     					},
@@ -666,7 +666,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
     		    			$.ajax({
     		            		url: '/userLiveClassWeixinPay',
     		            		type: "POST",
-    		            		data: {fee:"0.01",course_id:courseId},
+    		            		data: {fee:coursePrice,course_id:courseId},
     		            		success: function(data) {
     		            			document.getElementById("loadingToast").style.display = "none";
     		            			var jsonData = JSON.parse("{"+data+"}");
@@ -874,7 +874,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
     mui('#user_study_record_data_list li').each(function(){
 		this.addEventListener('tap',function(){
 			if(this.getAttribute('course_path') == "") {
-				alert("该直播课程已经结束，无法进入，感谢您的关注！");
+				alert("该直播讲座已经结束，无法进入，感谢您的关注！");
 			} else {
 				window.location.href=this.getAttribute('course_path');
 			}
