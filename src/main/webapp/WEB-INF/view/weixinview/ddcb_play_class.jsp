@@ -2,6 +2,7 @@
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@ page import="org.springframework.web.context.WebApplicationContext"%>
 <%@ page import="com.ddcb.dao.ICourseDetailDao"%>
+<%@ page import="com.ddcb.dao.ICourseDao"%>
 <%@ page import="com.ddcb.dao.IWeixinUserDao"%>
 <%@ page import="com.ddcb.model.CourseModel"%>
 <%@ page import="com.ddcb.model.CourseDetailModel"%>
@@ -12,10 +13,12 @@
 <%
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDao");
+ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IWeixinUserDao weixinUserDao = (IWeixinUserDao)wac.getBean("weixinUserDao");
 List<CourseDetailModel> list = null;
 long id = Long.valueOf((String)request.getParameter("course_id"));
 session.setAttribute("course_id", String.valueOf(id));
+CourseModel cm = courseDao.getCourseByCourseId(id);
 list = courseDetailDao.getCourseDetailByCourseId(id);
 Map<String, String> result = new HashMap<>();
 result = WeixinTools.getSign("http://www.diandou.me/playDDCBOpenClass?course_id=" + id);
@@ -373,13 +376,16 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 		}
 	});
 	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
-	var lineLink = window.location.href;
+	var lineLink = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbd6aef840715f99d&redirect_uri=http%3A%2F%2Fwww.diandou.me%2Fweixin%2FweixinLogin%3Fview%3Dddcb_open_class&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
 	var descContent = "点豆成兵---为进取心而生，专注职场“传、帮、带”";
 	var shareTitle = "点豆成兵";
+	var shareCircleTitle = "<%=cm.getName()%>-<%=cm.getTeacher()%>-[点豆大讲堂]";
 	<%if(list != null && !list.isEmpty()) {%>
 		imgUrl = "http://www.diandou.me/files/imgs/<%=list.get(0).getTeacher_image()%>";
-		descContent = "<%=list.get(0).getDetails().replaceAll("\r\n", "")%>";
-		shareTitle = "<%=list.get(0).getSubTitle().replaceAll("\r\n", "")%>";
+		<%-- descContent = "<%=list.get(0).getDetails().replaceAll("\r\n", "")%>";
+		shareTitle = "<%=list.get(0).getSubTitle().replaceAll("\r\n", "")%>"; --%>
+		descContent = "主讲人：<%=cm.getTeacher()%>";
+		shareTitle = "<%=cm.getName()%>-[点豆大讲堂]";
 	<%}%>
 	wx.config({
 		appId: 'wxbd6aef840715f99d',
@@ -395,7 +401,7 @@ if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()
 	wx.ready(function(){
 		setTimeout(function(){
 			wx.onMenuShareTimeline({
-			    title: shareTitle, // 分享标题
+			    title: shareCircleTitle, // 分享标题
 			    link: lineLink, // 分享链接
 			    imgUrl: imgUrl, // 分享图标
 			    success: function () { 

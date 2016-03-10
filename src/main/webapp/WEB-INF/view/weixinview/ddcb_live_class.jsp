@@ -301,7 +301,7 @@
 												<div style="float: right;">
 													<button class="buy_class" course_price="<%=cm.getPrice()%>"
 														course_id="<%=cm.getId()%>"
-														style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;">购买课程</button>
+														style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;" disabled>购买课程</button>
 												</div>
 												<%
 													}
