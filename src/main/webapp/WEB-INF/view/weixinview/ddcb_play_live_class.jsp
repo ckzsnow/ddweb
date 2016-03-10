@@ -47,6 +47,12 @@ if(cm.getPrice() == null || cm.getPrice().isEmpty() || ("0").equals(cm.getPrice(
 	else
 		userStatus = "4";//收费课程，用户未购买
 }
+long currentTime = System.currentTimeMillis();
+IWeixinUserDao weixinUserDao = (IWeixinUserDao)wac.getBean("weixinUserDao");
+WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);
+if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()>=currentTime) {
+	userStatus = "2";
+}
 %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -158,6 +164,7 @@ video::-webkit-media-controls-volume-slider {} */
 	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
+	var globalPlayStatus = "stop";
 	var playVideoEvent = 1;
 	var pauseVideoEvent = 1;
 	var seekingVideoEvent = 1;
@@ -206,6 +213,9 @@ video::-webkit-media-controls-volume-slider {} */
 		var courseDate = new Date(year, month-1, day, hour, minute, seconds).getTime() / 1000;
 		var currentDate = new Date().getTime() / 1000;
 		var courseLength = parseInt("<%=courseLength%>") * 60;
+		document.getElementById("video").addEventListener('pause', function(){
+			globalPlayStatus = "pause";
+		});
 		document.getElementById("video").addEventListener('play', function(){
 			if(playVideoEvent > 2) {
 				currentDate = new Date().getTime() / 1000;
@@ -234,6 +244,7 @@ video::-webkit-media-controls-volume-slider {} */
 					document.getElementById("playClassTimeTips").style.display = "none";
 					document.getElementById("video_div").style.display = "";
 					document.getElementById("video").play();
+					globalPlayStatus = "play";
 					playVideoEvent = 2;
 				}
 			} else {
@@ -273,6 +284,7 @@ video::-webkit-media-controls-volume-slider {} */
 					document.getElementById("playClassTimeTips").style.display = "none";
 					document.getElementById("video_div").style.display = "";
 					document.getElementById("video").play();
+					globalPlayStatus = "play";
 					seekingVideoEvent = 2;
 					playVideoEvent = 2;
 				}
@@ -299,10 +311,12 @@ video::-webkit-media-controls-volume-slider {} */
 						document.getElementById("video_div").style.display = "";
 						document.getElementById("video").currentTime = 0;
 						document.getElementById("video").play();
+						globalPlayStatus = "play";
 						document.getElementById("video").addEventListener('ended', function() {
 							currentDate = new Date().getTime() / 1000;
 							document.getElementById("video").currentTime = currentDate - courseDate;
 							if (currentDate - courseDate >= document.getElementById("video").duration) {
+								globalPlayStatus = "end";
 								//document.getElementById("video").pause();
 								<%if(("exist").equals(parentCourseExist)) {%>
 								document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>直播讲座已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>大讲堂已收录该讲座</p>";
@@ -325,54 +339,14 @@ video::-webkit-media-controls-volume-slider {} */
 								document.getElementById("playClassTimeTips").style.display = "none";
 								document.getElementById("video_div").style.display = "";
 								document.getElementById("video").play();
+								globalPlayStatus = "play";
 								seekingVideoEvent = 2;
 								playVideoEvent = 2;
 							}
 						}, false);
 					}
 				}
-			});	
-			<%-- var timer = setInterval(function(){
-				var cDate = new Date();
-				$('#time_counter').html(cDate.pattern("yyyy-MM-dd hh:mm:ss"));
-				if(cDate.getTime() / 1000 >= courseDate) {
-					clearInterval(timer);
-					document.getElementById("playClassTimeTips").style.display = "none";
-					document.getElementById("video_div").style.display = "";
-					document.getElementById("video").currentTime = 0;
-					document.getElementById("video").play();
-					document.getElementById("video").addEventListener('ended', function(){
-						currentDate = new Date().getTime() / 1000;
-						document.getElementById("video").currentTime = currentDate - courseDate;
-						if(currentDate - courseDate >= document.getElementById("video").duration) {
-							//document.getElementById("video").pause();
-							<%if(("exist").equals(parentCourseExist)) {%>
-							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>大讲堂已收录改讲座</p>";
-							var countDown = 5;
-							var timer = setInterval(function(){
-								if(countDown == 0) {
-									clearInterval(timer);
-									window.location.href = "/playDDCBOpenClass?course_id=<%=parentCm.getId() %>";
-								} else {
-									document.getElementById("redirect_open_class").innerHTML = "大讲堂已收录改讲座,"+countDown+"秒后自动跳转。";
-								}
-								countDown--;
-							}, 1000);
-							<%} else {%>
-							document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>课程直播已经结束，感谢您的关注！</p><p style='color:white;'>大讲堂正在收录该讲座，<br/>稍后可在公开课中观看。</p>";
-							<%}%>		
-							document.getElementById("playClassTimeTips").style.display = "";
-							document.getElementById("video_div").style.display = "none";
-						} else {
-							document.getElementById("playClassTimeTips").style.display = "none";
-							document.getElementById("video_div").style.display = "";
-							document.getElementById("video").play();
-							seekingVideoEvent = 2;
-							playVideoEvent = 2;
-						}
-					}, false);
-				}
-			},1000); --%>
+			});
 		} else {
 			if(courseDate + courseLength < currentDate) {
 				document.getElementById("video").pause();
@@ -421,6 +395,7 @@ video::-webkit-media-controls-volume-slider {} */
 							document.getElementById("playClassTimeTips").style.display = "none";
 							document.getElementById("video_div").style.display = "";
 							document.getElementById("video").play();
+							globalPlayStatus = "play";
 						}
 					}
 				});
@@ -428,6 +403,7 @@ video::-webkit-media-controls-volume-slider {} */
 					currentDate = new Date().getTime() / 1000;
 					document.getElementById("video").currentTime = currentDate - courseDate;
 					if(currentDate - courseDate >= document.getElementById("video").duration) {
+						globalPlayStatus = "end";
 						//document.getElementById("video").pause();
 						<%if(("exist").equals(parentCourseExist)) {%>
 						document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>直播讲座已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>大讲堂已收录该讲座</p>";
@@ -450,11 +426,13 @@ video::-webkit-media-controls-volume-slider {} */
 						document.getElementById("playClassTimeTips").style.display = "none";
 						document.getElementById("video_div").style.display = "";
 						document.getElementById("video").play();
+						globalPlayStatus = "play";
 						seekingVideoEvent = 2;
 						playVideoEvent = 2;
 					}
 				}, false);
 				document.getElementById("video").play();
+				globalPlayStatus = "play";
 			}
 		}
 	});
@@ -509,5 +487,26 @@ video::-webkit-media-controls-volume-slider {} */
 			}
 		}
 	<%}%>
+	
+	setInterval(function(){
+		$.ajax({
+			url: "/statistics/addPerMinuteStatistics",
+			type: "POST",
+			data: {course_id:<%=id%>, open_id:'<%=userId%>', play_status:globalPlayStatus},
+			success: function(data) {
+			},
+			error: function(status, error) {
+			}
+		});
+	}, 1000*60);
+	$.ajax({
+		url: "/statistics/addPerMinuteStatistics",
+		type: "POST",
+		data: {course_id:<%=id%>, open_id:'<%=userId%>', play_status:globalPlayStatus},
+		success: function(data) {
+		},
+		error: function(status, error) {
+		}
+	});
 	</script>
 </html>

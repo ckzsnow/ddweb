@@ -191,7 +191,7 @@
 												</div>
 												<%
 													}
-												} else {
+												} else if(userIsVip != 1){
 												%>
 													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
 													<div style="float: right;">
@@ -305,7 +305,7 @@
 												</div>
 												<%
 													}
-												} else {
+												} else if(userIsVip != 1){
 												%>
 													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
 													<div style="float: right;">
@@ -643,7 +643,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 								    						} else {
 								    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>购买课程</button></div>";
 								    						}
-							    						} else {
+							    						} else if(<%=userIsVip%> != 1){
 							    							if(data[i].screenshot == null || data[i].screenshot == "") {
 							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>我要报名</button></div>";
 							    							} else {
@@ -718,7 +718,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 								    						} else {
 								    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
 								    						}
-							    						} else {
+							    						} else if(<%=userIsVip%> != 1) {
 							    							if(data[i].screenshot == null || data[i].screenshot == "") {
 							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>我要报名</button></div>";
 							    							} else {

@@ -138,6 +138,19 @@ public class CourseDaoImpl implements ICourseDao {
 		}
 		return list;
 	}
+	
+	@Override
+	public List<CourseModel> getAllLiveClass() {
+		List<CourseModel> list = null;
+		try {
+			String sql = "select c.course_grade, c.parent_id, c.id as has_collection, c.study_people_count, c.price as people_count, c.price, c.course_field, c.course_industry, c.course_competency, c.id, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c where c.course_type=1 order by c.course_date desc";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<CourseModel>(
+							new CourseMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
 
 	@Override
 	public List<CourseModel> getAllUserPayedCourseRecentCourse() {

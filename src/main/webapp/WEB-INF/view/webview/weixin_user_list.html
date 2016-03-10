@@ -133,18 +133,19 @@
 			                    <div class="icons">
 			                      <i class="fa fa-table"></i>
 			                    </div>
-			                    <h5>所有课程信息列表</h5>
+			                    <h5>微信用户信息列表</h5>
 			                  </header>
 			                  <div id="collapse4" class="body">
 			                    <table id="dataTable" style="white-space:normal;" class="table table-bordered table-condensed table-hover table-striped">
 			                      <thead>
 			                        <tr>
-			                          <th nowrap="nowrap">课程ID</th>
-			                          <th nowrap="nowrap">课程名称</th>
-			                          <th nowrap="nowrap">课程类型</th>
-			                          <th nowrap="nowrap">导师摘要</th>
-			                          <th nowrap="nowrap">上课时间</th>
-			                          <th nowrap="nowrap">课程时长(分钟)</th>
+			                          <th nowrap="nowrap">用户头像</th>
+			                          <th nowrap="nowrap">用户OpenID</th>
+			                          <th nowrap="nowrap">用户昵称</th>
+			                          <th nowrap="nowrap">用户性别</th>
+			                          <th nowrap="nowrap">省份</th>
+			                          <th nowrap="nowrap">城市</th>
+			                          <th nowrap="nowrap">VIP状态</th>
 			                        </tr>
 			                      </thead>
 			                      <tbody id="data_detail">
@@ -207,13 +208,41 @@
 			function createDataList(data) {
 				var detailNode = document.getElementById('data_detail');
 				for (var i in data) {
+					var user_sex = data[i].user_sex;
+					var vip = data[i].user_type;
+					if(vip == "1") {
+						vip = "月会员";
+					} else if(vip == "2") {
+						vip = "季会员";
+					} else if(vip == "3"){
+						vip = "年会员";
+					}
+					if(user_sex == 1) {
+						user_sex = "男";
+					}else if(user_sex == 2){
+						user_sex = "女";
+					}else {
+						user_sex = "未知";
+					}
+					var vip_status = "";
+					if(data[i].pay_status != "1") {
+						vip_status = "非VIP会员";
+					} else {
+						var currentTime = new Date().getTime();
+						var expTime = new Date(data[i].expiration_time).getTime();
+						if(currentTime <= expTime) {
+							vip_status = "VIP会员/" + vip + "/到期时间" + new Date(parseInt(data[i].expiration_time)).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+						} else {
+							vip_status = "超期会员/" + vip + "/到期时间" + new Date(parseInt(data[i].expiration_time)).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+						}
+					}
 					var thNode = document.createElement('tr');
-					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].id+"</td><td nowrap='nowrap'>"+data[i].name+"</td><td>"+(data[i].courseType == "0" ? "公开课":"直播课")+"</td><td nowrap='nowrap'>"+data[i].teacher+"</td><td nowrap='nowrap'>"+data[i].course_date_readable+"</td><td>"+data[i].course_length+"</td>";
+					thNode.innerHTML = "<td nowrap='nowrap'><img src='"+data[i].headimgurl+"' style='width:60px;height:60px;'></td><td nowrap='nowrap'>"+data[i].open_id+"</td><td nowrap='nowrap'>"+data[i].user_nickname+"</td><td nowrap='nowrap'>"+user_sex+"</td><td nowrap='nowrap'>"+data[i].user_province+"</td><td>"+data[i].user_city+"</td><td>"+vip_status+"</td>";
 					detailNode.appendChild(thNode);
 				}
 			}
 			$.ajax({
-				url: '/course/getAllCourse',
+				url: '/weixin/getAllWeixinUserInfo',
 				type: "POST",
 				data: {},
 				success: function(data) {

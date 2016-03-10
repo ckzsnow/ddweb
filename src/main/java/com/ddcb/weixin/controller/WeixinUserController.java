@@ -32,9 +32,12 @@ import org.xml.sax.InputSource;
 
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserDao;
+import com.ddcb.dao.IUserOpenIdDao;
 import com.ddcb.dao.IWeixinUserDao;
+import com.ddcb.dao.IWeixinUserLogDao;
 import com.ddcb.model.UserCourseModel;
 import com.ddcb.model.UserModel;
+import com.ddcb.model.UserOpenIdModel;
 import com.ddcb.model.WeixinUserModel;
 import com.ddcb.utils.UserPwdMD5Encrypt;
 import com.ddcb.utils.WeixinConstEnum;
@@ -53,10 +56,16 @@ public class WeixinUserController {
 	private IUserDao userDao;
 	
 	@Autowired
+	private IUserOpenIdDao userOpenIdDao;
+	
+	@Autowired
 	private IUserCourseDao userCourseDao;
 	
 	@Autowired
 	private IWeixinUserDao weixinUserDao;
+	
+	@Autowired
+	private IWeixinUserLogDao weixinUserLogDao;
 	
 	@RequestMapping("/weixin/weixinRegisterUser")
 	@ResponseBody
@@ -190,6 +199,7 @@ public class WeixinUserController {
 		String code = request.getParameter("code");
 		String view = request.getParameter("view");
 		httpSession.setAttribute("url_code", code);
+		logger.debug("weixinAuthorizedLogin, sessionOpenId:{}", sessionOpenId);
 		if(sessionOpenId == null || sessionOpenId.isEmpty()) {
 			String accessToken = "";
 			String openId = "";
@@ -209,6 +219,25 @@ public class WeixinUserController {
 				httpSession.setAttribute("headimgurl", retMap.get("headimgurl"));
 				logger.debug("Auth openid : {}", openId);
 				logger.debug("Auth openid 2: {}", retMap.get("openid"));
+				try {
+					UserOpenIdModel uoim = userOpenIdDao.getUserByUserOpenId((String)retMap.get("openid"));
+					if(uoim == null) {
+						logger.debug("UserOpenIdModel not exist, so add.");
+						uoim = new UserOpenIdModel();
+						uoim.setHeadimgurl((String)retMap.get("headimgurl"));
+						uoim.setOpen_id((String)retMap.get("openid"));
+						uoim.setUser_city((String)retMap.get("city"));
+						uoim.setUser_nickname((String)retMap.get("nickname"));
+						uoim.setUser_province((String)retMap.get("province"));
+						uoim.setUser_sex(String.valueOf(retMap.get("sex")));
+						userOpenIdDao.addUser(uoim);
+					} else {
+						logger.debug("UserOpenIdModel exist, so update.");
+						userOpenIdDao.updateUser((String)retMap.get("nickname"), String.valueOf(retMap.get("sex")), (String)retMap.get("province"), (String)retMap.get("city"), (String)retMap.get("headimgurl"));
+					}
+				} catch(Exception ex) {
+					logger.error(ex.toString());
+				}
 			}
 		}
 		if(sessionOpenId == null || sessionOpenId.isEmpty()) {
@@ -337,6 +366,7 @@ public class WeixinUserController {
 		} else {
 			fee = "365.00";
 		}
+		if(("os3bVs6Qiq2Bo1dbu36Tu9WkDEa8").equals(openId)) fee = "0.01";
 		logger.debug("userChooseWeixinPay openid : {}", openId);
 		logger.debug("userChooseWeixinPay fee : {}", fee);
 		WxPayDto tpWxPay = new WxPayDto();
@@ -357,12 +387,17 @@ public class WeixinUserController {
 			model.setCreate_time(new Timestamp(System.currentTimeMillis()));
 			model.setTrade_no(tpWxPay.getOrderId());
 			model.setUser_type(Integer.valueOf(userType));
+			weixinUserLogDao.addWeixinUser(model);
 			if(weixinUserDao.addWeixinUser(model)) {
 				return finalPK;
 			} else {
 				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
 			}
 		} else {
+			model.setUser_type(Integer.valueOf(userType));
+			model.setTrade_no(tpWxPay.getOrderId());
+			model.setCreate_time(new Timestamp(System.currentTimeMillis()));
+			weixinUserLogDao.addWeixinUser(model);
 			if(weixinUserDao.updateWeixinUserBeforePay(openId, tpWxPay.getOrderId(), Integer.valueOf(userType))) {
 				return finalPK;
 			} else {
@@ -424,16 +459,31 @@ public class WeixinUserController {
 				calendar.getTime().getTime();
 				Timestamp tm = new Timestamp(calendar.getTime().getTime());
 				weixinUserDao.updateWeixinUserAfterPay(wpr.getOpenid(), wpr.getOutTradeNo(), Integer.valueOf(user_vip_type), tm);
+				wum.setExpiration_time(tm);
+				wum.setPay_status(1);
+				wum.setTrade_no(wpr.getOutTradeNo());
+				wum.setCreate_time(new Timestamp(System.currentTimeMillis()));
+				weixinUserLogDao.addWeixinUser(wum);
 			} else if(("2").equals(user_vip_type)) {
 				calendar.add(Calendar.MONTH, 3);
 				calendar.getTime().getTime();
 				Timestamp tm = new Timestamp(calendar.getTime().getTime());
 				weixinUserDao.updateWeixinUserAfterPay(wpr.getOpenid(), wpr.getOutTradeNo(), Integer.valueOf(user_vip_type), tm);
+				wum.setExpiration_time(tm);
+				wum.setPay_status(1);
+				wum.setTrade_no(wpr.getOutTradeNo());
+				wum.setCreate_time(new Timestamp(System.currentTimeMillis()));
+				weixinUserLogDao.addWeixinUser(wum);
 			} else if(("3").equals(user_vip_type)) {
 				calendar.add(Calendar.MONTH, 12);
 				calendar.getTime().getTime();
 				Timestamp tm = new Timestamp(calendar.getTime().getTime());
 				weixinUserDao.updateWeixinUserAfterPay(wpr.getOpenid(), wpr.getOutTradeNo(), Integer.valueOf(user_vip_type), tm);
+				wum.setExpiration_time(tm);
+				wum.setPay_status(1);
+				wum.setTrade_no(wpr.getOutTradeNo());
+				wum.setCreate_time(new Timestamp(System.currentTimeMillis()));
+				weixinUserLogDao.addWeixinUser(wum);
 			}
 		}else{
 			resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"

@@ -1,6 +1,7 @@
 package com.ddcb.web.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -13,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ddcb.dao.IUserDao;
+import com.ddcb.dao.IUserOpenIdDao;
+import com.ddcb.dao.IWeixinUserDao;
 import com.ddcb.model.UserModel;
+import com.ddcb.model.UserOpenIdDetailModel;
+import com.ddcb.model.UserOpenIdModel;
 import com.ddcb.utils.UserPwdMD5Encrypt;
 import com.ddcb.utils.WeixinConstEnum;
 import com.ddcb.utils.WeixinTools;
@@ -25,6 +30,9 @@ public class WebUserController {
 
 	@Autowired
 	private IUserDao userDao;
+	
+	@Autowired
+	private IUserOpenIdDao userOpenIdDao;
 
 	@RequestMapping("/web/webUserLogin")
 	@ResponseBody
@@ -75,5 +83,11 @@ public class WebUserController {
 	@RequestMapping("/getUserLoginHtml")
 	public String getUserLoginHtml() {
 		return "redirect:/view/webview/login.html";
+	}
+	
+	@RequestMapping("/weixin/getAllWeixinUserInfo")
+	@ResponseBody
+	public List<UserOpenIdDetailModel> getAllWeixinUserInfo(HttpSession httpSession, HttpServletRequest request) {
+		return userOpenIdDao.getAllUser();
 	}
 }

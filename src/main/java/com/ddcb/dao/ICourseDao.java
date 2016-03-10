@@ -18,6 +18,8 @@ public interface ICourseDao {
 	
 	public List<CourseModel> getAllCourse();
 	
+	public List<CourseModel> getAllLiveClass();
+	
 	public List<CourseModel> getAllOpenCourse(int page, int count);
 	
 	public List<CourseModel> getAllOpenCourse();

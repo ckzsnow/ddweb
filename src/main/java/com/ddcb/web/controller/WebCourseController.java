@@ -12,7 +12,9 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +37,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ddcb.dao.IBannerDao;
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.ICourseDetailDao;
+import com.ddcb.dao.ILiveClassStatisticsDao;
 import com.ddcb.model.BannerModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
+import com.ddcb.model.LiveClassStatisticsModel;
 
 @Controller
 public class WebCourseController {
@@ -52,6 +56,9 @@ public class WebCourseController {
 
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
+	
+	@Autowired
+	private ILiveClassStatisticsDao liveClassStatisticsDao;
 
 	@RequestMapping("/course/addCourse")
 	@ResponseBody
@@ -307,5 +314,37 @@ public class WebCourseController {
 	public List<CourseModel> updateCourseStudyPeopleCount() {
 		//courseDao.updateCourseStudyPeopleCount();
 		return null;
+	}
+	
+	@RequestMapping("/statistics/getPerMinuteStatistics")
+	@ResponseBody
+	public List<LiveClassStatisticsModel> getPerMinuteStatistics(HttpServletRequest request) {
+		String timeDuration = request.getParameter("duration");
+		String beginTime = request.getParameter("begin_time");
+		String endTime = request.getParameter("end_time");
+		List<LiveClassStatisticsModel> list = liveClassStatisticsDao.getStatisticsByTimeRange(beginTime, endTime);
+		return null;
+	}
+	
+	@RequestMapping("/statistics/addPerMinuteStatistics")
+	@ResponseBody
+	public Map<String, String> addPerMinuteStatistics(HttpServletRequest request) {
+		String openId = request.getParameter("open_id");
+		String courseId = request.getParameter("course_id");
+		String playStatus = request.getParameter("play_status");
+		logger.debug("addPerMinuteStatistics, openid:{}, courseId:{}, playStatus:{}", openId, courseId, playStatus);
+		long courseId_ = 0;
+		try {
+			courseId_ = Long.valueOf(courseId);
+			LiveClassStatisticsModel lcsm = new LiveClassStatisticsModel();
+			lcsm.setCourse_id(courseId_);
+			lcsm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+			lcsm.setOpen_id(openId);
+			lcsm.setPlay_status(playStatus);
+			liveClassStatisticsDao.addLiveClassStatistics(lcsm);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return new HashMap<>();
 	}
 }

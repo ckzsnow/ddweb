@@ -507,4 +507,11 @@ public class WeixinCourseController {
 		}
 		return null;
 	}
+	
+	@RequestMapping("/weixin/getAllLiveClass")
+	@ResponseBody
+	public List<CourseModel> getAllLiveClass(HttpSession httpSession, HttpServletRequest request) {
+		List<CourseModel> courseList = courseDao.getAllLiveClass();
+		return courseList;
+	}
 }
