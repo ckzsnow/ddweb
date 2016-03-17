@@ -32,10 +32,12 @@ import org.xml.sax.InputSource;
 
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserDao;
+import com.ddcb.dao.IUserLiveCoursePayDao;
 import com.ddcb.dao.IUserOpenIdDao;
 import com.ddcb.dao.IWeixinUserDao;
 import com.ddcb.dao.IWeixinUserLogDao;
 import com.ddcb.model.UserCourseModel;
+import com.ddcb.model.UserLiveCoursePayModel;
 import com.ddcb.model.UserModel;
 import com.ddcb.model.UserOpenIdModel;
 import com.ddcb.model.WeixinUserModel;
@@ -60,6 +62,9 @@ public class WeixinUserController {
 	
 	@Autowired
 	private IUserCourseDao userCourseDao;
+	
+	@Autowired
+	private IUserLiveCoursePayDao userLiveCoursePayDao;
 	
 	@Autowired
 	private IWeixinUserDao weixinUserDao;
@@ -341,6 +346,99 @@ public class WeixinUserController {
 			resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
 			+ "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
 			userCourseDao.updatePayStatusByTradeNo(wpr.getOpenid(), wpr.getOutTradeNo(), 1);
+		}else{
+			resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
+			+ "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+		}
+		return resXml;
+	}
+	
+	@RequestMapping("/userLiveClassDonateWeixinPay")
+	@ResponseBody
+	public String userLiveClassDonateWeixinPay(HttpSession httpSession, HttpServletRequest request) {
+		String openId = (String)httpSession.getAttribute("openid");
+		String courseId = request.getParameter("course_id");
+		logger.debug("userLiveClassWeixinPay course_id : {}", courseId);
+		if(openId == null || openId.isEmpty()) {
+			return "\"ddcb_error_msg\":\"无法获取到您的openId，请关闭所有页面，从公众号菜单重新进入！\"";
+		}
+		WeixinPayUtils.setNotifyurl("http://www.diandou.me/weixinLiveClassDonatePayResult");
+		String fee = "5.00";
+		logger.debug("userLiveClassDonateWeixinPay openid : {}", openId);
+		logger.debug("userLiveClassDonateWeixinPay fee : {}", fee);
+		WxPayDto tpWxPay = new WxPayDto();
+		tpWxPay.setOpenId(openId);
+		tpWxPay.setBody("点都大讲堂直播讲座");
+		tpWxPay.setOrderId(WeixinPayUtils.getNonceStr());
+		tpWxPay.setSpbillCreateIp(request.getRemoteAddr());
+		tpWxPay.setTotalFee(fee);
+		tpWxPay.setAttach(courseId);
+		String finalPK = WeixinPayUtils.getPackage(tpWxPay);
+		if(finalPK == null || finalPK.isEmpty()) {
+			return "\"ddcb_error_msg\":\"微信服务器无法获取到支付ID，请稍后重试！\"";
+		}
+		UserLiveCoursePayModel model = userLiveCoursePayDao.getUserCourseByUserIdAndCourseId(openId, Long.valueOf(courseId));
+		if(model == null) {
+			model = new UserLiveCoursePayModel();
+			model.setCourse_id(Long.valueOf(courseId));
+			model.setCreate_time(new Timestamp(System.currentTimeMillis()));
+			model.setTradeNo(tpWxPay.getOrderId());
+			model.setUser_id(openId);
+			if(userLiveCoursePayDao.addUserLiveCoursePayModel(model)) {
+				return finalPK;
+			} else {
+				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
+			}
+		} else {
+			if(userLiveCoursePayDao.updateTradeNo(openId, Long.valueOf(courseId), tpWxPay.getOrderId())) {
+				return finalPK;
+			} else {
+				return "\"ddcb_error_msg\":\"写数据库错误，请稍后重试！\"";
+			}
+		}
+	}
+	
+	@RequestMapping("/weixinLiveClassDonatePayResult")
+	@ResponseBody
+	public String weixinLiveClassDonatePayResult(HttpSession httpSession, HttpServletRequest request) {
+		String inputLine;
+		String notityXml = "";
+		String resXml = "";
+		try {
+			while ((inputLine = request.getReader().readLine()) != null) {
+				notityXml += inputLine;
+			}
+			request.getReader().close();
+		} catch (Exception e) {
+			logger.debug(e.toString());
+		}
+
+		logger.debug("receive xml:" + notityXml);
+		Map m = parseXmlToList2(notityXml);
+		WxPayResult wpr = new WxPayResult();
+		wpr.setAppid(m.get("appid").toString());
+		wpr.setBankType(m.get("bank_type").toString());
+		wpr.setCashFee(m.get("cash_fee").toString());
+		wpr.setFeeType(m.get("fee_type").toString());
+		wpr.setIsSubscribe(m.get("is_subscribe").toString());
+		wpr.setMchId(m.get("mch_id").toString());
+		wpr.setNonceStr(m.get("nonce_str").toString());
+		wpr.setOpenid(m.get("openid").toString());
+		wpr.setOutTradeNo(m.get("out_trade_no").toString());
+		wpr.setResultCode(m.get("result_code").toString());
+		wpr.setReturnCode(m.get("return_code").toString());
+		wpr.setSign(m.get("sign").toString());
+		wpr.setTimeEnd(m.get("time_end").toString());
+		wpr.setTotalFee(m.get("total_fee").toString());
+		wpr.setTradeType(m.get("trade_type").toString());
+		wpr.setTransactionId(m.get("transaction_id").toString());
+		String courseId = m.get("attach").toString();
+		logger.debug("weixinLiveClassDonatePayResult courseOd:" + courseId);
+		logger.debug("weixinLiveClassDonatePayResult openid:" + wpr.getOpenid());
+		if("SUCCESS".equals(wpr.getResultCode())){
+			resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
+			+ "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
+			userLiveCoursePayDao.updatePayStatusByTradeNo(wpr.getOpenid(), wpr.getOutTradeNo(), 1);
 		}else{
 			resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
 			+ "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";

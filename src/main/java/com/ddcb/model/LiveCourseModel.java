@@ -21,6 +21,7 @@ public class LiveCourseModel {
 	private String price;
 	private String hasCollection;
 	private String screenshot;
+	private Integer donate_pay_status;
 	
 	private Integer select_status;
 	private Integer pay_status;
@@ -32,7 +33,7 @@ public class LiveCourseModel {
 			Timestamp course_date, String course_date_readable, String course_time, 
 			String course_length, Timestamp create_time, Integer courseType,
 			String courseField, String courseIndustry, String courseCompetency, String price, String hasCollection,
-			Integer payStatus, String screenshot) {
+			Integer payStatus, String screenshot, Integer donate_pay_status) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -52,6 +53,7 @@ public class LiveCourseModel {
 		this.hasCollection = hasCollection;
 		this.pay_status = payStatus;
 		this.screenshot = screenshot;
+		this.donate_pay_status = donate_pay_status;
 	}
 
 	public Long getId() {
@@ -214,6 +216,14 @@ public class LiveCourseModel {
 		this.screenshot = screenshot;
 	}
 
+	public Integer getDonate_pay_status() {
+		return donate_pay_status;
+	}
+
+	public void setDonate_pay_status(Integer donate_pay_status) {
+		this.donate_pay_status = donate_pay_status;
+	}
+
 	@Override
 	public String toString() {
 		return "LiveCourseModel [id=" + id + ", name=" + name + ", course_abstract=" + course_abstract + ", teacher="
@@ -221,7 +231,8 @@ public class LiveCourseModel {
 				+ course_date_readable + ", course_time=" + course_time + ", course_length=" + course_length
 				+ ", create_time=" + create_time + ", courseType=" + courseType + ", courseField=" + courseField
 				+ ", courseIndustry=" + courseIndustry + ", courseCompetency=" + courseCompetency + ", price=" + price
-				+ ", hasCollection=" + hasCollection + ", screenshot=" + screenshot + ", select_status=" + select_status
-				+ ", pay_status=" + pay_status + ", forward_status=" + forward_status + "]";
+				+ ", hasCollection=" + hasCollection + ", screenshot=" + screenshot + ", donate_pay_status="
+				+ donate_pay_status + ", select_status=" + select_status + ", pay_status=" + pay_status
+				+ ", forward_status=" + forward_status + "]";
 	}
 }

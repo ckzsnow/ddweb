@@ -193,7 +193,7 @@
 													}
 												} else if(userIsVip != 1){
 												%>
-													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
+													<%if((cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) && (cm.getDonate_pay_status() == null || cm.getDonate_pay_status() == 0)) { %>
 													<div style="float: right;">
 														<button onclick="uploadShareImage('<%=cm.getId()%>', this)" course_id="<%=cm.getId()%>"
 															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;">我要报名</button>
@@ -307,7 +307,7 @@
 													}
 												} else if(userIsVip != 1){
 												%>
-													<%if(cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) { %>
+													<%if((cm.getScreenshot() == null || cm.getScreenshot().isEmpty()) && (cm.getDonate_pay_status() == null || cm.getDonate_pay_status() == 0)) { %>
 													<div style="float: right;">
 														<button onclick="uploadShareImage('<%=cm.getId()%>', this)" course_id="<%=cm.getId()%>"
 															style="height: 25px; line-height: 25px; padding: 0px 5px; font-size: 12px;" disabled>我要报名</button>
@@ -393,7 +393,7 @@
 <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" charset="utf-8">
 mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack) {
-	var template = "<div style='width:80%;margin:50% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:10px;margin-left:20px;font-size:15px;'>提示信息</div><hr style='margin-top:10px;margin-bottom:10px;'/><div style='margin-left:20px;margin-right:20px;height:40px;font-size:15px;'>{{info}}</div><div style='text-align:right;margin-bottom:10px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;font-size:15px;'>取消</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;font-size:15px;'>{{btnInfo}}</a></div></div>";
+	var template = "<div style='width:80%;margin:50% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:10px;margin-left:20px;font-size:15px;'>提示信息</div><hr style='margin-top:10px;margin-bottom:10px;'/><div style='margin-left:20px;margin-right:20px;height:40px;font-size:15px;'>{{info}}</div><div style='text-align:right;margin-bottom:10px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;font-size:15px;'>打赏5元</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;font-size:15px;'>{{btnInfo}}</a></div></div>";
 	var element = document.createElement('div');
 	element.classList.add('dialog');
 	element.innerHTML = template.replace('{{info}}', info);
@@ -465,13 +465,49 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 		    var currentImageSelectEle;
 		    function uploadShareImage(courseId, ele) {
 		    	currentImageSelectEle = ele;
-		    	 var confirmDialog = mui.createConfirmDialog('报名条件：将该讲座分享至朋友圈并截图上传。',"上传分享截图",
+		    	document.getElementById("loadingToast").style.display = "";
+		    	 var confirmDialog = mui.createConfirmDialog("报名方式：①点击屏幕右上角微信按钮，选择分享至朋友圈即可报名。②微信支付5元打赏费即可直接观看，不需要分享至朋友圈。","确定",
 	    					function() {
 	    						confirmDialog.close();
+	    						mui.ajax({
+	    		            		url: '/userLiveClassDonateWeixinPay',
+	    		            		type: "POST",
+	    		            		data: {fee:"5.00",course_id:courseId},
+	    		            		success: function(data) {
+	    		            			document.getElementById("loadingToast").style.display = "none";
+	    		            			var jsonData = JSON.parse("{"+data+"}");
+	    		            			if(jsonData.ddcb_error_msg != null) {
+	    		            				alert(jsonData.ddcb_error_msg);
+	    		            			} else {
+	    		            				wx.chooseWXPay({
+	    		            		            timestamp: jsonData.timeStamp,
+	    		            		            nonceStr: jsonData.nonceStr,
+	    		            		            package: jsonData.package,
+	    		            		            signType: jsonData.signType,
+	    		            		            paySign: jsonData.paySign,
+	    		            		            success: function (res) {
+	    		            		            	if(res.errMsg != null && res.errMsg == "chooseWXPay:ok") {
+	    		            		            		currentImageSelectEle.setAttribute("disabled", true);
+	    		            		    		    	currentImageSelectEle.innerHTML = "已经报名";
+	    		            		            		alert("支付成功!");
+	    		            		            	} else {
+	    		            		            		alert("支付失败！");
+	    		            		            	}																            
+	    		            		            },
+	    		            		            fail:function(res) {
+	    		            		            	alert(JSON.stringify(res));
+	    		            		            }
+	    		            		        });
+	    		            			}
+	    		            		},
+	    		            		error: function(status, error) {
+	    		            			alert("支付失败！");
+	    		            		}
+	    		            	});
 	    					},
 	    					function() {
 	    						confirmDialog.close();
-	    						document.getElementById('image_select').click();	
+	    						//document.getElementById('image_select').click();	
 	    					}
 	    				);
 	    				confirmDialog.show();	    	
@@ -644,7 +680,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 								    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>购买课程</button></div>";
 								    						}
 							    						} else if(<%=userIsVip%> != 1){
-							    							if(data[i].screenshot == null || data[i].screenshot == "") {
+							    							if((data[i].screenshot == null || data[i].screenshot == "") && (data[i].donate_pay_status == null || data[i].donate_pay_status == 0)) {
 							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>我要报名</button></div>";
 							    							} else {
 							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经报名</button></div>";
@@ -719,7 +755,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 								    							btnDiv.innerHTML += "<div style='float:right;'><button class='buy_class' course_price='"+data[i].price+"' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>购买课程</button></div>";
 								    						}
 							    						} else if(<%=userIsVip%> != 1) {
-							    							if(data[i].screenshot == null || data[i].screenshot == "") {
+							    							if((data[i].screenshot == null || data[i].screenshot == "") && (data[i].donate_pay_status == null || data[i].donate_pay_status == 0)) {
 							    								btnDiv.innerHTML += "<div style='float:right;'><button onclick='uploadShareImage(\""+data[i].id+"\", this)' course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;'>我要报名</button></div>";
 							    							} else {
 							    								btnDiv.innerHTML += "<div style='float:right;'><button course_id='"+data[i].id+"' style='height:25px;line-height:25px;padding:0px 5px;font-size:12px;' disabled>已经报名</button></div>";
@@ -776,10 +812,12 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 				link : lineLink, // 分享链接
 				imgUrl : imgUrl, // 分享图标
 				success : function() {
-					// 用户确认分享后执行的回调函数
+					alert("报名成功！");
+					currentImageSelectEle.setAttribute("disabled", true);
+    		    	currentImageSelectEle.innerHTML = "已经报名";
 				},
 				cancel : function() {
-					// 用户取消分享后执行的回调函数
+					alert("您没有分享，报名失败！");
 				}
 			});
 			wx.onMenuShareAppMessage({

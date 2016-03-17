@@ -399,7 +399,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 														}
 													%>
 													<%if(lcm.getPay_status() == null || lcm.getPay_status() == 0) {%>
-														<li class="mui-table-view-cell mui-media" course_has_end="<%=courseHasEnd %>" course_id="<%=lcm.getId() %>" course_price="<%=lcm.getPrice() %>" course_path=''>
+														<li class="mui-table-view-cell mui-media" course_has_end="<%=courseHasEnd %>" course_id="<%=lcm.getId() %>" course_price="<%=lcm.getPrice() %>" course_path='/playDDCBLiveClass?course_id=<%=lcm.getId() %>'>
 															<div class="mui-slider-right mui-disabled">
 																<a class="mui-btn mui-btn-red">删除</a>
 															</div>
@@ -412,7 +412,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 																<div style="margin-top:5px;">
 																	<div style="float:left;height:25px;line-height:25px;"><p style="font-size:12px;">课程售价：<%=lcm.getPrice() %>元</p></div>
 																	<%if(("0").equals(courseHasEnd)) { %>
-																		<div style="float:right;height:25px;line-height:25px;"><p id="course_id_<%=lcm.getId() %>" style="font-size:12px;">尚未购买</p></div>
+																		<div style="float:right;height:25px;line-height:25px;"><p id="course_id_<%=lcm.getId() %>" style="font-size:12px;">点击进入</p></div>
 																	<%} else { %>
 																		<div style="float:right;height:25px;line-height:25px;"><p id="course_id_<%=lcm.getId() %>" style="font-size:12px;">课程已结束</p></div>
 																	<%} %>
