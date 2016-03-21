@@ -6,6 +6,8 @@
 <%@ page import="com.ddcb.dao.IUserCourseDao"%>
 <%@ page import="com.ddcb.dao.IWeixinUserDao"%>
 <%@ page import="com.ddcb.dao.IUserForwardDao"%>
+<%@ page import="com.ddcb.dao.ILiveClassShareDao"%>
+<%@ page import="com.ddcb.model.LiveCourseShareModel"%>
 <%@ page import="com.ddcb.model.CourseModel"%>
 <%@ page import="com.ddcb.model.UserCourseModel"%>
 <%@ page import="com.ddcb.model.CourseDetailModel"%>
@@ -20,6 +22,7 @@ ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDa
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IUserCourseDao userCourseDao = (IUserCourseDao)wac.getBean("userCourseDao");
 IUserForwardDao userForwardDao = (IUserForwardDao)wac.getBean("userForwardDao");
+ILiveClassShareDao liveClassShareDao = (ILiveClassShareDao) wac.getBean("liveClassShareDao");
 List<CourseDetailModel> list = null;
 long id = Long.valueOf((String)request.getParameter("course_id"));
 list = courseDetailDao.getCourseDetailByCourseId(id);
@@ -53,6 +56,11 @@ WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);
 if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()>=currentTime) {
 	userStatus = "2";
 }
+Calendar calendar = Calendar.getInstance(); 
+calendar.setTime(new Date()); 
+int intWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+if(intWeek == 0) intWeek = 7;
+LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByWeekDay(intWeek);
 %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -164,6 +172,16 @@ video::-webkit-media-controls-volume-slider {} */
 	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
+	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
+	var lineLink = window.location.href;
+	var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
+	var shareTitle = "点豆大讲堂";
+	<%if (lcsm != null) {%>
+		imgUrl = "http://www.diandou.me/files/bannerimgs/<%=lcsm.getImage()%>";
+		descContent = "<%=lcsm.getCourseName()%>";
+		shareTitle = "<%=lcsm.getTitle()%>";
+		lineLink = "<%=lcsm.getLink()%>";
+	<%}%>
 	var globalPlayStatus = "stop";
 	var playVideoEvent = 1;
 	var pauseVideoEvent = 1;
@@ -499,7 +517,7 @@ video::-webkit-media-controls-volume-slider {} */
 			'chooseWXPay'
 		]
 	});
-	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
+	<%-- var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 	var lineLink = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbd6aef840715f99d&redirect_uri=http%3A%2F%2Fwww.diandou.me%2Fweixin%2FweixinLogin%3Fview%3Dddcb_live_class&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
 	var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
 	var shareTitle = "点豆大讲堂";
@@ -508,18 +526,30 @@ video::-webkit-media-controls-volume-slider {} */
 		imgUrl = "http://www.diandou.me/files/imgs/<%=cm.getImage()%>";
 		descContent = "主讲人：<%=cm.getTeacher()%>";
 		shareTitle = "直播-<%=cm.getName()%>-[点豆大讲堂]";
-	<%}%>
+	<%}%> --%>
 wx.ready(function() {
 setTimeout(function() {
 	wx.onMenuShareTimeline({
-		title : shareCircleTitle, // 分享标题
+		title : shareTitle, // 分享标题
 		link : lineLink, // 分享链接
 		imgUrl : imgUrl, // 分享图标
 		success : function() {
-			// 用户确认分享后执行的回调函数
+			mui.ajax({
+        		url: "/course/uploadUserShare",
+        		type: "POST",
+        		data: {courseId:"<%=cm.getId()%>"},
+        		success: function(data) {
+        			alert("报名成功！");
+        			window.location.href="/playDDCBLiveClass?course_id=<%=id%>";
+        		},
+        		error: function(status, error) {
+        			alert("报名失败！");
+        		}
+        	});			
 		},
 		cancel : function() {
 			// 用户取消分享后执行的回调函数
+			alert("您没有分享，报名失败！");
 		}
 	});
 	wx.onMenuShareAppMessage({

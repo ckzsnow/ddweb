@@ -5,8 +5,6 @@
 <%@ page import="com.ddcb.dao.ICourseDao"%>
 <%@ page import="com.ddcb.dao.IUserCollectionDao"%>
 <%@ page import="com.ddcb.dao.IUserCourseDao"%>
-<%@ page import="com.ddcb.dao.ILiveClassShareDao"%>
-<%@ page import="com.ddcb.model.LiveCourseShareModel"%>
 <%@ page import="com.ddcb.model.LiveCourseModel"%>
 <%@ page import="com.ddcb.model.UserCollectionModel"%>
 <%@ page import="com.ddcb.model.UserCourseModel"%>
@@ -19,7 +17,6 @@
 			.getRequiredWebApplicationContext(this.getServletContext());
 	ICourseDao courseDao = (ICourseDao) wac.getBean("courseDao");
 	IUserCourseDao userCourseDao = (IUserCourseDao) wac.getBean("userCourseDao");
-	ILiveClassShareDao liveClassShareDao = (ILiveClassShareDao) wac.getBean("liveClassShareDao");
 	String userId = (String) session.getAttribute("openid");
 	//userId = "os3bVs6Qiq2Bo1dbu36Tu9WkDEa8";
 	List<LiveCourseModel> finishedlist = courseDao.getAllFinishedLiveCourse(1, 8, userId);
@@ -33,11 +30,6 @@
 	long currentTime = System.currentTimeMillis();
 	int userIsVip = 0;
 	if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()>=currentTime) userIsVip = 1;
-	Calendar calendar = Calendar.getInstance(); 
-	calendar.setTime(new Date()); 
-	int intWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-	if(intWeek == 0) intWeek = 7;
-	LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByWeekDay(intWeek);
 %>
 <!DOCTYPE html>
 <html>
@@ -400,8 +392,17 @@
 <script src="/js/weixinjs/mui.pullToRefresh.material.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" charset="utf-8">
+var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
+var lineLink = window.location.href;
+var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
+var shareTitle = "点豆大讲堂";
+<%if (list != null && list.size() != 0) {%>
+	imgUrl = "http://www.diandou.me/files/imgs/<%=list.get(0).getImage()%>";
+	descContent = "<%=list.get(0).getTeacher()%>";
+	shareTitle = "<%=list.get(0).getName()%>";
+<%}%>
 mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack) {
-	var template = "<div style='width:80%;margin:50% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:10px;margin-left:20px;font-size:15px;'>提示信息</div><hr style='margin-top:10px;margin-bottom:10px;'/><div style='margin-left:20px;margin-right:20px;height:90px;font-size:15px;'>{{info}}</div><div style='text-align:right;margin-bottom:10px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;font-size:15px;'>打赏5元</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;font-size:15px;'>{{btnInfo}}</a></div></div>";
+	var template = "<div style='width:80%;margin:30% 10%;border:1px solid #ddd;background-color: white;border-radius: 5px;'><div style='margin-top:10px;font-size:15px;text-align:center;'>讲座报名</div><hr style='margin-top:10px;margin-bottom:10px;'/><div style='margin-left:20px;margin-right:20px;height:200px;font-size:15px;'>{{info}}</div><div style='text-align:right;margin-bottom:10px;margin-right:20px;'><a id='createConfirmDialog_cancel' href='javascript:void(0);' style='margin-right:20px;text-decoration:none;font-size:15px;'>打赏5元</a><a id='createConfirmDialog_accept' href='javascript:void(0);' style='text-decoration:none;font-size:15px;'>{{btnInfo}}</a></div></div>";
 	var element = document.createElement('div');
 	element.classList.add('dialog');
 	element.innerHTML = template.replace('{{info}}', info);
@@ -473,7 +474,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 		    var currentImageSelectEle;
 		    function uploadShareImage(courseId, ele) {
 		    	currentImageSelectEle = ele;
-		    	 var confirmDialog = mui.createConfirmDialog("报名方式：①点击屏幕右上角微信按钮，选择分享至朋友圈即可报名。②微信支付5元打赏费即可直接观看，不需要分享至朋友圈。","确定",
+		    	 var confirmDialog = mui.createConfirmDialog("<div><p style='color:#2ab888;'>提示：各位看官，小店录制不易，好内容会一直做下去，需要各位的参与与贡献哦！</p></div><div>方式一：免费<p>点击讲座标题进入教室，将该讲座分享至朋友圈即可报名成功。</p></div><div>方式二：打赏5元<p>如不愿分享，支付5元报名费即可报名成功。</p></div>","取消",
 	    					function() {
 	    						confirmDialog.close();
 	    						document.getElementById("loadingToast").style.display = "";
@@ -516,6 +517,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 	    					},
 	    					function() {
 	    						confirmDialog.close();
+	    						
 	    						//document.getElementById('image_select').click();	
 	    					}
 	    				);
@@ -805,16 +807,6 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 					});
 				});
 			})(mui);
-			var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
-			var lineLink = window.location.href;
-			var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
-			var shareTitle = "点豆大讲堂";
-			<%if (lcsm != null) {%>
-				imgUrl = "http://www.diandou.me/files/bannerimgs/<%=lcsm.getImage()%>";
-				descContent = "<%=list.get(0).getTeacher()%>";
-				shareTitle = "<%=lcsm.getTitle()%>";
-				lineLink = "<%=lcsm.getLink()%>";
-			<%}%>
 	wx.ready(function() {
 		setTimeout(function() {
 			wx.onMenuShareTimeline({
@@ -822,7 +814,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 				link : lineLink, // 分享链接
 				imgUrl : imgUrl, // 分享图标
 				success : function() {
-					alert("报名成功！");
+					/* alert("报名成功！");
 					currentImageSelectEle.setAttribute("disabled", true);
     		    	currentImageSelectEle.innerHTML = "已经报名";
     		    	mui.ajax({
@@ -835,10 +827,10 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
                 		error: function(status, error) {
                 			
                 		}
-                	});
+                	}); */
 				},
 				cancel : function() {
-					alert("您没有分享，报名失败！");
+					//alert("您没有分享，报名失败！");
 				}
 			});
 			wx.onMenuShareAppMessage({
