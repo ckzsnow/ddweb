@@ -171,7 +171,7 @@ public class CourseDaoImpl implements ICourseDao {
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
 			String sql = "select uf.screenshot, !ISNULL(b.user_id) as has_collection, a.pay_status, ulcp.pay_status as donate_pay_status, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id LEFT JOIN user_forward as uf on uf.user_id=? and uf.course_id=c.id LEFT JOIN user_live_course_pay as ulcp on ulcp.user_id=? and ulcp.course_id=c.id where NOW() < (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date asc limit ?,?";
-			list = jdbcTemplate.query(sql, new Object[]{userId, userId, userId, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
+			list = jdbcTemplate.query(sql, new Object[]{userId, userId, userId, userId, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());
@@ -273,7 +273,7 @@ public class CourseDaoImpl implements ICourseDao {
 		int beginIndex = page == 1? 0:(page - 1) * count;
 		try {
 			String sql = "select a.pay_status, ulcp.pay_status as donate_pay_status, uf.screenshot, !ISNULL(b.user_id) as has_collection, c.id, c.price, c.course_field, c.course_industry, c.course_competency, c.name, c.course_abstract, c.teacher, c.image, DATE_FORMAT(c.course_date,'%Y-%m-%d %T') as course_date_readable, c.course_date, c.course_time, c.course_length, c.create_time, c.course_type from course as c left JOIN user_collection as b on c.id=b.course_id and b.user_id=? LEFT JOIN user_course as a on a.user_id=? and a.course_id=c.id LEFT JOIN user_forward as uf on uf.user_id=? and uf.course_id=c.id LEFT JOIN user_live_course_pay as ulcp on ulcp.user_id=? and ulcp.course_id=c.id where NOW() >= (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date desc limit ?,?";
-			list = jdbcTemplate.query(sql, new Object[]{userId, userId, userId, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
+			list = jdbcTemplate.query(sql, new Object[]{userId, userId, userId, userId, beginIndex, count}, new RowMapperResultSetExtractor<LiveCourseModel>(
 							new LiveCourseMapper()));
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());

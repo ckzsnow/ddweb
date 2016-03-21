@@ -395,7 +395,7 @@ List<LiveCourseModel> userStudyRecordCourseList = userStudyRecordDao.getUserStud
 														String courseHasEnd = "0";
 														long currentTime = System.currentTimeMillis();
 														if(lcm.getCourse_date().getTime() + Integer.valueOf(lcm.getCourse_length())*60000 <= currentTime) {
-															courseHasEnd = "1";
+															courseHasEnd = "0";
 														}
 													%>
 													<%if(lcm.getPay_status() == null || lcm.getPay_status() == 0) {%>

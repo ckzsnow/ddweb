@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,11 +38,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ddcb.dao.IBannerDao;
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.ICourseDetailDao;
+import com.ddcb.dao.ILiveClassShareDao;
 import com.ddcb.dao.ILiveClassStatisticsDao;
 import com.ddcb.model.BannerModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveClassStatisticsModel;
+import com.ddcb.model.LiveCourseShareModel;
 
 @Controller
 public class WebCourseController {
@@ -56,6 +59,9 @@ public class WebCourseController {
 
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
+	
+	@Autowired
+	private ILiveClassShareDao liveClassShareDao;
 	
 	@Autowired
 	private ILiveClassStatisticsDao liveClassStatisticsDao;
@@ -227,6 +233,43 @@ public class WebCourseController {
 		retMap.put("error_message", "");
 		return retMap;
 	}
+	
+	@RequestMapping(value="/course/addLiveCourseShare", headers = "content-type=multipart/*", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> addLiveCourseShare(@RequestParam MultipartFile[] files, HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF");
+		logger.debug("realPath : {}", realPath);
+		realPath = realPath.substring(0, realPath.indexOf("/", 1));
+		logger.debug("realPath : {}", realPath);
+		String imgPath = realPath + "/files/bannerimgs";
+		int index = 1;
+		if (files.length != 0) {
+			for (MultipartFile file : files) {
+				String imgFileName = "share" + String.valueOf(index) + ".jpg";
+				String courseId = request.getParameter("courseId" + index);
+				String title = request.getParameter("title" + index);
+				String link = request.getParameter("link" + index);
+				try {
+					long courseId_ = Long.valueOf(courseId);
+					FileUtils.copyInputStreamToFile(file.getInputStream(), new File(imgPath, imgFileName));
+					LiveCourseShareModel lcsm = new LiveCourseShareModel();
+					lcsm.setId(courseId_);
+					lcsm.setImage(imgFileName);
+					lcsm.setLink(link);
+					lcsm.setTitle(title);
+					lcsm.setWeekDay(index);
+					liveClassShareDao.updateLiveClassShare(lcsm);
+				} catch (IOException e) {
+					logger.debug(e.toString());
+				}
+				index++;
+			}
+		}
+		retMap.put("error_code", "0");
+		retMap.put("error_message", "");
+		return retMap;
+	}
 
 	@RequestMapping("/course/getCourseBanner")
 	@ResponseBody
@@ -245,6 +288,13 @@ public class WebCourseController {
 	@ResponseBody
 	public List<CourseModel> getBannerCourse() {
 		List<CourseModel> list = bannerDao.getAllBannerCourse();
+		return list;
+	}
+	
+	@RequestMapping("/course/getLiveCourseShare")
+	@ResponseBody
+	public List<LiveCourseShareModel> getLiveCourseShare() {
+		List<LiveCourseShareModel> list = liveClassShareDao.getAllLiveClassShare();
 		return list;
 	}
 
