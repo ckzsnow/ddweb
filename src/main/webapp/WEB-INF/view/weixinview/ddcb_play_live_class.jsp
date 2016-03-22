@@ -534,7 +534,7 @@ setTimeout(function() {
 		link : lineLink, // 分享链接
 		imgUrl : imgUrl, // 分享图标
 		success : function() {
-			mui.ajax({
+			$.ajax({
         		url: "/course/uploadUserShare",
         		type: "POST",
         		data: {courseId:"<%=cm.getId()%>"},
