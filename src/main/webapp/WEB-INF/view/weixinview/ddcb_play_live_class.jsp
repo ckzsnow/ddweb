@@ -126,14 +126,15 @@ video::-webkit-media-controls-volume-slider {} */
 
 		<div id="tabtip" class="container">
 			<ul id="myTab" class="nav nav-tabs row mantoutab" style="padding-left:0px;padding-right:0px;">
-				<li class="col-xs-6 text-center active"><a vinfo="summary" class="center-block" data-toggle="tab">课程简介</a></li>
+				<li class="col-xs-6 text-center active" style="backgroud-color:white;"><a vinfo="summary" class="center-block" data-toggle="tab">简介</a></li>
+				<li class="col-xs-6 text-center" style="backgroud-color:white;"><a vinfo="question" class="center-block" data-toggle="tab">提问</a></li>
 			</ul>
 		</div>
 
 		<div class="content">
 			<div id="myTabContent" class="tab-content">
 				<div class="tab-pane fade in active" id="summary">
-					<div class="container">
+					<div class="container" style="backgroud-color:white;">
 						<div class="row csdetials">
 							<div class="col-xs-12  mantoutitle"><span class="color-block"></span>导师简介</div>
 							<div class="col-xs-12  mentername">
@@ -164,6 +165,18 @@ video::-webkit-media-controls-volume-slider {} */
 						</div>
 					</div>
 				</div>
+				<div class="tab-pane fade in" id="question">
+					<div class="container" id="questionList" style="margin-bottom:63px;">	
+					</div>
+					<div class="container publishbox">
+                        <div class="row publish">
+                            <div class="col-xs-10 cmtcnt">
+                                <textarea id="replycotent" placeholder="有问题？快提出来吧~" rows="1" cols="40" style="overflow:scroll;overflow-y:hidden;;overflow-x:hidden"></textarea>
+                            </div>
+                            <div class="col-xs-2 cmtbtn"><span replaycommenttext="" replyname="" replycommentid="0" replyuserid="0" id="publishbtn" class="text-center publishbtn">提问</span></div>
+                        </div>
+                    </div>
+				</div>
 			</div>
 		</div>
 		<div id="countdown" style="display:none;width:100%;"></div>
@@ -172,6 +185,18 @@ video::-webkit-media-controls-volume-slider {} */
 	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
+	$("#myTab li a").click(function() {
+	    $(this).parent().addClass("active");
+	    $(this).parent().siblings().removeClass("active");
+	    $(this).parent().css("background-color", "#fff");
+	    $("#" + $(this).attr("vinfo")).attr("style", "display:block;opacity:1")
+	    $("#" + $(this).attr("vinfo")).siblings().hide();
+	    if ($(this).attr("vinfo") == "comment") {
+	        $(".navbar-fixed-bottom").hide();
+	    } else {
+	        $(".navbar-fixed-bottom").show();
+	    }
+	});
 	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 	var lineLink = window.location.href;
 	var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
@@ -579,6 +604,94 @@ setTimeout(function() {
 		}
 	});
 }, 500);
+});
+function checkJsonIsEmpty(json) {
+	var isEmpty = true;
+	if (json == null) return true;
+	for (var jsonKey in json) {
+		isEmpty = false;
+		break;
+	}
+	return isEmpty;
+}
+var page = 1;
+var countPerPage = 2;
+$.ajax({
+	url: "/getAllCourseQuestions",
+	type: "POST",
+	data: {course_id:<%=id%>, page:page, count:countPerPage},
+	success: function(data) {
+		if (!checkJsonIsEmpty(data)) {
+			var questionList = $('#questionList');
+			var questionListHTML = "";
+			var count = 0;
+			var hasBind = false;
+			for (i in data) {
+				questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div class='col-xs-5 text-right commentbuttom'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
+				count++;
+			}
+			if(count>=countPerPage) {
+				hasBind = true;
+				questionListHTML += "<h3 id='show' style='height:40px;margin-top:18px;'><span class='click'>点击展开更多问题</span><span class='glyphicon glyphicon-menu-down'></span></h3>";
+			} else {
+				questionListHTML += "<h3 id='show' style='height:40px;margin-top:18px;'><p class='click'>该课程所有问题均已显示</p></h3>";
+			} 
+			questionList.html(questionListHTML);
+			if(hasBind) {
+				$("#show").click(function(){
+					page++;
+					$.ajax({
+						url: "/getAllCourseQuestions",
+						type: "POST",
+						data: {course_id:<%=id%>, page:page, count:countPerPage},
+						success: function(data) {
+							if (!checkJsonIsEmpty(data)) {
+								var questionList = $('#questionList > div:last');
+								var questionListHTML = "";
+								var pullcount = 0;
+								for (i in data) {
+									questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-5 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div class='col-xs-7 text-right commentbuttom'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
+									pullcount++;
+								}
+								questionList.append(questionListHTML);
+								if(pullcount >= countPerPage) {
+									
+								} else {
+									$("#show").unbind("click"); 
+									$("#show").html("<p class='click'>该课程所有问题均已显示</p>");
+								}
+							} else {
+								$("#show").unbind("click"); 
+								$("#show").html("<p class='click'>该课程所有问题均已显示</p>");
+							}
+						},
+						error: function(status, error) {
+						}
+					});
+				});
+			}
+		} else {
+			var questionList = $('#questionList');
+			var questionListHTML = "<h3 id='show' style='height:40px;margin-top:18px;'><p class='click'>该课程当前还没有用户提问</p></h3>";
+			questionList.append(questionListHTML);
+		}
+	},
+	error: function(status, error) {
+	}
+});
+
+$("#publishbtn").click(function(){
+	$.ajax({
+		url: "/userPublishQuestion",
+		type: "POST",
+		data: {course_id:<%=id%>},
+		success: function(data) {
+			
+		},
+		error: function(status, error) {
+			
+		}
+	});
 });
 
 setInterval(function(){

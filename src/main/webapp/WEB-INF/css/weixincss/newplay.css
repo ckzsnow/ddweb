@@ -101,6 +101,7 @@ ul.mantoutab li{
     padding-right:0;
     height:100%;
     margin-bottom:0;
+    background-color:#fff;
 }
 .nav-tabs > li {
     border:none;
@@ -119,6 +120,7 @@ ul.mantoutab li{
     -webkit-transform:translateY(3px);
     transform:translateY(3px);
     margin-top:-2px;
+    background-color:#fff;
 }
 .nav-tabs > li > a:hover {
     border:none;
@@ -1083,14 +1085,14 @@ a{
     position:fixed;
     width:100%;
     bottom:0;
-    background-color:#f1f1f1;
+    background-color:#fff;
     padding-left:5px;
     min-height: 47px;
     max-height: 72px;
 }
 .publishbox .publish{
     padding-bottom:6px;
-    padding-top:6px;
+    padding-top:16px;
     margin-left:0px;
     margin-right:0px;
     /*margin-left:40px;*/

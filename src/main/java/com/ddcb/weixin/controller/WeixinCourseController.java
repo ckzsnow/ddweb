@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.ICourseDetailDao;
+import com.ddcb.dao.IQuestionDao;
 import com.ddcb.dao.IUserCollectionDao;
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserForwardDao;
@@ -31,6 +32,7 @@ import com.ddcb.dao.IUserStudyRecordDao;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveCourseModel;
+import com.ddcb.model.QuestionModel;
 import com.ddcb.model.UserCollectionModel;
 import com.ddcb.model.UserCourseModel;
 import com.ddcb.model.UserForwardModel;
@@ -56,6 +58,10 @@ public class WeixinCourseController {
 	
 	@Autowired
 	private IUserStudyRecordDao userStudyRecordDao;
+	
+	@Autowired
+	private IQuestionDao questionDao;
+	
 	
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
@@ -512,6 +518,24 @@ public class WeixinCourseController {
 	@ResponseBody
 	public List<CourseModel> getAllLiveClass(HttpSession httpSession, HttpServletRequest request) {
 		List<CourseModel> courseList = courseDao.getAllLiveClass();
+		return courseList;
+	}
+	
+	@RequestMapping("/getAllCourseQuestions")
+	@ResponseBody
+	public List<QuestionModel> getAllCourseQuestions(HttpSession httpSession, HttpServletRequest request) {
+		String courseId = request.getParameter("course_id");
+		String page = request.getParameter("page");
+		String count = request.getParameter("count");
+		int page_ = Integer.valueOf(page);
+		int count_ = Integer.valueOf(count);
+		List<QuestionModel> courseList = null;
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			courseList = questionDao.getAllQuestionByCourseId(courseId_, page_, count_);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
 		return courseList;
 	}
 }
