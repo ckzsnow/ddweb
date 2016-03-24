@@ -185,7 +185,7 @@ video::-webkit-media-controls-volume-slider {} */
 	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
-	$("#myTab li a").click(function() {
+	/* $("#myTab li a").click(function() {
 	    $(this).parent().addClass("active");
 	    $(this).parent().siblings().removeClass("active");
 	    $(this).parent().css("background-color", "#fff");
@@ -196,7 +196,7 @@ video::-webkit-media-controls-volume-slider {} */
 	    } else {
 	        $(".navbar-fixed-bottom").show();
 	    }
-	});
+	}); */
 	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 	var lineLink = window.location.href;
 	var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
@@ -616,7 +616,6 @@ function checkJsonIsEmpty(json) {
 }
 var page = 1;
 var countPerPage = 5;
-var currentClickLike = 0;
 $.ajax({
 	url: "/getAllCourseQuestions",
 	type: "POST",
@@ -628,7 +627,7 @@ $.ajax({
 			var count = 0;
 			var hasBind = false;
 			for (i in data) {
-				questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
+				questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div click_status='"+data[i].id+"' question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
 				count++;
 			}
 			if(count>=countPerPage) {
@@ -646,7 +645,7 @@ $.ajax({
 						currentClickLike = 1;
 					} else if(currentClickLike == 1){
 						alert("取消点赞成功！！");
-						currentClickLike = 0;
+						currentClickLike = 1;
 					}
 					$.ajax({
 						url: "/userClickLikeQuestion",
