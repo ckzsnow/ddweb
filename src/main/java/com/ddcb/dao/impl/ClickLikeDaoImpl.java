@@ -30,9 +30,9 @@ public class ClickLikeDaoImpl implements IClickLikeDao {
 	@Override
 	public boolean addClickLike(ClickLikeModel clm) {
 		try{
-			String sql= "insert into user_click_like(question_id, open_id, like, create_time) values (?,?,?,?)";
+			String sql= "insert into user_click_like(question_id, open_id, click_like, create_time) values (?,?,?,?)";
 			int num = jdbcTemplate.update(sql, clm.getQuestion_id(), clm.getOpen_id(),
-					clm.getLike(), clm.getCreate_time());
+					clm.getClick_like(), clm.getCreate_time());
 			return num > 0;
 		}catch(Exception e){
 			logger.error("exception : {}", e.toString());

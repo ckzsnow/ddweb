@@ -12,7 +12,7 @@ import com.ddcb.model.UserModel;
 public class ClickLikeMapper implements RowMapper<ClickLikeModel> {
 	public ClickLikeModel mapRow(ResultSet rs, int index) throws SQLException {
 		ClickLikeModel u = new ClickLikeModel(rs.getLong("id"), rs.getLong("question_id"), rs.getString("open_id"), 
-				rs.getInt("like"), rs.getTimestamp("create_time"));
+				rs.getInt("click_like"), rs.getTimestamp("create_time"));
 		return u;
 	}
 }

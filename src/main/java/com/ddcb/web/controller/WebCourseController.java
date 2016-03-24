@@ -40,11 +40,13 @@ import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.ICourseDetailDao;
 import com.ddcb.dao.ILiveClassShareDao;
 import com.ddcb.dao.ILiveClassStatisticsDao;
+import com.ddcb.dao.IQuestionDao;
 import com.ddcb.model.BannerModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveClassStatisticsModel;
 import com.ddcb.model.LiveCourseShareModel;
+import com.ddcb.model.QuestionModel;
 
 @Controller
 public class WebCourseController {
@@ -65,6 +67,9 @@ public class WebCourseController {
 	
 	@Autowired
 	private ILiveClassStatisticsDao liveClassStatisticsDao;
+	
+	@Autowired
+	private IQuestionDao questionDao;
 
 	@RequestMapping("/course/addCourse")
 	@ResponseBody
@@ -396,5 +401,20 @@ public class WebCourseController {
 			logger.error(ex.toString());
 		}
 		return new HashMap<>();
+	}
+	
+	@RequestMapping("/webSearchUserQuestion")
+	@ResponseBody
+	public List<QuestionModel> webSearchUserQuestion(HttpServletRequest request) {
+		List<QuestionModel> retList = null;
+		String courseId = request.getParameter("course_id");
+		long courseId_ = 0;
+		try {
+			courseId_ = Long.valueOf(courseId);
+			retList = questionDao.getAllQuestionByCourseId(courseId_, 1, 100000);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return retList;
 	}
 }

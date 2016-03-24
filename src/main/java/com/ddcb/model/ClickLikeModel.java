@@ -7,17 +7,17 @@ public class ClickLikeModel {
 	private Long id;
 	private Long question_id;
 	private String open_id;
-	private Integer like;
+	private Integer click_like;
 	private Timestamp create_time;
 	
 	public ClickLikeModel() {}
 
-	public ClickLikeModel(Long id, Long question_id, String open_id, Integer like, Timestamp create_time) {
+	public ClickLikeModel(Long id, Long question_id, String open_id, Integer click_like, Timestamp create_time) {
 		super();
 		this.id = id;
 		this.question_id = question_id;
 		this.open_id = open_id;
-		this.like = like;
+		this.click_like = click_like;
 		this.create_time = create_time;
 	}
 
@@ -37,12 +37,12 @@ public class ClickLikeModel {
 		this.open_id = open_id;
 	}
 
-	public Integer getLike() {
-		return like;
+	public Integer getClick_like() {
+		return click_like;
 	}
 
-	public void setLike(Integer like) {
-		this.like = like;
+	public void setClick_like(Integer click_like) {
+		this.click_like = click_like;
 	}
 
 	public Timestamp getCreate_time() {

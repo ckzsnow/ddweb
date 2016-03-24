@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ddcb.dao.IClickLikeDao;
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.dao.ICourseDetailDao;
 import com.ddcb.dao.IQuestionDao;
@@ -29,6 +30,7 @@ import com.ddcb.dao.IUserCollectionDao;
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserForwardDao;
 import com.ddcb.dao.IUserStudyRecordDao;
+import com.ddcb.model.ClickLikeModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveCourseModel;
@@ -65,6 +67,9 @@ public class WeixinCourseController {
 	
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
+	
+	@Autowired
+	private IClickLikeDao clickLikeDao;
 	
 	@RequestMapping("/course/getAllCourse")
 	@ResponseBody
@@ -537,5 +542,59 @@ public class WeixinCourseController {
 			logger.error(ex.toString());
 		}
 		return courseList;
+	}
+	
+	@RequestMapping("/userPublishQuestion")
+	@ResponseBody
+	public Map<String, String> userPublishQuestion(HttpSession httpSession, HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		String courseId = request.getParameter("course_id");
+		String userId = (String)httpSession.getAttribute("openid");
+		String question = request.getParameter("question");
+		boolean addSuccess = false;
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			QuestionModel qm = new QuestionModel();
+			qm.setClick_like(0);
+			qm.setCourse_id(courseId_);
+			qm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+			qm.setQuestion(question);
+			qm.setOpen_id(userId);
+			addSuccess = questionDao.addQuestion(qm);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		if(addSuccess) {
+			retMap.put("error_code", "0");
+			retMap.put("error_msg", "");
+		} else {
+			retMap.put("error_code", "1");
+			retMap.put("error_msg", "保存至数据库失败！");
+		}
+		return retMap;
+	}
+	
+	@RequestMapping("/userClickLikeQuestion")
+	@ResponseBody
+	public Map<String, String> userClickLikeQuestion(HttpSession httpSession, HttpServletRequest request) {
+		String questionId = request.getParameter("id");
+		String userId = (String)httpSession.getAttribute("openid");
+		String like = request.getParameter("like");
+		try {
+			long questionId_ = Long.valueOf(questionId);
+			int like_ = Integer.valueOf(like);
+			if(like_ == 1) {
+				questionDao.updateClickLike(questionId_);
+			}
+			ClickLikeModel clm = new ClickLikeModel();
+			clm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+			clm.setClick_like(like_);
+			clm.setOpen_id(userId);
+			clm.setQuestion_id(questionId_);
+			clickLikeDao.addClickLike(clm);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		return null;
 	}
 }

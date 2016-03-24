@@ -615,7 +615,8 @@ function checkJsonIsEmpty(json) {
 	return isEmpty;
 }
 var page = 1;
-var countPerPage = 2;
+var countPerPage = 5;
+var currentClickLike = 0;
 $.ajax({
 	url: "/getAllCourseQuestions",
 	type: "POST",
@@ -627,7 +628,7 @@ $.ajax({
 			var count = 0;
 			var hasBind = false;
 			for (i in data) {
-				questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div class='col-xs-5 text-right commentbuttom'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
+				questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
 				count++;
 			}
 			if(count>=countPerPage) {
@@ -637,6 +638,27 @@ $.ajax({
 				questionListHTML += "<h3 id='show' style='height:40px;margin-top:18px;'><p class='click'>该课程所有问题均已显示</p></h3>";
 			} 
 			questionList.html(questionListHTML);
+			$('.clicklikecall').each(function(){
+				$(this).click(function(){
+					var questionId = $(this).attr("question_id");
+					if(currentClickLike == 0) {
+						alert("点赞成功！");
+						currentClickLike = 1;
+					} else if(currentClickLike == 1){
+						alert("取消点赞成功！！");
+						currentClickLike = 0;
+					}
+					$.ajax({
+						url: "/userClickLikeQuestion",
+						type: "POST",
+						data: {id:questionId, like:currentClickLike},
+						success: function(data) {
+						},
+						error: function(status, error) {
+						}
+					});
+				})
+			});
 			if(hasBind) {
 				$("#show").click(function(){
 					page++;
@@ -650,10 +672,15 @@ $.ajax({
 								var questionListHTML = "";
 								var pullcount = 0;
 								for (i in data) {
-									questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-5 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div class='col-xs-7 text-right commentbuttom'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
+									questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall_"+page+"'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
 									pullcount++;
 								}
 								questionList.append(questionListHTML);
+								$('.clicklikecall_'+page).each(function(){
+									$(this).click(function(){
+										alert($(this).attr("question_id"));
+									})
+								});
 								if(pullcount >= countPerPage) {
 									
 								} else {
@@ -681,15 +708,24 @@ $.ajax({
 });
 
 $("#publishbtn").click(function(){
+	var question = $('#replycotent').val();
+	if(question == null || question=="") {
+		alert("提问内容不能为空！");
+		return;
+	}
 	$.ajax({
 		url: "/userPublishQuestion",
 		type: "POST",
-		data: {course_id:<%=id%>},
+		data: {course_id:<%=id%>, question:question},
 		success: function(data) {
-			
+			if(data != null && data.error_code == '0') {
+				alert("提问成功！");
+			} else {
+				alert(data.error_msg);
+			}
 		},
 		error: function(status, error) {
-			
+			alert("网络原因，提问失败，请稍后重试！");
 		}
 	});
 });
