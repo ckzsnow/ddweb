@@ -59,10 +59,7 @@ WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);
 if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()>=currentTime) {
 	userStatus = "2";
 }
-Date dt = new Date();
-SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-String dtStr = format.format(dt);
-LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByWeekDay(dtStr);
+LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByCourseId(id);
 %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -200,14 +197,14 @@ video::-webkit-media-controls-volume-slider {} */
 	        $(".navbar-fixed-bottom").show();
 	    }
 	});
-	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
+	var imgUrl = "http://www.diandou.me/files/imgs/<%=cm.getImage()%>";
 	var lineLink = window.location.href;
-	var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
-	var shareTitle = "点豆大讲堂";
+	var descContent = "<%=cm.getName()%>";
+	var shareTitle = "<%=cm.getName()%>";
 	<%if (lcsm != null) {%>
 		imgUrl = "http://www.diandou.me/files/imgs/<%=lcsm.getImage()%>";
 		descContent = "<%=lcsm.getTitle()%>";
-		shareTitle = "[直播|点豆大讲堂]<%=lcsm.getTitle()%>";
+		shareTitle = "<%=lcsm.getTitle()%>";
 		lineLink = "<%=lcsm.getLink()%>";
 	<%}%>
 	var globalPlayStatus = "stop";

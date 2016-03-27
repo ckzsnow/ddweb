@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
@@ -100,5 +101,17 @@ public class QuestionDaoImpl implements IQuestionDao {
 			logger.error(ex.toString());
 		}
 		return affectedRows != 0;
+	}
+	
+	@Override
+	public boolean deleteUserQuestion(Long id) {
+		String sql = "delete from user_question where id = ?";
+		try {
+			int affectedRows = jdbcTemplate.update(sql, id);
+			return affectedRows != 0;
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

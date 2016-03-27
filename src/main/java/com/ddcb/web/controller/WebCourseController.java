@@ -291,7 +291,7 @@ public class WebCourseController {
 		String weekDay = request.getParameter("weekDay");
 		try {
 			long courseId_ = Long.valueOf(courseId);
-			LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByWeekDay(weekDay);
+			LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByCourseId(courseId_);
 			if(lcsm == null) {
 				lcsm = new LiveCourseShareModel();
 				lcsm.setCourseId(courseId_);
@@ -459,5 +459,25 @@ public class WebCourseController {
 			logger.error(ex.toString());
 		}
 		return retList;
+	}
+	
+	@RequestMapping("/deleteUserQuestion")
+	@ResponseBody
+	public Map<String, String> deleteUserQuestion(HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		String questionId = request.getParameter("id");
+		long questionId_ = 0;
+		try {
+			questionId_ = Long.valueOf(questionId);
+			if(questionDao.deleteUserQuestion(questionId_)) {
+				retMap.put("error_code", "0");
+				retMap.put("error_msg", "");
+			}
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+			retMap.put("error_code", "1");
+			retMap.put("error_msg", "操作数据库失败！");
+		}
+		return retMap;
 	}
 }

@@ -13,5 +13,7 @@ public interface IQuestionDao {
 	public long addQuestion(QuestionModel qm);
 	
 	public boolean updateClickLike(Long id, int type);
+	
+	public boolean deleteUserQuestion(Long id);
 		
 }

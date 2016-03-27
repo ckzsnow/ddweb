@@ -66,6 +66,19 @@ public class LiveClassShareDaoImpl implements ILiveClassShareDao {
 	}
 	
 	@Override
+	public LiveCourseShareModel getLiveClassShareByCourseId(long id) {
+		String sql = "select *, 0 as course_id, 123 as course_name from live_class_share where id = ?";
+		LiveCourseShareModel liveCourseShareModel = null;
+		try {
+			liveCourseShareModel = jdbcTemplate.queryForObject(sql,
+					new Object[] { id }, new LiveClassShareMapper());
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return liveCourseShareModel;
+	}
+	
+	@Override
 	public boolean addLiveClassShare(LiveCourseShareModel lcsm) {
 		try{
 			String sql= "insert into live_class_share(id, image, link, title, week) values (?,?,?,?,?)";
