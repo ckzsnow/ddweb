@@ -6,13 +6,13 @@ public class LiveCourseShareModel {
 	private String image;
 	private String link;
 	private String title;
-	private Integer weekDay;
+	private String weekDay;
 	private Long courseId;
 	private String courseName;
 	
 	public LiveCourseShareModel() {}
 
-	public LiveCourseShareModel(Long id, String image, String link, String title, Integer weekDay, Long courseId,
+	public LiveCourseShareModel(Long id, String image, String link, String title, String weekDay, Long courseId,
 			String courseName) {
 		super();
 		this.id = id;
@@ -56,11 +56,11 @@ public class LiveCourseShareModel {
 		this.title = title;
 	}
 
-	public Integer getWeekDay() {
+	public String getWeekDay() {
 		return weekDay;
 	}
 
-	public void setWeekDay(Integer weekDay) {
+	public void setWeekDay(String weekDay) {
 		this.weekDay = weekDay;
 	}
 

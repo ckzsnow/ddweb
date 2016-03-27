@@ -1,0 +1,649 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="UTF-8">
+
+		<title>点豆成兵</title>
+
+		<!--IE Compatibility modes-->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<!--Mobile first-->
+
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="/css/webcss/bootstrap.min.css">
+
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="/css/webcss/font-awesome.min.css">
+
+		<!-- Metis core stylesheet -->
+		<link rel="stylesheet" href="/css/webcss/main.css">
+
+		<!-- metisMenu stylesheet -->
+		<link rel="stylesheet" href="/css/webcss/metisMenu.min.css">
+
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+		<!--[if lt IE 9]>
+      <script src="/js/webjs/html5shiv.js"></script>
+      <script src="/js/webjs/respond.min.js"></script>
+      <![endif]-->
+
+		<link rel="stylesheet" href="/css/webcss/theme.css">
+		<link rel="stylesheet" href="/css/webcss/jasny-bootstrap.min.css">
+		<link rel="stylesheet" href="/css/webcss/bootstrap-datetimepicker.min.css">
+		<link rel="stylesheet" href="/css/webcss/datepicker3.min.css">
+		<link rel="stylesheet" href="/css/webcss/jasny-bootstrap.min.css">
+		<script src="/js/webjs/less.min.js"></script>
+
+		<!--Modernizr-->
+		<script src="/js/webjs/modernizr.min.js"></script>
+		<script src="/js/webjs/base.js"></script>
+	</head>
+
+	<body>
+		<div class="bg-dark dk" id="wrap">
+			<div id="top" class="bg-dark dk" style="width:100%;height:60px;position:fixed;top:0;left:0;z-index: 999999;">
+				<header class="head">
+					<div class="search-bar" style="text-align: center;">
+						<img style="height:40px;width:103px;" src="/img/webimg/logo_big.png">
+					</div>
+					<div class="main-bar" style="">
+						<h3><i class="fa fa-align-justify"></i>&nbsp; 直播课程分享链接</h3>
+					</div>
+				</header>
+			</div>
+
+			<div id="left" class="bg-dark dker" style="width:250px;height:100%;position:fixed;top:60px;left:0;z-index: 999999;">
+				<div class="media user-media bg-dark dker">
+					<div class="user-media-toggleHover">
+						<span class="fa fa-user"></span>
+					</div>
+					<div class="user-wrapper bg-dark">
+						<a class="user-link" href="">
+							<img class="media-object img-thumbnail user-img" style="width:64px;height:64px;" alt="User Picture" src="/img/webimg/qrcode.jpg">
+						</a>
+						<div class="media-body">
+							<h5 class="media-heading">欢迎登录点豆成兵</h5>
+							<ul class="list-unstyled user-info">
+								<li>Administrator</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<!-- #menu -->
+				<ul id="menu" class="bg-blue dker">
+					<li class="nav-divider"></li>
+					<li class="">
+						<a href="admin_index.html">
+							<i class="fa fa-upload"></i><span class="link-title">&nbsp;添加课程</span>
+						</a>
+					</li>
+					<li class="">
+						<a href="class_list.html">
+							<i class="fa fa-book"></i><span class="link-title">&nbsp;课程列表</span>
+						</a>
+					</li>
+					<li class="">
+						<a href="open_class_banner.html">
+							<i class="fa fa-align-justify"></i><span class="link-title">&nbsp;公开课Banner</span>
+						</a>
+					</li>
+					<li class="">
+						<a href="live_class_share.html">
+							<i class="fa fa-share-alt"></i><span class="link-title">&nbsp;直播课程分享链接</span>
+						</a>
+					</li>
+					<li class="">
+						<a href="user_question_list.html">
+							<i class="fa fa-question-circle"></i><span class="link-title">&nbsp;直播课程提问</span>
+						</a>
+					</li>
+					<li class="nav-divider"></li>
+					<li class="">
+						<a href="user_forward_audit.html">
+							<i class="fa fa-legal"></i><span class="link-title">&nbsp;用户分享审核</span>
+						</a>
+					</li>
+					<li class="nav-divider"></li>
+					<li class="">
+						<a href="weixin_user_list.html">
+							<i class="fa fa-user"></i><span class="link-title">&nbsp;微信用户列表</span>
+						</a>
+					</li>
+					<li class="nav-divider"></li>
+					<li class="">
+						<a href="live_class_statistic.html">
+							<i class="fa fa-align-left"></i><span class="link-title">&nbsp;直播课程统计信息</span>
+						</a>
+					</li>
+					<li class="nav-divider"></li>
+					<li>
+						<a href="/web/webUserLogout">
+							<i class="fa fa-sign-out"></i>
+							<span class="link-title">退出</span>
+						</a>
+					</li>
+				</ul>
+				<!-- /#menu -->
+			</div>
+			<!-- /#left -->			
+			<div id="content" style="margin-left:250px;margin-top:60px;">
+				<div class="outer">
+					<div class="inner bg-light lter" style="overflow-y: auto;">
+						
+						<div class="row">
+			              <div class="col-lg-12">
+			                <div class="box">
+			                  <header>
+			                    <div class="icons">
+			                      <i class="fa fa-table"></i>
+			                    </div>
+			                    <h5>已上传直播课程分享链接列表</h5>
+			                  </header>
+			                  <div id="collapse4" class="body">
+			                    <table id="dataTable" style="white-space:normal;" class="table table-bordered table-condensed table-hover table-striped">
+			                      <thead>
+			                        <tr>
+			                          <th nowrap="nowrap">课程ID</th>
+			                          <th nowrap="nowrap">课程名称</th>
+			                          <th nowrap="nowrap">分享图片</th>
+			                          <th nowrap="nowrap">分享标题</th>
+			                          <th nowrap="nowrap">分享链接</th>
+			                          <th nowrap="nowrap">WeekDay</th>
+			                        </tr>
+			                      </thead>
+			                      <tbody id="data_detail">
+			                        
+			                      </tbody>
+			                    </table>
+			                  </div>
+			                </div>
+			              </div>
+			            </div><!-- /.row -->
+						
+						<div class="box dark">
+										<header>
+											<div class="icons">
+												<i class="fa fa-th-large"></i>
+											</div>
+											<h5>直播课程分享链接上传</h5>
+
+											<!-- .toolbar -->
+											<div class="toolbar">
+												<nav style="padding: 8px;">
+													<a href="javascript:;" class="btn btn-default btn-xs collapse-box">
+														<i class="fa fa-minus"></i>
+													</a>
+													<a href="javascript:;" class="btn btn-default btn-xs full-box">
+														<i class="fa fa-expand"></i>
+													</a>
+												</nav>
+											</div>
+											<!-- /.toolbar -->
+										</header>
+										<div id="div-2" class="body" >
+											<div class="row">
+											<form class="form-horizontal col-lg-12">
+												<div class="form-group col-lg-6">
+													<label class="control-label col-lg-2">周一分享</label>
+													<div class="col-lg-4">
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+															<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+															<div>
+																<span class="btn btn-default btn-file"><span class="fileinput-new">选择图片</span> <span class="fileinput-exists">重新选择</span>
+																<input type="file" name="banner1" id="banner1">
+																</span>
+																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_course_id_1" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享标题</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_title_1" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享链接</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_link_1" placeholder="" class="form-control">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group col-lg-6">
+													<label class="control-label col-lg-2">周二分享</label>
+													<div class="col-lg-4">
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+															<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+															<div>
+																<span class="btn btn-default btn-file"><span class="fileinput-new">选择图片</span> <span class="fileinput-exists">重新选择</span>
+																<input type="file" name="banner2" id="banner2">
+																</span>
+																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_course_id_2" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享标题</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_title_2" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享链接</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_link_2" placeholder="" class="form-control">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</form>
+											<form class="form-horizontal col-lg-12">
+												<div class="form-group col-lg-6">
+													<label class="control-label col-lg-2">周三分享</label>
+													<div class="col-lg-4">
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+															<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+															<div>
+																<span class="btn btn-default btn-file"><span class="fileinput-new">选择图片</span> <span class="fileinput-exists">重新选择</span>
+																<input type="file" name="banner3" id="banner3">
+																</span>
+																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_course_id_3" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享标题</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_title_3" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享链接</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_link_3" placeholder="" class="form-control">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group col-lg-6">
+													<label class="control-label col-lg-2">周四分享</label>
+													<div class="col-lg-4">
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+															<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+															<div>
+																<span class="btn btn-default btn-file"><span class="fileinput-new">选择图片</span> <span class="fileinput-exists">重新选择</span>
+																<input type="file" name="banner4" id="banner4">
+																</span>
+																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_course_id_4" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享标题</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_title_4" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享链接</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_link_4" placeholder="" class="form-control">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group col-lg-6">
+													<label class="control-label col-lg-2">周五分享</label>
+													<div class="col-lg-4">
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+															<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+															<div>
+																<span class="btn btn-default btn-file"><span class="fileinput-new">选择图片</span> <span class="fileinput-exists">重新选择</span>
+																<input type="file" name="banner5" id="banner5">
+																</span>
+																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_course_id_5" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享标题</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_title_5" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享链接</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_link_5" placeholder="" class="form-control">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group col-lg-6">
+													<label class="control-label col-lg-2">周六分享</label>
+													<div class="col-lg-4">
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+															<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+															<div>
+																<span class="btn btn-default btn-file"><span class="fileinput-new">选择图片</span> <span class="fileinput-exists">重新选择</span>
+																<input type="file" name="banner6" id="banner6">
+																</span>
+																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_course_id_6" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享标题</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_title_6" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享链接</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_link_6" placeholder="" class="form-control">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group col-lg-6">
+													<label class="control-label col-lg-2">周日分享</label>
+													<div class="col-lg-4">
+														<div class="fileinput fileinput-new" data-provides="fileinput">
+															<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+															<div>
+																<span class="btn btn-default btn-file"><span class="fileinput-new">选择图片</span> <span class="fileinput-exists">重新选择</span>
+																<input type="file" name="banner7" id="banner7">
+																</span>
+																<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">删除图片</a>
+															</div>
+															<div class="form-group">
+																<label for="teacher_name" class="control-label col-lg-4">课程ID</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_course_id_7" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享标题</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_title_7" placeholder="" class="form-control">
+																</div>
+																<label for="teacher_name" class="control-label col-lg-4">分享链接</label>
+																<div class="col-lg-8">
+																	<input type="text" id="share_link_7" placeholder="" class="form-control">
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</form>
+											</div>
+										</div>
+									</div>
+									<div id="progress_tip" class="progress progress-striped active" style="display:none;">
+											<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" data-original-title="" title="" aria-describedby="popover352425">
+												<span class="sr-only">40% Complete (success)</span>
+											</div>
+										</div>
+										<div>
+											<a id="submit_banner" href="javascript:void(0);" class="btn btn-success btn-lg btn-grad pull-right">提交分享设置</a>
+										</div>
+					</div>
+					<!-- /.inner -->
+				</div>
+				<!-- /.outer -->
+			</div>
+			<!-- /#content -->
+		</div>
+		<!-- /#wrap -->
+		<div id="helpModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">消息提示</h4>
+					</div>
+					<div class="modal-body" id="tips_info">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+		<footer class="Footer bg-dark dker" style="width:100%;height:48px;position:fixed;bottom:0;left:0;z-index: 999999;">
+			<p>沪ICP备15002235号-4 | COPYRIGHT &copy; 2014-2015, BANGRONGNETWORKTECH, ALL RIGHTS RESERVED</p>
+
+		</footer>
+		<!-- /#footer -->
+
+		<!--jQuery -->
+		<script src="/js/webjs/jquery.min.js"></script>
+
+		<!--Bootstrap -->
+		<script src="/js/webjs/bootstrap.min.js"></script>
+
+		<!-- MetisMenu -->
+		<script src="/js/webjs/metisMenu.min.js"></script>
+
+		<!-- Screenfull -->
+		<script src="/js/webjs/screenfull.min.js"></script>
+
+		<script src="/js/webjs/jasny-bootstrap.min.js"></script>
+		<script src="/js/webjs/moment.min.js"></script>
+		<script src="/js/webjs/bootstrap-datetimepicker.min.js"></script>
+		<script src="/js/webjs/bootstrap-datepicker.min.js"></script>
+		<!-- Metis core scripts -->
+		<script src="/js/webjs/core.min.js"></script>
+
+		<!-- Metis demo scripts -->
+		<script src="/js/webjs/app.js"></script>
+		<script>
+			$('.outer').height($('#left').height() - 48 - 61 - 19);
+			$('.inner').height($('#left').height() - 48 - 61 - 20 - 20);
+			$(window).resize(function() {
+				$('.outer').height($('#left').height() - 48 - 61 - 19);
+				$('.inner').height($('#left').height() - 48 - 61 - 20 - 20);
+			});
+			function checkInput() {
+				var banner1 = $('#banner1').val();
+				var banner2 = $('#banner2').val();
+				var banner3 = $('#banner3').val();
+				var banner4 = $('#banner4').val();
+				var banner5 = $('#banner5').val();
+				var banner6 = $('#banner6').val();
+				var banner7 = $('#banner7').val();
+				var share_course_id_1 = $('#share_course_id_1').val();
+				var share_course_id_2 = $('#share_course_id_2').val();
+				var share_course_id_3 = $('#share_course_id_3').val();
+				var share_course_id_4 = $('#share_course_id_4').val();
+				var share_course_id_5 = $('#share_course_id_5').val();
+				var share_course_id_6 = $('#share_course_id_6').val();
+				var share_course_id_7 = $('#share_course_id_7').val();
+				var share_title_1 = $('#share_title_1').val();
+				var share_title_2 = $('#share_title_2').val();
+				var share_title_3 = $('#share_title_3').val();
+				var share_title_4 = $('#share_title_4').val();
+				var share_title_5 = $('#share_title_5').val();
+				var share_title_6 = $('#share_title_6').val();
+				var share_title_7 = $('#share_title_7').val();
+				var share_link_1 = $('#share_link_1').val();
+				var share_link_2 = $('#share_link_2').val();
+				var share_link_3 = $('#share_link_3').val();
+				var share_link_4 = $('#share_link_4').val();
+				var share_link_5 = $('#share_link_5').val();
+				var share_link_6 = $('#share_link_6').val();
+				var share_link_7 = $('#share_link_7').val();
+				if(banner1 == null || banner1 == "" ||
+						banner2 == null || banner2 == "" ||
+						banner3 == null || banner3 == "" ||
+						banner4 == null || banner4 == "" ||
+						banner5 == null || banner5 == "" ||
+						banner6 == null || banner6 == "" ||
+						banner7 == null || banner7 == "" ||
+						share_course_id_1 == null || share_course_id_1 == "" ||
+						share_course_id_2 == null || share_course_id_2 == "" ||
+						share_course_id_3 == null || share_course_id_3 == "" ||
+						share_course_id_4 == null || share_course_id_4 == "" ||
+						share_course_id_5 == null || share_course_id_5 == "" ||
+						share_course_id_6 == null || share_course_id_6 == "" ||
+						share_course_id_7 == null || share_course_id_7 == "" ||
+						share_title_1 == null || share_title_1 == "" ||
+						share_title_2 == null || share_title_2 == "" ||
+						share_title_3 == null || share_title_3== "" ||
+						share_title_4 == null || share_title_4 == "" ||
+						share_title_5 == null || share_title_5 == "" ||
+						share_title_6 == null || share_title_6 == "" ||
+						share_title_7 == null || share_title_7 == "" ||
+						share_link_1 == null || share_link_1 == "" ||
+						share_link_2 == null || share_link_2 == "" ||
+						share_link_3 == null || share_link_3 == "" ||
+						share_link_4 == null || share_link_4 == "" ||
+						share_link_5 == null || share_link_5 == "" ||
+						share_link_6 == null || share_link_6 == "" ||
+						share_link_7 == null || share_link_7 == "") {
+					$('#tips_info').html("<p>所有信息均为必填信息，请检查！</p>");
+					$('#helpModal').modal("show");
+					return false;
+				} else {
+					return true;
+				}
+			}
+			$('#submit_banner').click(function() {
+				/* $('#helpModal').modal();
+				$('.progress.progress-striped').show(); */
+				if(true) {
+					var share_course_id_1 = $('#share_course_id_1').val();
+					var share_course_id_2 = $('#share_course_id_2').val();
+					var share_course_id_3 = $('#share_course_id_3').val();
+					var share_course_id_4 = $('#share_course_id_4').val();
+					var share_course_id_5 = $('#share_course_id_5').val();
+					var share_course_id_6 = $('#share_course_id_6').val();
+					var share_course_id_7 = $('#share_course_id_7').val();
+					var share_title_1 = $('#share_title_1').val();
+					var share_title_2 = $('#share_title_2').val();
+					var share_title_3 = $('#share_title_3').val();
+					var share_title_4 = $('#share_title_4').val();
+					var share_title_5 = $('#share_title_5').val();
+					var share_title_6 = $('#share_title_6').val();
+					var share_title_7 = $('#share_title_7').val();
+					var share_link_1 = $('#share_link_1').val();
+					var share_link_2 = $('#share_link_2').val();
+					var share_link_3 = $('#share_link_3').val();
+					var share_link_4 = $('#share_link_4').val();
+					var share_link_5 = $('#share_link_5').val();
+					var share_link_6 = $('#share_link_6').val();
+					var share_link_7 = $('#share_link_7').val();
+					$("#submit_banner").attr('disabled', "");
+					$("#progress_tip").show();
+					var xhr = new XMLHttpRequest();
+					var fd = new FormData();
+					fd.append("courseId1", share_course_id_1);
+					fd.append("courseId2", share_course_id_2);
+					fd.append("courseId3", share_course_id_3);
+					fd.append("courseId4", share_course_id_4);
+					fd.append("courseId5", share_course_id_5);
+					fd.append("courseId6", share_course_id_6);
+					fd.append("courseId7", share_course_id_7);
+					fd.append("title1", share_title_1);
+					fd.append("title2", share_title_2);
+					fd.append("title3", share_title_3);
+					fd.append("title4", share_title_4);
+					fd.append("title5", share_title_5);
+					fd.append("title6", share_title_6);
+					fd.append("title7", share_title_7);
+					fd.append("link1", share_link_1);
+					fd.append("link2", share_link_2);
+					fd.append("link3", share_link_3);
+					fd.append("link4", share_link_4);
+					fd.append("link5", share_link_5);
+					fd.append("link6", share_link_6);
+					fd.append("link7", share_link_7);
+					fd.append("files", document.getElementById("banner1").files[0]);
+					fd.append("files", document.getElementById("banner2").files[0]);
+					fd.append("files", document.getElementById("banner3").files[0]);
+					fd.append("files", document.getElementById("banner4").files[0]);
+					fd.append("files", document.getElementById("banner5").files[0]);
+					fd.append("files", document.getElementById("banner6").files[0]);
+					fd.append("files", document.getElementById("banner7").files[0]);
+					xhr.upload.addEventListener("progress", function(evt) {
+						if (evt.lengthComputable) {
+							var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+							var percent = percentComplete + "%";
+							$('.progress-bar.progress-bar-success').css("width", percent);
+						}
+					}, false);
+					xhr.addEventListener("load", function(evt) {
+						$("#submit_banner").removeAttr('disabled');
+						var res = JSON.parse(evt.target.responseText);
+						if (res.error_code == '0') {
+							$('#tips_info').html("<p>提交成功！</p>");
+							$('#helpModal').modal();
+							$(".btn.btn-default.fileinput-exists").each(function(){
+								this.click();
+							});
+							$('.progress-bar.progress-bar-success').css("width", "0%");
+						} else {
+							$('#tips_info').html("<p>提交失败，请联系系统管理员！</p>");
+							$('#helpModal').modal();
+							$('.progress-bar.progress-bar-success').css("width", "0%");
+						}
+						$("#progress_tip").hide();
+					}, false);
+					xhr.addEventListener("error", function(evt) {
+						$("#progress_tip").hide();
+						$("#submit_course").removeAttr('disabled');
+						$('#tips_info').html("<p>提交失败，请联系系统管理员！</p>");
+						$('#helpModal').modal();
+						$('.progress-bar.progress-bar-success').css("width", "0%");
+					}, false);
+					xhr.addEventListener("abort", null, false);
+					xhr.open("POST", "/course/addLiveCourseShare");
+					xhr.send(fd);
+				}
+			})
+			function checkJsonIsEmpty(json) {
+				var isEmpty = true;
+				if (json == null) return true;
+				for (var jsonKey in json) {
+					isEmpty = false;
+					break;
+				}
+				return isEmpty;
+			}
+			function createDataList(data) {
+				var detailNode = document.getElementById('data_detail');
+				for (var i in data) {
+					var thNode = document.createElement('tr');
+					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].courseId+"</td><td nowrap='nowrap'>"+data[i].courseName+"</td><td><img src='/files/bannerimgs/"+data[i].image+"'></td><td nowrap='nowrap'>"+data[i].title+"</td><td nowrap='nowrap'><a href='"+data[i].link+"'>"+data[i].link+"</a></td><td>"+data[i].weekDay+"</td>";
+					detailNode.appendChild(thNode);
+				}
+			}
+			$.ajax({
+				url: '/course/getLiveCourseShare',
+				type: "POST",
+				data: {},
+				success: function(data) {
+					if (!checkJsonIsEmpty(data)) {
+						createDataList(data);
+					}
+				},
+				error: function(status, error) {
+				}
+			});
+		</script>
+	</body>

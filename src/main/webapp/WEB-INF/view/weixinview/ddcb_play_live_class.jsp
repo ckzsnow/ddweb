@@ -16,6 +16,7 @@
 <%@ page import="com.ddcb.utils.WeixinTools"%>
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.util.*"%>
+<%@ page import="java.text.*"%>
 <%
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDao");
@@ -33,6 +34,8 @@ String parentCourseExist = parentCm != null && parentCm.getId() != 0? "exist" : 
 Map<String, String> result = new HashMap<>();
 result = WeixinTools.getSign("http://www.diandou.me/playDDCBLiveClass?course_id=" + id);
 String userId = (String)session.getAttribute("openid");
+String nickname = (String)session.getAttribute("nickname");
+String headimgurl = (String)session.getAttribute("headimgurl");
 String courseDate = cm.getCourse_date().toString();
 String courseDateReadable = cm.getCourse_date_readable();
 String courseLength = cm.getCourse_length();
@@ -56,11 +59,10 @@ WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);
 if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()>=currentTime) {
 	userStatus = "2";
 }
-Calendar calendar = Calendar.getInstance(); 
-calendar.setTime(new Date()); 
-int intWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-if(intWeek == 0) intWeek = 7;
-LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByWeekDay(intWeek);
+Date dt = new Date();
+SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+String dtStr = format.format(dt);
+LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByWeekDay(dtStr);
 %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -168,7 +170,7 @@ video::-webkit-media-controls-volume-slider {} */
 				<div class="tab-pane fade in" id="question">
 					<div class="container" id="questionList" style="margin-bottom:63px;">	
 					</div>
-					<div class="container publishbox">
+					<div class="container publishbox" id="question_publish">
                         <div class="row publish">
                             <div class="col-xs-10 cmtcnt">
                                 <textarea id="replycotent" placeholder="有问题？快提出来吧~" rows="1" cols="40" style="overflow:scroll;overflow-y:hidden;;overflow-x:hidden"></textarea>
@@ -185,7 +187,8 @@ video::-webkit-media-controls-volume-slider {} */
 	<script src="/js/weixinjs/jquery.countdown.js"></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script>
-	/* $("#myTab li a").click(function() {
+	var userStatus = "<%=userStatus%>";
+	$("#myTab li a").click(function() {
 	    $(this).parent().addClass("active");
 	    $(this).parent().siblings().removeClass("active");
 	    $(this).parent().css("background-color", "#fff");
@@ -196,15 +199,15 @@ video::-webkit-media-controls-volume-slider {} */
 	    } else {
 	        $(".navbar-fixed-bottom").show();
 	    }
-	}); */
+	});
 	var imgUrl = "http://www.diandou.me/img/weixinimg/share_img.jpg";
 	var lineLink = window.location.href;
 	var descContent = "点豆大讲堂---为进取心而生，专注职场“传、帮、带”";
 	var shareTitle = "点豆大讲堂";
 	<%if (lcsm != null) {%>
-		imgUrl = "http://www.diandou.me/files/bannerimgs/<%=lcsm.getImage()%>";
-		descContent = "<%=lcsm.getCourseName()%>";
-		shareTitle = "<%=lcsm.getTitle()%>";
+		imgUrl = "http://www.diandou.me/files/imgs/<%=lcsm.getImage()%>";
+		descContent = "<%=lcsm.getTitle()%>";
+		shareTitle = "[直播|点豆大讲堂]<%=lcsm.getTitle()%>";
 		lineLink = "<%=lcsm.getLink()%>";
 	<%}%>
 	var globalPlayStatus = "stop";
@@ -392,6 +395,7 @@ video::-webkit-media-controls-volume-slider {} */
 			});
 		} else {
 			if(courseDate + courseLength < currentDate) {
+				//$("#question_publish").hide();
 				document.getElementById("video").pause();
 				<%if(("exist").equals(parentCourseExist)) {%>
 				document.getElementById("playClassTimeTips").innerHTML = "<p style='color:white;padding-top:50px;'>直播讲座已经结束，感谢您的关注！</p><p id='redirect_open_class' style='color:white;'>大讲堂已收录该讲座</p>";
@@ -489,6 +493,7 @@ video::-webkit-media-controls-volume-slider {} */
 		}
 	});
 	<%} else {%>
+	//$("#question_publish").hide();
 		var year = <%=courseDate.substring(0, 4)%>;
 		var month = <%=courseDate.substring(5, 7)%>;
 		var day = <%=courseDate.substring(8, 10)%>;
@@ -627,7 +632,7 @@ $.ajax({
 			var count = 0;
 			var hasBind = false;
 			for (i in data) {
-				questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div click_status='"+data[i].id+"' question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
+				questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div current_click_like='"+data[i].current_click_like+"' question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
 				count++;
 			}
 			if(count>=countPerPage) {
@@ -640,17 +645,24 @@ $.ajax({
 			$('.clicklikecall').each(function(){
 				$(this).click(function(){
 					var questionId = $(this).attr("question_id");
-					if(currentClickLike == 0) {
+					var current_click_like = $(this).attr("current_click_like");
+					if(current_click_like == "0") {
 						alert("点赞成功！");
-						currentClickLike = 1;
-					} else if(currentClickLike == 1){
+						$(this).attr("current_click_like", "1");
+						var ct = parseInt($(this).find('.count')[0].innerHTML);
+						$($(this).find('.count')[0]).html(ct + 1);
+						current_click_like = "1";
+					} else if(current_click_like == "1"){
 						alert("取消点赞成功！！");
-						currentClickLike = 1;
+						$(this).attr("current_click_like", "0");
+						var ct = parseInt($(this).find('.count')[0].innerHTML);
+						$($(this).find('.count')[0]).html(ct - 1);
+						current_click_like = "0";
 					}
 					$.ajax({
 						url: "/userClickLikeQuestion",
 						type: "POST",
-						data: {id:questionId, like:currentClickLike},
+						data: {id:questionId, like:current_click_like},
 						success: function(data) {
 						},
 						error: function(status, error) {
@@ -671,13 +683,36 @@ $.ajax({
 								var questionListHTML = "";
 								var pullcount = 0;
 								for (i in data) {
-									questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall_"+page+"'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
+									questionListHTML += "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='"+data[i].headimgurl+"'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'>"+data[i].user_nickname+"</div></div><div class='row'><div class='col-xs-12'><p>"+data[i].question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+data[i].create_time_readable.substring(0,16)+"</div><div current_click_like='"+data[i].current_click_like+"' question_id='"+data[i].id+"' class='col-xs-5 text-right commentbuttom clicklikecall_"+page+"'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>"+data[i].click_like+"</span></span></div></div></div></div>";
 									pullcount++;
 								}
 								questionList.append(questionListHTML);
 								$('.clicklikecall_'+page).each(function(){
 									$(this).click(function(){
-										alert($(this).attr("question_id"));
+										var questionId = $(this).attr("question_id");
+										var current_click_like = $(this).attr("current_click_like");
+										if(current_click_like == "0") {
+											alert("点赞成功！");
+											$(this).attr("current_click_like", "1");
+											var ct = parseInt($(this).find('.count')[0].innerHTML);
+											$($(this).find('.count')[0]).html(ct + 1);
+											current_click_like = "1";
+										} else if(current_click_like == "1"){
+											alert("取消点赞成功！！");
+											$(this).attr("current_click_like", "0");
+											var ct = parseInt($(this).find('.count')[0].innerHTML);
+											$($(this).find('.count')[0]).html(ct - 1);
+											current_click_like = "0";
+										}
+										$.ajax({
+											url: "/userClickLikeQuestion",
+											type: "POST",
+											data: {id:questionId, like:current_click_like},
+											success: function(data) {
+											},
+											error: function(status, error) {
+											}
+										});
 									})
 								});
 								if(pullcount >= countPerPage) {
@@ -705,11 +740,33 @@ $.ajax({
 	error: function(status, error) {
 	}
 });
-
+Date.prototype.Format = function(fmt)   
+{ //author: meizz   
+  var o = {   
+    "M+" : this.getMonth()+1,                 //月份   
+    "d+" : this.getDate(),                    //日   
+    "h+" : this.getHours(),                   //小时   
+    "m+" : this.getMinutes(),                 //分   
+    "s+" : this.getSeconds(),                 //秒   
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度   
+    "S"  : this.getMilliseconds()             //毫秒   
+  };   
+  if(/(y+)/.test(fmt))   
+    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
+  for(var k in o)   
+    if(new RegExp("("+ k +")").test(fmt))   
+  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+  return fmt;   
+}  
+var publish_index = 1;
 $("#publishbtn").click(function(){
 	var question = $('#replycotent').val();
 	if(question == null || question=="") {
 		alert("提问内容不能为空！");
+		return;
+	}
+	if(userStatus == "1" || userStatus == "4") {
+		alert("您还没有报名，请您先报名！");
 		return;
 	}
 	$.ajax({
@@ -719,6 +776,38 @@ $("#publishbtn").click(function(){
 		success: function(data) {
 			if(data != null && data.error_code == '0') {
 				alert("提问成功！");
+				publish_index++;
+				var htmlStr = "<div class='row commentlist'><div class='col-xs-3 commenter basecommenter'><img src='<%=headimgurl%>'></div><div class='cmtdetials'><div class='row'><div class='col-xs-12 text-left name'><%=nickname%></div></div><div class='row'><div class='col-xs-12'><p>"+question+"</p></div></div><div class='row'><div class='col-xs-7 text-left time'>"+new Date().pattern("yyyy-MM-dd HH:mm")+"</div><div current_click_like='0' question_id='"+data.error_msg+"' class='col-xs-5 text-right commentbuttom clicklikecall_publish_"+publish_index+"'><span class='agree'><span class='agreeimg'><img style='width: 16px;height: 16px;border-radius: 0;margin-left: 0;vertical-align: top;' src='/img/weixinimg/priced.png'></span><span class='count'>0</span></span></div></div></div></div>";
+				$('#questionList').prepend(htmlStr);
+				$("#show").html("<p class='click'>该课程所有问题均已显示</p>");
+				$('.clicklikecall_publish_' + publish_index).each(function(){
+					$(this).click(function(){
+						var questionId = $(this).attr("question_id");
+						var current_click_like = $(this).attr("current_click_like");
+						if(current_click_like == "0") {
+							alert("点赞成功！");
+							$(this).attr("current_click_like", "1");
+							var ct = parseInt($(this).find('.count')[0].innerHTML);
+							$($(this).find('.count')[0]).html(ct + 1);
+							current_click_like = "1";
+						} else if(current_click_like == "1"){
+							alert("取消点赞成功！！");
+							$(this).attr("current_click_like", "0");
+							var ct = parseInt($(this).find('.count')[0].innerHTML);
+							$($(this).find('.count')[0]).html(ct - 1);
+							current_click_like = "0";
+						}
+						$.ajax({
+							url: "/userClickLikeQuestion",
+							type: "POST",
+							data: {id:questionId, like:current_click_like},
+							success: function(data) {
+							},
+							error: function(status, error) {
+							}
+						});
+					})
+				});
 			} else {
 				alert(data.error_msg);
 			}

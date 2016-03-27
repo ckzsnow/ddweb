@@ -529,6 +529,7 @@ public class WeixinCourseController {
 	@RequestMapping("/getAllCourseQuestions")
 	@ResponseBody
 	public List<QuestionModel> getAllCourseQuestions(HttpSession httpSession, HttpServletRequest request) {
+		String userId = (String)httpSession.getAttribute("openid");
 		String courseId = request.getParameter("course_id");
 		String page = request.getParameter("page");
 		String count = request.getParameter("count");
@@ -537,7 +538,7 @@ public class WeixinCourseController {
 		List<QuestionModel> courseList = null;
 		try {
 			long courseId_ = Long.valueOf(courseId);
-			courseList = questionDao.getAllQuestionByCourseId(courseId_, page_, count_);
+			courseList = questionDao.getAllQuestionByCourseId(userId, courseId_, page_, count_);
 		} catch(Exception ex) {
 			logger.error(ex.toString());
 		}
@@ -551,6 +552,7 @@ public class WeixinCourseController {
 		String courseId = request.getParameter("course_id");
 		String userId = (String)httpSession.getAttribute("openid");
 		String question = request.getParameter("question");
+		long pId = -1;
 		boolean addSuccess = false;
 		try {
 			long courseId_ = Long.valueOf(courseId);
@@ -560,13 +562,14 @@ public class WeixinCourseController {
 			qm.setCreate_time(new Timestamp(System.currentTimeMillis()));
 			qm.setQuestion(question);
 			qm.setOpen_id(userId);
-			addSuccess = questionDao.addQuestion(qm);
+			pId = questionDao.addQuestion(qm);
+			addSuccess = pId != -1;
 		} catch(Exception ex) {
 			logger.error(ex.toString());
 		}
 		if(addSuccess) {
 			retMap.put("error_code", "0");
-			retMap.put("error_msg", "");
+			retMap.put("error_msg", String.valueOf(pId));
 		} else {
 			retMap.put("error_code", "1");
 			retMap.put("error_msg", "保存至数据库失败！");
@@ -584,14 +587,21 @@ public class WeixinCourseController {
 			long questionId_ = Long.valueOf(questionId);
 			int like_ = Integer.valueOf(like);
 			if(like_ == 1) {
-				questionDao.updateClickLike(questionId_);
+				questionDao.updateClickLike(questionId_, 1);
+			} else if(like_ == 0) {
+				questionDao.updateClickLike(questionId_, 0);
 			}
-			ClickLikeModel clm = new ClickLikeModel();
-			clm.setCreate_time(new Timestamp(System.currentTimeMillis()));
-			clm.setClick_like(like_);
-			clm.setOpen_id(userId);
-			clm.setQuestion_id(questionId_);
-			clickLikeDao.addClickLike(clm);
+			ClickLikeModel clm = clickLikeDao.getClickLike(questionId_, userId);
+			if(clm == null) {
+				clm = new ClickLikeModel();
+				clm.setCreate_time(new Timestamp(System.currentTimeMillis()));
+				clm.setClick_like(like_);
+				clm.setOpen_id(userId);
+				clm.setQuestion_id(questionId_);
+				clickLikeDao.addClickLike(clm);
+			} else {
+				clickLikeDao.updateClickLike(questionId_, userId, like_);
+			}
 		} catch(Exception ex) {
 			logger.error(ex.toString());
 		}

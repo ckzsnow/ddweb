@@ -6,10 +6,12 @@ import com.ddcb.model.QuestionModel;
 
 public interface IQuestionDao {
 
+	public List<QuestionModel> getAllQuestionByCourseId(String openId, Long courseId, int page, int countPerPage);
+	
 	public List<QuestionModel> getAllQuestionByCourseId(Long courseId, int page, int countPerPage);
 	
-	public boolean addQuestion(QuestionModel qm);
+	public long addQuestion(QuestionModel qm);
 	
-	public boolean updateClickLike(Long id);
+	public boolean updateClickLike(Long id, int type);
 		
 }

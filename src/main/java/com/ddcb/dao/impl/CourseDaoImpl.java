@@ -22,10 +22,12 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.mapper.CourseMapper;
+import com.ddcb.mapper.LiveClassShareMapper;
 import com.ddcb.mapper.LiveCourseMapper;
 import com.ddcb.mapper.SelectCourseMapper;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveCourseModel;
+import com.ddcb.model.LiveCourseShareModel;
 import com.ddcb.model.SelectCourseModel;
 
 @Repository("courseDao")
@@ -328,5 +330,18 @@ public class CourseDaoImpl implements ICourseDao {
 		} catch(Exception ex) {
 			logger.error(ex.toString());
 		}
+	}
+
+	@Override
+	public List<LiveCourseShareModel> getLiveClassShare() {
+		List<LiveCourseShareModel> list = null;
+		try {
+			String sql = "select c.id, c.image, a.link, c.name as title, DATE_FORMAT(c.course_date,'%Y-%m-%d') as week, c.id as course_id, c.name as course_name from course as c left join live_class_share as a on a.id=c.id where NOW() < (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date asc";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveCourseShareModel>(
+							new LiveClassShareMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
 	}
 }

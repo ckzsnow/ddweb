@@ -12,12 +12,13 @@ public class QuestionModel {
 	private String headimgurl;
 	private String user_nickname;
 	private String create_time_readable;
+	private Integer current_click_like;
 	private Timestamp create_time;
 	
 	public QuestionModel() {}
 
 	public QuestionModel(Long id, String open_id, String question, Integer click_like, Long course_id,
-			String user_nickname, String headimgurl, String create_time_readable, Timestamp create_time) {
+			String user_nickname, String headimgurl, String create_time_readable, Integer current_click_like, Timestamp create_time) {
 		super();
 		this.id = id;
 		this.open_id = open_id;
@@ -28,6 +29,7 @@ public class QuestionModel {
 		this.headimgurl = headimgurl;
 		this.create_time_readable = create_time_readable;
 		this.create_time = create_time;
+		this.current_click_like = current_click_like;
 	}
 
 	public Long getId() {
@@ -100,6 +102,14 @@ public class QuestionModel {
 
 	public void setCreate_time_readable(String create_time_readable) {
 		this.create_time_readable = create_time_readable;
+	}
+
+	public Integer getCurrent_click_like() {
+		return current_click_like;
+	}
+
+	public void setCurrent_click_like(Integer current_click_like) {
+		this.current_click_like = current_click_like;
 	}
 	
 }

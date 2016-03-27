@@ -7,8 +7,10 @@ public interface ILiveClassShareDao {
 
 	public List<LiveCourseShareModel> getAllLiveClassShare();
 	
-	public LiveCourseShareModel getLiveClassShareByWeekDay(int weekDay);
+	public LiveCourseShareModel getLiveClassShareByWeekDay(String weekDay);
 	
-	public boolean updateLiveClassShare(LiveCourseShareModel lcsm);
+	public boolean updateLiveClassShare(String link, String week);
+	
+	public boolean addLiveClassShare(LiveCourseShareModel lcsm);
 		
 }

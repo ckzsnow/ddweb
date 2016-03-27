@@ -12,7 +12,7 @@ public class QuestionMapper implements RowMapper<QuestionModel> {
 	public QuestionModel mapRow(ResultSet rs, int index) throws SQLException {
 		QuestionModel u = new QuestionModel(rs.getLong("id"), rs.getString("open_id"), rs.getString("question"),
 				rs.getInt("click_like"), rs.getLong("course_id"), rs.getString("user_nickname"), 
-				rs.getString("headimgurl"), rs.getString("create_time_readable"), rs.getTimestamp("create_time"));
+				rs.getString("headimgurl"), rs.getString("create_time_readable"), rs.getInt("current_click_like"), rs.getTimestamp("create_time"));
 		return u;
 	}
 }

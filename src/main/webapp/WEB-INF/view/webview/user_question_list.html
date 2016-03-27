@@ -244,6 +244,7 @@
 					data: {course_id:courseId},
 					success: function(data) {
 						if (!checkJsonIsEmpty(data)) {
+							document.getElementById('data_detail').innerHTML="";
 							createDataList(data);
 						} else {
 							alert("搜索结果为空，当前课程暂时没有人提问！");

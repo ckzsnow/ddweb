@@ -31,7 +31,7 @@ public class LiveClassShareDaoImpl implements ILiveClassShareDao {
 	public List<LiveCourseShareModel> getAllLiveClassShare() {
 		List<LiveCourseShareModel> list = null;
 		try {
-			String sql = "select a.*, c.id as course_id, c.name from live_class_share as a left join course as c on c.id=a.id";
+			String sql = "select a.*, c.id as course_id, c.name as course_name from live_class_share as a left join course as c on c.id=a.id";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveCourseShareModel>(
 							new LiveClassShareMapper()));
 		} catch (Exception e) {
@@ -41,12 +41,11 @@ public class LiveClassShareDaoImpl implements ILiveClassShareDao {
 	}
 
 	@Override
-	public boolean updateLiveClassShare(LiveCourseShareModel lcsm) {
-		String sql = "update live_class_share set id=?, image=?, link=?, title=? where week=?";
+	public boolean updateLiveClassShare(String link, String week) {
+		String sql = "update live_class_share set link=? where week=?";
 		int affectedRows = 0;
 		try {
-			affectedRows = jdbcTemplate.update(sql, lcsm.getId(), lcsm.getImage(),
-					lcsm.getLink(), lcsm.getTitle(), lcsm.getWeekDay());
+			affectedRows = jdbcTemplate.update(sql, link, week);
 		} catch(Exception ex) {
 			logger.error(ex.toString());
 		}
@@ -54,8 +53,8 @@ public class LiveClassShareDaoImpl implements ILiveClassShareDao {
 	}
 
 	@Override
-	public LiveCourseShareModel getLiveClassShareByWeekDay(int weekDay) {
-		String sql = "select *, 0 as course_id, 123 as name from live_class_share where week = ?";
+	public LiveCourseShareModel getLiveClassShareByWeekDay(String weekDay) {
+		String sql = "select *, 0 as course_id, 123 as course_name from live_class_share where week = ?";
 		LiveCourseShareModel liveCourseShareModel = null;
 		try {
 			liveCourseShareModel = jdbcTemplate.queryForObject(sql,
@@ -64,6 +63,18 @@ public class LiveClassShareDaoImpl implements ILiveClassShareDao {
 			logger.debug("exception : {}", e.toString());
 		}
 		return liveCourseShareModel;
+	}
+	
+	@Override
+	public boolean addLiveClassShare(LiveCourseShareModel lcsm) {
+		try{
+			String sql= "insert into live_class_share(id, image, link, title, week) values (?,?,?,?,?)";
+			int num = jdbcTemplate.update(sql, lcsm.getId(), lcsm.getImage(), lcsm.getLink(), lcsm.getTitle(), lcsm.getWeekDay());
+			return num > 0;
+		}catch(Exception e){
+			logger.error("exception : {}", e.toString());
+		}
+		return false;
 	}
 
 }

@@ -45,6 +45,7 @@ import com.ddcb.model.BannerModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
 import com.ddcb.model.LiveClassStatisticsModel;
+import com.ddcb.model.LiveCourseModel;
 import com.ddcb.model.LiveCourseShareModel;
 import com.ddcb.model.QuestionModel;
 
@@ -239,7 +240,7 @@ public class WebCourseController {
 		return retMap;
 	}
 	
-	@RequestMapping(value="/course/addLiveCourseShare", headers = "content-type=multipart/*", method = RequestMethod.POST)
+	/*@RequestMapping(value="/course/addLiveCourseShare", headers = "content-type=multipart/*", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> addLiveCourseShare(@RequestParam MultipartFile[] files, HttpServletRequest request) {
 		Map<String, String> retMap = new HashMap<>();
@@ -248,32 +249,74 @@ public class WebCourseController {
 		realPath = realPath.substring(0, realPath.indexOf("/", 1));
 		logger.debug("realPath : {}", realPath);
 		String imgPath = realPath + "/files/bannerimgs";
+		String imgPath = "/files/bannerimgs";
 		int index = 1;
-		if (files.length != 0) {
-			for (MultipartFile file : files) {
+		int fileIndex = 0;
+		if(files.length != 0) {
+			for (int i=0; i<=6; i++) {
+				index++;
 				String imgFileName = "share" + String.valueOf(index) + ".jpg";
 				String courseId = request.getParameter("courseId" + index);
+				if(courseId == null || courseId.isEmpty()) continue;
 				String title = request.getParameter("title" + index);
 				String link = request.getParameter("link" + index);
 				try {
 					long courseId_ = Long.valueOf(courseId);
-					FileUtils.copyInputStreamToFile(file.getInputStream(), new File(imgPath, imgFileName));
+					FileUtils.copyInputStreamToFile(files[fileIndex++].getInputStream(), new File(imgPath, imgFileName));
 					LiveCourseShareModel lcsm = new LiveCourseShareModel();
 					lcsm.setId(courseId_);
 					lcsm.setImage(imgFileName);
 					lcsm.setLink(link);
 					lcsm.setTitle(title);
-					lcsm.setWeekDay(index);
+					//lcsm.setWeekDay(index);
 					liveClassShareDao.updateLiveClassShare(lcsm);
 				} catch (IOException e) {
 					logger.debug(e.toString());
 				}
-				index++;
 			}
 		}
 		retMap.put("error_code", "0");
 		retMap.put("error_message", "");
 		return retMap;
+	}*/
+	
+	@RequestMapping("/course/updateLiveCourseShare")
+	@ResponseBody
+	public Map<String, String> updateLiveCourseShare(HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		String courseId = request.getParameter("courseId");
+		String shareImage = request.getParameter("shareImage");
+		String shareTitle = request.getParameter("shareTitle");
+		String shareLink = request.getParameter("shareLink");
+		String weekDay = request.getParameter("weekDay");
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByWeekDay(weekDay);
+			if(lcsm == null) {
+				lcsm = new LiveCourseShareModel();
+				lcsm.setCourseId(courseId_);
+				lcsm.setCourseName(shareTitle);
+				lcsm.setId(courseId_);
+				lcsm.setImage(shareImage);
+				lcsm.setLink(shareLink);
+				lcsm.setTitle(shareTitle);
+				lcsm.setWeekDay(weekDay);
+				liveClassShareDao.addLiveClassShare(lcsm);
+			} else {
+				liveClassShareDao.updateLiveClassShare(shareLink, weekDay);
+			}
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+		retMap.put("error_code", "0");
+		retMap.put("error_message", "");
+		return retMap;
+	}
+	
+	@RequestMapping("/course/getAllUnfinishedLiveClass")
+	@ResponseBody
+	public List<LiveCourseShareModel> getAllUnfinishedLiveClass() {
+		return courseDao.getLiveClassShare();
 	}
 
 	@RequestMapping("/course/getCourseBanner")
