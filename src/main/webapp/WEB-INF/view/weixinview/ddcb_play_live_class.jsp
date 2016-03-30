@@ -7,11 +7,13 @@
 <%@ page import="com.ddcb.dao.IWeixinUserDao"%>
 <%@ page import="com.ddcb.dao.IUserForwardDao"%>
 <%@ page import="com.ddcb.dao.ILiveClassShareDao"%>
+<%@ page import="com.ddcb.dao.IUserLiveCoursePayDao"%>
 <%@ page import="com.ddcb.model.LiveCourseShareModel"%>
 <%@ page import="com.ddcb.model.CourseModel"%>
 <%@ page import="com.ddcb.model.UserCourseModel"%>
 <%@ page import="com.ddcb.model.CourseDetailModel"%>
 <%@ page import="com.ddcb.model.UserForwardModel"%>
+<%@ page import="com.ddcb.model.UserLiveCoursePayModel"%>
 <%@ page import="com.ddcb.model.WeixinUserModel"%>
 <%@ page import="com.ddcb.utils.WeixinTools"%>
 <%@ page import="java.sql.Timestamp"%>
@@ -20,6 +22,7 @@
 <%
 WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
 ICourseDetailDao courseDetailDao = (ICourseDetailDao)wac.getBean("courseDetailDao");
+IUserLiveCoursePayDao userLiveCoursePayDao = (IUserLiveCoursePayDao)wac.getBean("userLiveCoursePayDao");
 ICourseDao courseDao = (ICourseDao)wac.getBean("courseDao");
 IUserCourseDao userCourseDao = (IUserCourseDao)wac.getBean("userCourseDao");
 IUserForwardDao userForwardDao = (IUserForwardDao)wac.getBean("userForwardDao");
@@ -57,6 +60,10 @@ long currentTime = System.currentTimeMillis();
 IWeixinUserDao weixinUserDao = (IWeixinUserDao)wac.getBean("weixinUserDao");
 WeixinUserModel wum = weixinUserDao.getWeixinUserByUserId(userId);
 if(wum != null && wum.getPay_status() == 1 && wum.getExpiration_time().getTime()>=currentTime) {
+	userStatus = "2";
+}
+UserLiveCoursePayModel ulcpm = userLiveCoursePayDao.getUserCourseByUserIdAndCourseId(userId, id);
+if(ulcpm != null && ulcpm.getPay_status() == 1) {
 	userStatus = "2";
 }
 LiveCourseShareModel lcsm = liveClassShareDao.getLiveClassShareByCourseId(id);

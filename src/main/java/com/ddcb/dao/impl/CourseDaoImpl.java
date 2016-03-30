@@ -22,10 +22,12 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import com.ddcb.dao.ICourseDao;
 import com.ddcb.mapper.CourseMapper;
+import com.ddcb.mapper.LiveClassApplyMapper;
 import com.ddcb.mapper.LiveClassShareMapper;
 import com.ddcb.mapper.LiveCourseMapper;
 import com.ddcb.mapper.SelectCourseMapper;
 import com.ddcb.model.CourseModel;
+import com.ddcb.model.LiveClassApplyModel;
 import com.ddcb.model.LiveCourseModel;
 import com.ddcb.model.LiveCourseShareModel;
 import com.ddcb.model.SelectCourseModel;
@@ -333,12 +335,48 @@ public class CourseDaoImpl implements ICourseDao {
 	}
 
 	@Override
+	public void updateCourseStudyPeopleCountForCount(Long courseId, Integer study_people_count) {
+		String sql = "update course set study_people_count=? where id=?";
+		try {
+			jdbcTemplate.update(sql, study_people_count, courseId);
+		} catch(Exception ex) {
+			logger.error(ex.toString());
+		}
+	}
+	
+	@Override
 	public List<LiveCourseShareModel> getLiveClassShare() {
 		List<LiveCourseShareModel> list = null;
 		try {
 			String sql = "select c.id, c.image, a.link, c.name as title, DATE_FORMAT(c.course_date,'%Y-%m-%d') as week, c.id as course_id, c.name as course_name from course as c left join live_class_share as a on a.id=c.id where NOW() < (select date_add(c.course_date, interval c.course_length minute)) and c.course_type=1 order by c.course_date asc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveCourseShareModel>(
 							new LiveClassShareMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<LiveClassApplyModel> getAllLiveClassApply() {
+		List<LiveClassApplyModel> list = null;
+		try {
+			String sql = "select id, name, count(id) as total from ((select a.id, a.name from course as a, user_forward as b where a.id=b.course_id) union all (select t1.id, t1.name from course as t1, user_live_course_pay as t2 where t1.id=t2.course_id)) as temp group by id";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveClassApplyModel>(
+							new LiveClassApplyMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<LiveClassApplyModel> getAllOpenClassStudyCount() {
+		List<LiveClassApplyModel> list = null;
+		try {
+			String sql = "select id, name, study_people_count as total from course where course_type=0";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveClassApplyModel>(
+							new LiveClassApplyMapper()));
 		} catch (Exception e) {
 			logger.debug("exception : {}", e.toString());
 		}

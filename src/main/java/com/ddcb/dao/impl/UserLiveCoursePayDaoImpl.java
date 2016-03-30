@@ -87,4 +87,10 @@ public class UserLiveCoursePayDaoImpl implements IUserLiveCoursePayDao {
 		}
 		return affectedRows != 0;
 	}
+
+	@Override
+	public List<UserLiveCoursePayModel> getAllUserCourse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

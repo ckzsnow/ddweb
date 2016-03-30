@@ -1,10 +1,14 @@
 package com.ddcb.dao;
 
+import java.util.List;
+
 import com.ddcb.model.UserLiveCoursePayModel;
 
 public interface IUserLiveCoursePayDao {
 	
 	public UserLiveCoursePayModel getUserCourseByUserIdAndCourseId(String userId, long courseId);
+	
+	public List<UserLiveCoursePayModel> getAllUserCourse();
 	
 	public boolean addUserLiveCoursePayModel(UserLiveCoursePayModel userCourseModel);
 	

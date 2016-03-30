@@ -3,6 +3,7 @@ package com.ddcb.dao;
 import java.util.List;
 
 import com.ddcb.model.CourseModel;
+import com.ddcb.model.LiveClassApplyModel;
 import com.ddcb.model.LiveCourseModel;
 import com.ddcb.model.LiveCourseShareModel;
 import com.ddcb.model.SelectCourseModel;
@@ -12,6 +13,8 @@ public interface ICourseDao {
 	public void updateCourseStudyPeopleCount();
 	
 	public void updateCourseStudyPeopleCount(Long courseId);
+	
+	public void updateCourseStudyPeopleCountForCount(Long courseId, Integer study_people_count);
 	
 	public CourseModel getCourseByCourseId(long id);
 	
@@ -44,5 +47,9 @@ public interface ICourseDao {
 	public List<CourseModel> getOpenCourseByCondition(String openId, int page, int count, String type, String field, String industry, String competeny, String grade, String key);
 		
 	public List<LiveCourseShareModel> getLiveClassShare();
+	
+	public List<LiveClassApplyModel> getAllLiveClassApply();
+	
+	public List<LiveClassApplyModel> getAllOpenClassStudyCount();
 
 }

@@ -29,10 +29,12 @@ import com.ddcb.dao.IQuestionDao;
 import com.ddcb.dao.IUserCollectionDao;
 import com.ddcb.dao.IUserCourseDao;
 import com.ddcb.dao.IUserForwardDao;
+import com.ddcb.dao.IUserLiveCoursePayDao;
 import com.ddcb.dao.IUserStudyRecordDao;
 import com.ddcb.model.ClickLikeModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
+import com.ddcb.model.LiveClassApplyModel;
 import com.ddcb.model.LiveCourseModel;
 import com.ddcb.model.QuestionModel;
 import com.ddcb.model.UserCollectionModel;
@@ -64,6 +66,8 @@ public class WeixinCourseController {
 	@Autowired
 	private IQuestionDao questionDao;
 	
+	@Autowired
+	private IUserLiveCoursePayDao userLiveCoursePayDao;
 	
 	@Autowired
 	private ICourseDetailDao courseDetailDao;
@@ -75,6 +79,13 @@ public class WeixinCourseController {
 	@ResponseBody
 	public List<CourseModel> getAllCourse(HttpServletRequest request) {
 		List<CourseModel> courseList = courseDao.getAllCourse();
+		return courseList;
+	}
+	
+	@RequestMapping("/course/getAllLiveClassApply")
+	@ResponseBody
+	public List<LiveClassApplyModel> getAllLiveClassApply(HttpServletRequest request) {
+		List<LiveClassApplyModel> courseList = courseDao.getAllLiveClassApply();
 		return courseList;
 	}
 	
@@ -607,4 +618,32 @@ public class WeixinCourseController {
 		}
 		return null;
 	}
+	
+	@RequestMapping("/course/getAllOpenClassStudyCount")
+	@ResponseBody
+	public List<LiveClassApplyModel> getAllOpenClassStudyCount(HttpServletRequest request) {
+		List<LiveClassApplyModel> courseList = courseDao.getAllOpenClassStudyCount();
+		return courseList;
+	}
+	
+	@RequestMapping("/course/updateStudyCount")
+	@ResponseBody
+	public Map<String, String> updateStudyCount(HttpServletRequest request) {
+		Map<String, String> retMap = new HashMap<>();
+		String courseId = request.getParameter("courseId");
+		String count = request.getParameter("count");
+		try {
+			long courseId_ = Long.valueOf(courseId);
+			int count_ = Integer.valueOf(count);
+			courseDao.updateCourseStudyPeopleCountForCount(courseId_, count_);
+			retMap.put("error_code", "0");
+			retMap.put("error_msg", "");
+		} catch(Exception ex) {
+			retMap.put("error_code", "1");
+			retMap.put("error_msg", "参数错误，请检查！");
+			logger.error(ex.toString());
+		}
+		return retMap;
+	}
+	
 }
