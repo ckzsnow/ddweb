@@ -44,6 +44,7 @@ import com.ddcb.dao.IQuestionDao;
 import com.ddcb.model.BannerModel;
 import com.ddcb.model.CourseDetailModel;
 import com.ddcb.model.CourseModel;
+import com.ddcb.model.LiveClassApplyModel;
 import com.ddcb.model.LiveClassStatisticsModel;
 import com.ddcb.model.LiveCourseModel;
 import com.ddcb.model.LiveCourseShareModel;
@@ -479,5 +480,11 @@ public class WebCourseController {
 			retMap.put("error_msg", "操作数据库失败！");
 		}
 		return retMap;
+	}
+	
+	@RequestMapping("/getAllSelectLiveCourse")
+	@ResponseBody
+	public List<LiveClassApplyModel> getAllSelectLiveCourse(HttpServletRequest request) {		
+		return courseDao.getAllSelectLiveCourse();
 	}
 }

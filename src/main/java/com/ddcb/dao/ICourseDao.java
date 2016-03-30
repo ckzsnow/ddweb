@@ -51,5 +51,7 @@ public interface ICourseDao {
 	public List<LiveClassApplyModel> getAllLiveClassApply();
 	
 	public List<LiveClassApplyModel> getAllOpenClassStudyCount();
+	
+	public List<LiveClassApplyModel> getAllSelectLiveCourse();
 
 }

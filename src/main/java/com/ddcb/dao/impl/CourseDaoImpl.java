@@ -382,4 +382,17 @@ public class CourseDaoImpl implements ICourseDao {
 		}
 		return list;
 	}
+
+	@Override
+	public List<LiveClassApplyModel> getAllSelectLiveCourse() {
+		List<LiveClassApplyModel> list = null;
+		try {
+			String sql = "select id, name, study_people_count as total from course where course_type=1 order by course_date desc";
+			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveClassApplyModel>(
+							new LiveClassApplyMapper()));
+		} catch (Exception e) {
+			logger.debug("exception : {}", e.toString());
+		}
+		return list;
+	}
 }
