@@ -361,7 +361,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<LiveClassApplyModel> getAllLiveClassApply() {
 		List<LiveClassApplyModel> list = null;
 		try {
-			String sql = "select id, name, count(id) as total from ((select a.id, a.name from course as a, user_forward as b where a.id=b.course_id) union all (select t1.id, t1.name from course as t1, user_live_course_pay as t2 where t1.id=t2.course_id)) as temp group by id";
+			String sql = "select id, name, teacher, count(id) as total from ((select a.id, a.name, a.teacher from course as a, user_forward as b where a.id=b.course_id) union all (select t1.id, t1.name, t1.teacher from course as t1, user_live_course_pay as t2 where t1.id=t2.course_id)) as temp group by id";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveClassApplyModel>(
 							new LiveClassApplyMapper()));
 		} catch (Exception e) {
@@ -374,7 +374,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<LiveClassApplyModel> getAllOpenClassStudyCount() {
 		List<LiveClassApplyModel> list = null;
 		try {
-			String sql = "select id, name, study_people_count as total from course where course_type=0";
+			String sql = "select id, name, teacher, study_people_count as total from course where course_type=0";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveClassApplyModel>(
 							new LiveClassApplyMapper()));
 		} catch (Exception e) {
@@ -387,7 +387,7 @@ public class CourseDaoImpl implements ICourseDao {
 	public List<LiveClassApplyModel> getAllSelectLiveCourse() {
 		List<LiveClassApplyModel> list = null;
 		try {
-			String sql = "select id, name, study_people_count as total from course where course_type=1 order by course_date desc";
+			String sql = "select id, name, teacher, study_people_count as total from course where course_type=1 order by course_date desc";
 			list = jdbcTemplate.query(sql, new RowMapperResultSetExtractor<LiveClassApplyModel>(
 							new LiveClassApplyMapper()));
 		} catch (Exception e) {

@@ -161,6 +161,7 @@
 			                        <tr>
 			                          <th nowrap="nowrap">课程ID</th>
 			                          <th nowrap="nowrap">课程名称</th>
+			                          <th nowrap="nowrap">导师摘要</th>
 			                          <th nowrap="nowrap">课程学习人数</th>
 			                        </tr>
 			                      </thead>
@@ -243,7 +244,7 @@
 				var detailNode = document.getElementById('data_detail');
 				for (var i in data) {
 					var thNode = document.createElement('tr');
-					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].id+"</td><td nowrap='nowrap'>"+data[i].name+"</td><td><input id='course_id_"+data[i].id+"' style='width:100px;float:left;' class='form-control' value='"+data[i].total+"'><button onclick='updateStudyCount(\""+data[i].id+"\")' style='margin-left:5px;float:left;' class='btn btn-success'>更新</button></td>";
+					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].id+"</td><td nowrap='nowrap'>"+data[i].name+"</td><td nowrap='nowrap'>"+data[i].teacher+"</td><td><input id='course_id_"+data[i].id+"' style='width:100px;float:left;' class='form-control' value='"+data[i].total+"'><button onclick='updateStudyCount(\""+data[i].id+"\")' style='margin-left:5px;float:left;' class='btn btn-success'>更新</button></td>";
 					detailNode.appendChild(thNode);
 				}
 			}

@@ -161,6 +161,7 @@
 			                        <tr>
 			                          <th nowrap="nowrap">课程ID</th>
 			                          <th nowrap="nowrap">课程名称</th>
+			                          <th nowrap="nowrap">导师摘要</th>
 			                          <th nowrap="nowrap">报名人数</th>
 			                        </tr>
 			                      </thead>
@@ -225,7 +226,7 @@
 				var detailNode = document.getElementById('data_detail');
 				for (var i in data) {
 					var thNode = document.createElement('tr');
-					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].id+"</td><td nowrap='nowrap'>"+data[i].name+"</td><td>"+data[i].total+"</td>";
+					thNode.innerHTML = "<td nowrap='nowrap'>"+data[i].id+"</td><td nowrap='nowrap'>"+data[i].name+"</td><td nowrap='nowrap'>"+data[i].teacher+"</td><td>"+data[i].total+"</td>";
 					detailNode.appendChild(thNode);
 				}
 			}
