@@ -210,7 +210,7 @@ String course_id = (String)session.getAttribute("course_id");
 							</div>
 							<div class="mui-card" style="margin:0px 5px;">
 								<ul class="mui-table-view">
-									 <li class="mui-table-view-cell"><p style="margin-top:0px;">在线观看大讲堂全部讲座，付费直播除外</p></li>
+									 <li class="mui-table-view-cell"><p style="margin-top:0px;">在线观看大讲堂全部讲座，付费录播除外</p></li>
 							         <li class="mui-table-view-cell"><p>优先入导师答疑群，与导师互动</p></li>
 							         <li class="mui-table-view-cell"><p>线下活动优先参加</p></li>
 							         <li class="mui-table-view-cell"><p>持续更新讲座内容</p></li>

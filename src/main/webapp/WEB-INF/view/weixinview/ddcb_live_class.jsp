@@ -110,7 +110,7 @@
 <body>
 	<header class="mui-bar mui-bar-nav"
 		style="background-color: #66d6a6; z-index: 999999999;">
-		<h1 class="mui-title" style="color: white;">点豆直播课</h1>
+		<h1 class="mui-title" style="color: white;">点豆录播课</h1>
 	</header>
 	<div class="mui-content">
 		<input id="image_select" type="file" capture="camera" accept="image/*" hidefocus='true' style="position: absolute;float:right;width:0px;height:0px;opacity: 0;">
@@ -118,9 +118,9 @@
 			<ul id="myTab" class="nav nav-tabs row mantoutab"
 				style="padding-left: 0px; padding-right: 0px;">
 				<li class="col-xs-6 text-center active"><a vinfo="open_class"
-					class="center-block" data-toggle="tab">直播进行中</a></li>
+					class="center-block" data-toggle="tab">播放进行中</a></li>
 				<li class="col-xs-6 text-center"><a vinfo="live_class"
-					class="center-block" data-toggle="tab">直播已结束</a></li>
+					class="center-block" data-toggle="tab">播放已结束</a></li>
 			</ul>
 		</div>
 		<div class="content">
@@ -163,7 +163,7 @@
 														style="color: #888888; margin-top: 2px; margin-bottom: 2px;"
 														class='mui-ellipsis'>
 														<span style="font-size: 16px;"
-															class="mui-icon mui-icon-compose"></span>直播时间<%=cm.getCourse_date_readable()%></h6>
+															class="mui-icon mui-icon-compose"></span>播放时间<%=cm.getCourse_date_readable()%></h6>
 												</div>
 											</div>
 											<div style="margin-top: 5px;">
@@ -277,7 +277,7 @@
 														style="color: #888888; margin-top: 2px; margin-bottom: 2px;"
 														class='mui-ellipsis'>
 														<span style="font-size: 16px;"
-															class="mui-icon mui-icon-compose"></span>直播时间<%=cm.getCourse_date_readable()%></h6>
+															class="mui-icon mui-icon-compose"></span>播放时间<%=cm.getCourse_date_readable()%></h6>
 												</div>
 											</div>
 											<div style="margin-top: 5px;">
@@ -682,7 +682,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 							    						browserDiv.setAttribute('course_id', data[i].id);
 							    						var btnDiv = document.createElement('div');
 							    						btnDiv.setAttribute('style', 'margin-top:5px');
-							    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div>";
+							    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>播放时间"+data[i].course_date_readable+"</h6></div>";
 							    						btnDiv.innerHTML = "<div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
 							    						if(data[i].price != null && data[i].price != "" && data[i].price != "0") {
 							    							if(data[i].pay_status != null && data[i].pay_status=="1") {
@@ -757,7 +757,7 @@ mui.createConfirmDialog = function(info, btnInfo, cancelCallBack, acceptCallBack
 							    						browserDiv.setAttribute('course_id', data[i].id);
 							    						var btnDiv = document.createElement('div');
 							    						btnDiv.setAttribute('style', 'margin-top:5px');
-							    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>直播时间"+data[i].course_date_readable+"</h6></div>";
+							    						browserDiv.innerHTML = "<img class='mui-media-object mui-pull-left' style='height:50px;width:80px;max-width:100px;' src='/files/imgs/"+data[i].image+"'><div class='mui-media-body'><h4 style='font-size:12px;margin-top:0px;margin-bottom:0px;'>"+data[i].name+"</h4><h6 style='color:#2ab888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-contact'></span>"+data[i].teacher+"</h6><h6 style='color:#888888;margin-top:2px;margin-bottom:2px;' class='mui-ellipsis'><span style='font-size:16px;' class='mui-icon mui-icon-compose'></span>播放时间"+data[i].course_date_readable+"</h6></div>";
 							    						btnDiv.innerHTML = "<div style='float:left;height:25px;line-height:25px;'><p style='font-size:12px;'>课程售价："+data[i].price+"元</p></div>";
 							    						if(data[i].price != null && data[i].price != "" && data[i].price != "0") {
 							    							if(data[i].pay_status != null && data[i].pay_status=="1") {
