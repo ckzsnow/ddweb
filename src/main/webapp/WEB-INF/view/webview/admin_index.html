@@ -529,6 +529,9 @@
 		<!-- Metis demo scripts -->
 		<script src="/js/webjs/app.js"></script>
 		<script>
+		String.prototype.replaceAll = function(s1,s2) { 
+		    return this.replace(new RegExp(s1,"gm"),s2); 
+		}
 			var course_menu_count = 1;
 			function delCourseMenu() {
 				if(course_menu_count == 1) return;
@@ -615,10 +618,11 @@
 					var course_menu = "";
 					var course_menu_index = 1;
 					$('#course_menu>div input').each(function(){
+						var timeStr = $(this).val();
 						if(course_menu_index % 2 == 0) {
-							course_menu += $(this).val() + ";";
+							course_menu += timeStr.replaceAll("：", ":") + ";";
 						} else {
-							course_menu += $(this).val() + "###DDCB###";
+							course_menu += timeStr.replaceAll("：", ":") + "###DDCB###";
 						}
 						course_menu_index++;
 					});
